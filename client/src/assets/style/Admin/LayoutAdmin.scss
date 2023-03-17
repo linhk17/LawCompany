@@ -1,0 +1,19 @@
+.content{
+    padding: 1%;
+    background-color: var(--body-background);
+    padding-left: 2.5%;
+    .card-info{
+        box-shadow: 2px 2px 3px rgb(195, 195, 195);
+        border: transparent;
+        width: 95%;
+        margin-top: 16px;
+        &:hover{
+            background-color: rgb(233, 233, 233);
+        }
+    }
+    .pagination{
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+    }
+}
