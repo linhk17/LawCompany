@@ -1,8 +1,10 @@
 import { Table } from 'antd';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function TableComponent({data, columns}) {
+function TableComponent({ data, columns }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  let navigate = useNavigate();
   const onSelectChange = (newSelectedRowKeys) => {
     console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
@@ -44,6 +46,20 @@ function TableComponent({data, columns}) {
       },
     ],
   };
-  return <Table rowSelection={rowSelection} columns={columns} dataSource={data} />;
+  return (
+    <Table
+      rowSelection={rowSelection}
+      columns={columns}
+      dataSource={data}
+      onRow={(record, rowIndex) => {
+        return {
+          onClick: (event) => {
+            navigate(`/admin/customer/${record._id}`)
+          }, // click row
+        }
+    }}
+    />
+  )
+    ;
 };
 export default TableComponent;

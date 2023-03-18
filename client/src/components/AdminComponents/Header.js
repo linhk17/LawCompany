@@ -99,17 +99,17 @@ function HeaderAdmin() {
         </Col>
       </Row>
       <Row className="breadcrump-admin">
-        <Col md={{span: 10}}>
-        <Breadcrumb items={items2} />
+        <Col md={{ span: 10 }}>
+          <Breadcrumb items={items2} />
         </Col>
-        <Col md={{span: 10, push: 4}}>
-        <Search
-          placeholder="input search text"
-          allowClear
-          enterButton="Search"
-          size="large"
-          onSearch={onSearch}
-        />
+        <Col md={{ span: 10, push: 4 }}>
+          <Search
+            placeholder="input search text"
+            allowClear
+            enterButton="Search"
+            size="large"
+            onSearch={onSearch}
+          />
         </Col>
       </Row>
     </>

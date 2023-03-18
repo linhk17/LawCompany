@@ -5,6 +5,7 @@ import { Pagination } from 'antd';
 import CardUser from "~/components/AdminComponents/CardUser";
 import Filter from "~/components/AdminComponents/Filter";
 import TableComponent from "~/components/AdminComponents/Table";
+import { Link } from "react-router-dom";
 const columns = [
     {
       title: 'Họ tên',
@@ -189,7 +190,8 @@ function Customer() {
                                md={{ span: 12, push: 0 }}
                                sm={{ span: 12, push: 0 }}
                                xs={{ span: 23, push: 1 }}>
-                               <CardUser info={val} />
+                              <Link to={`${val.phone}`}><CardUser info={val} />
+                              </Link> 
                            </Col>
                        ))}
    

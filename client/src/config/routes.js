@@ -6,7 +6,11 @@ const routes = {
         service: '/service',
     },
     admin: {
-        customerManager: '/customer'
+        customerManager: '/customer',
+        customerDetail: '/customer/:id',
+        customerEdit: '/customer/edit/:id',
+
+
     }
 }
 export default routes;
