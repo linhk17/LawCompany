@@ -6,6 +6,7 @@ import Filter from "~/components/AdminComponents/Filter";
 import TableComponent from "~/components/AdminComponents/Table";
 import { Link } from "react-router-dom";
 import { Card } from "~/components";
+import BreadcrumpAdmin from "~/components/AdminComponents/Breadcump";
 const columns = [
     {
       title: 'Họ tên',
@@ -128,44 +129,34 @@ const users = [
 
 ]
 function Customer() {
-    const [tab, setTab] = useState("Kanban");
     const [minValue, setMinValue] = useState(0)
     const [maxValue, setMaxValue] = useState(8)
+    const [tab, setTab] = useState("Kanban");
     const numEachPage = 8
     const handleChange = value => {
         setMinValue((value - 1) * numEachPage);
         setMaxValue(value * numEachPage);
     };
+    const seg = <Segmented
+    defaultValue="Kanban"
+    options={[
+      {
+        label: 'Kanban',
+        value: 'Kanban',
+        icon: <AppstoreOutlined />,
+      },
+      {
+        label: 'List',
+        value: 'List',
+        icon: <BarsOutlined />,
+      },
+    ]}
+    onChange={(e) => setTab(e)}
+  />
     return (
         <>
-            <Row>
-                <Col md={{ span: 4 }}>
-                    <Space>
-                        <Button type="primary" className="btn-primary">CREATE</Button>
-                        <Button className="btn-outline-primary">CREATE</Button>
-                    </Space>
-                </Col>
-                <Col md={{ span: 8, push: 10 }}>
-                    <Filter />
-
-                    <Segmented
-                        defaultValue="Kanban"
-                        options={[
-                            {
-                                label: 'Kanban',
-                                value: 'Kanban',
-                                icon: <AppstoreOutlined />,
-                            },
-                            {
-                                label: 'List',
-                                value: 'List',
-                                icon: <BarsOutlined />,
-                            },
-                        ]}
-                        onChange={(e) => setTab(e)}
-                    />
-                </Col>
-            </Row>
+        <BreadcrumpAdmin/>
+            <Filter seg={seg}/>
             <br/>
             {tab === 'Kanban' ? 
              <>

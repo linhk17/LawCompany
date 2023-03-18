@@ -1,14 +1,16 @@
 import HeaderAdmin from "~/components/AdminComponents/Header";
 import "~/assets/style/Admin/LayoutAdmin.scss"
-function LayoutAdmin({children}) {
-    return ( 
+function LayoutAdmin({ children }) {
+    return (
         <>
-            <HeaderAdmin/>
+            <HeaderAdmin />
+            
             <div className="content">
-            {children}
+               
+                {children}
             </div>
         </>
-     );
+    );
 }
 
 export default LayoutAdmin;

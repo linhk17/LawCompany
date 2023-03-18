@@ -11,10 +11,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
 import "~/assets/style/Admin/Header.scss"
 import Search from "antd/es/transfer/search";
+import { Link } from "react-router-dom";
 const items = [
   {
-    icon: <FontAwesomeIcon icon={faHouse} />,
+    icon: <Link to="/admin">
+            <FontAwesomeIcon icon={faHouse} />
+          </Link>,
     key: 'title',
+    
   },
   {
     label: 'Quản lý chăm sóc khách hàng',
@@ -98,20 +102,7 @@ function HeaderAdmin() {
           <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={items1} />
         </Col>
       </Row>
-      <Row className="breadcrump-admin">
-        <Col md={{ span: 10 }}>
-          <Breadcrumb items={items2} />
-        </Col>
-        <Col md={{ span: 10, push: 4 }}>
-          <Search
-            placeholder="input search text"
-            allowClear
-            enterButton="Search"
-            size="large"
-            onSearch={onSearch}
-          />
-        </Col>
-      </Row>
+      
     </>
   );
 }

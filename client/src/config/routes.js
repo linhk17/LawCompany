@@ -6,10 +6,11 @@ const routes = {
         service: '/service',
     },
     admin: {
+        dashboard: '/',
         customerManager: '/customer',
         customerDetail: '/customer/:id',
         customerEdit: '/customer/edit/:id',
-
+        matterManager: '/matter',
 
     }
 }

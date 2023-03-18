@@ -1,5 +1,9 @@
-import { Radio, TreeSelect } from 'antd';
+import { Button, Col, Radio, Row, Segmented, Space, TreeSelect } from 'antd';
 import { useState } from 'react';
+import {
+  AppstoreOutlined,
+  BarsOutlined
+} from '@ant-design/icons';
 const treeData = [
   {
     value: 'parent 1',
@@ -40,27 +44,40 @@ const treeData = [
     ],
   },
 ];
-function Filter() {
-    const [placement, SetPlacement] = useState('topLeft');
+function Filter({ seg }) {
+  const [placement, SetPlacement] = useState('topLeft');
   const placementChange = (e) => {
     SetPlacement(e.target.value);
   };
   return (
     <>
-      <TreeSelect
-        showSearch
-        dropdownStyle={{
-          maxHeight: 400,
-          overflow: 'auto',
-          minWidth: 300,
-        }}
-        placeholder="Bộ lọc"
-        dropdownMatchSelectWidth={false}
-        placement={placement}
-        allowClear
-        treeDefaultExpandAll
-        treeData={treeData}
-      />
+      <Row>
+        <Col md={{ span: 4 }}>
+          <Space>
+            <Button type="primary" className="btn-primary">CREATE</Button>
+            <Button className="btn-outline-primary">CREATE</Button>
+          </Space>
+        </Col>
+        <Col md={{ span: 8, push: 10 }}>
+
+          <TreeSelect
+            showSearch
+            dropdownStyle={{
+              maxHeight: 400,
+              overflow: 'auto',
+              minWidth: 300,
+            }}
+            placeholder="Bộ lọc"
+            dropdownMatchSelectWidth={false}
+            placement={placement}
+            allowClear
+            treeDefaultExpandAll
+            treeData={treeData}
+          />
+          {seg}
+        </Col>
+      </Row>
+
     </>
   );
 }
