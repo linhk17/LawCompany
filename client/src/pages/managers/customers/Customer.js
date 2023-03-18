@@ -1,11 +1,11 @@
-import { Avatar, Button, Col, Row, Space, Segmented, Tabs, List } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Col, Row, Space, Segmented } from "antd";
+import { useState } from "react";
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { Pagination } from 'antd';
-import CardUser from "~/components/AdminComponents/CardUser";
 import Filter from "~/components/AdminComponents/Filter";
 import TableComponent from "~/components/AdminComponents/Table";
 import { Link } from "react-router-dom";
+import { Card } from "~/components";
 const columns = [
     {
       title: 'Họ tên',
@@ -127,18 +127,6 @@ const users = [
 
 
 ]
-const options = [
-    {
-        label: 'List',
-        value: 'List',
-        icon: <BarsOutlined />,
-    },
-    {
-        label: 'Kanban',
-        value: 'Kanban',
-        icon: <AppstoreOutlined />,
-    },
-]
 function Customer() {
     const [tab, setTab] = useState("Kanban");
     const [minValue, setMinValue] = useState(0)
@@ -190,7 +178,8 @@ function Customer() {
                                md={{ span: 12, push: 0 }}
                                sm={{ span: 12, push: 0 }}
                                xs={{ span: 23, push: 1 }}>
-                              <Link to={`${val.phone}`}><CardUser info={val} />
+                              <Link to={`${val.phone}`}>
+                                    <Card info={val} />
                               </Link> 
                            </Col>
                        ))}

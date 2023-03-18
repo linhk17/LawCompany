@@ -1,7 +1,9 @@
-function FormCustomer() {
+
+function FormCustomer({user}) {
     return ( 
         <>
-        Form</>
+        
+        </>
      );
 }
 

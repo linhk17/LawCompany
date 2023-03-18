@@ -13,6 +13,11 @@
     }
     .card-detail{
         margin: 1% 3%;
+        .edit-img{
+            .btn-edit-img{
+                overflow: hidden;
+            }
+        }
     }
     .pagination{
         margin-top: 30px;
