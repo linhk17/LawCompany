@@ -27,6 +27,10 @@ function Matters() {
 
                 </Col>
                 <Col>
+                <Space direction="horizontal">
+                    <h3>Icon</h3>
+                    <h4>Ok</h4>
+                </Space>
                 </Col>
                 <Col>
                 </Col>

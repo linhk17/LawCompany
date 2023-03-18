@@ -45,9 +45,13 @@ function Dashboard() {
         <div className="dashboard">
             <List
                 
-                style={{ width: '50%' }}
+                style={{ width: '70%' }}
                 grid={{
-                    column: 4,
+                    xs: 2,
+                    sm: 3,
+                    md: 4,
+                    lg: 5,
+                    xl: 5
                 }}
                 dataSource={data}
                 renderItem={(item) => (
@@ -66,8 +70,6 @@ function Dashboard() {
                         />
                         <h4>{item.title}</h4>
                             </Link>
-                        
-                        
                     </List.Item>
                 )}
             /> 

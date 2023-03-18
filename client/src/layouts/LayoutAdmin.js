@@ -4,9 +4,7 @@ function LayoutAdmin({ children }) {
     return (
         <>
             <HeaderAdmin />
-            
             <div className="content">
-               
                 {children}
             </div>
         </>
