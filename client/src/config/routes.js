@@ -11,6 +11,8 @@ const routes = {
         customerDetail: '/customer/:id',
         customerEdit: '/customer/edit/:id',
         matterManager: '/matter',
+        matterAdd: '/matter/add',
+        schedule: '/schedule',
 
     }
 }

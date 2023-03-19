@@ -4,5 +4,6 @@ export {Sidebar, SidebarHDrawer} from './AdminComponents/Sidebar';
 export {default as Card} from './AdminComponents/Card/CardUser';
 export {default as Filter} from './AdminComponents/Filter';
 export {default as Table} from './AdminComponents/Table';
+export {default as Select} from './AdminComponents/Select';
 export {default as FormCustomer} from './AdminComponents/Form/Customer';
 

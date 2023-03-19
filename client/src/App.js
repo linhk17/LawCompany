@@ -1,7 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { privateRoutes, publicRoutes } from "./routes/routes";
+import '../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+
 import 'antd/dist/reset.css';
 import "~/assets/GlobalStyle.scss"
+
 function App() {
   let role = 1;
   let routes = publicRoutes;

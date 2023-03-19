@@ -6,6 +6,8 @@ import CustomerDetail from "~/pages/managers/customers/CustomerDetail"
 import CustomerEdit from "~/pages/managers/customers/CustomerEdit"
 import Dashboard from "~/pages/managers/dashboard"
 import Matters from "~/pages/managers/matters/Matter"
+import MatterAdd from "~/pages/managers/matters/MatterAdd"
+import Schedule from "~/pages/managers/schedule/Schedule"
 const publicRoutes = [
     // {path: config.routes.user.home, component: HomePage,  layout: UserLayout},
 ]
@@ -15,5 +17,7 @@ const privateRoutes = [
     {path: config.routes.admin.customerDetail, component: CustomerDetail, layout: LayoutAdmin},
     {path: config.routes.admin.customerEdit, component: CustomerEdit, layout: LayoutAdmin},
     {path: config.routes.admin.matterManager, component: Matters, layout: LayoutAdmin},
+    {path: config.routes.admin.matterAdd, component: MatterAdd, layout: LayoutAdmin},
+    {path: config.routes.admin.schedule, component: Schedule, layout: LayoutAdmin},
 ]
 export {privateRoutes, publicRoutes}

@@ -25,7 +25,8 @@ const data = [
     {
         icon: faUser,
         title: "Lịch làm việc",
-        color: `var(--gold)`
+        color: `var(--gold)`,
+        link: 'schedule'
     },
     {
         icon: faUser,
