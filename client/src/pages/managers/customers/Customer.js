@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { Pagination } from 'antd';
 import Filter from "~/components/AdminComponents/Filter";
-import TableComponent from "~/components/AdminComponents/Table";
+import TableComponent from "~/components/AdminComponents/Table/Table";
 import { Link } from "react-router-dom";
 import { Card } from "~/components";
 import BreadcrumpAdmin from "~/components/AdminComponents/Breadcump";

@@ -1,9 +1,8 @@
 import { Avatar, Button, Col, Form, Input, Radio, Row, Card, Space, Tabs, Table } from "antd";
 import { useState } from "react";
-import { Select } from "~/components";
+import { Select, TableAddFile, TableAddRow, TableAddTask } from "~/components";
 import { Editor } from 'react-draft-wysiwyg';
 import SelectMltiple from "../SelectMultiple";
-import TableAddRow from "../TableAddRow";
 const formItemLayout = {
     labelCol: {
         xs: {
@@ -31,45 +30,43 @@ const label = [
     'Nội bộ được phép truy cập',
     'Khách hàng được phép truy cập'
 ]
+const columnsContact = [
 
-const items = [
-    {
-        key: '1',
-        label: `Mô tả`,
-        children: <Editor
-            wrapperClassName="wrapper-class"
-            editorClassName="editor-class"
-            toolbarClassName="toolbar-class"
-            wrapperStyle={wrapperStyle}
-        />,
-    },
-    {
-        key: '2',
-        label: `Giấy tờ`,
-        children: <TableAddRow/>,
-    },
-    {
-        key: '3',
-        label: `Liên hệ`,
-        children: `Content of Tab Pane 3`,
-    },
-    {
-        key: '4',
-        label: `Công việc`,
-        children: `Content of Tab Pane 3`,
-    },
-    {
-        key: '5',
-        label: `Chi phí`,
-        children: `Content of Tab Pane 3`,
-    },
-    {
-        key: '6',
-        label: `Lịch`,
-        children: `Content of Tab Pane 3`,
-    },
-];
+]
+
 function FormMatter() {
+    const items = [
+        {
+            key: '1',
+            label: `Mô tả`,
+            children: <Editor />,
+        },
+        {
+            key: '2',
+            label: `Giấy tờ`,
+            children: <TableAddFile/>,
+        },
+        {
+            key: '3',
+            label: `Liên hệ`,
+            children: <TableAddRow/>,
+        },
+        {
+            key: '4',
+            label: `Công việc`,
+            children: <TableAddTask/>,
+        },
+        {
+            key: '5',
+            label: `Chi phí`,
+            children: <TableAddRow/>,
+        },
+        {
+            key: '6',
+            label: `Lịch`,
+            children: `Content of Tab Pane 3`,
+        },
+    ];
     const [value, setValue] = useState(2);
 
     const onChange = (e) => {
@@ -81,8 +78,7 @@ function FormMatter() {
     };
     return (
         <>
-            <Form {...formItemLayout}
-            >
+            <Form {...formItemLayout}>
                 <Row>
                     <Col span={12} pull={2}>
                         <Form.Item
@@ -173,7 +169,6 @@ function FormMatter() {
                 >
                     <Button type="primary" htmlType="submit" className="btn-primary">SAVE</Button>
                 </Form.Item>
-
             </Form>
         </>
     );

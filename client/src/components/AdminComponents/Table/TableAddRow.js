@@ -1,10 +1,8 @@
-import { Button, Form, Input, Popconfirm, Table, message, Upload } from 'antd';
+import { clear } from '@testing-library/user-event/dist/clear';
+import { Button, Form, Input, Popconfirm, Select, Table } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { UploadOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-import FilePDF from './FilePDF';
+const arr = ['1', '2', '3']
 const EditableContext = React.createContext(null);
-
 const EditableRow = ({ index, ...props }) => {
     const [form] = Form.useForm();
     return (
@@ -15,6 +13,7 @@ const EditableRow = ({ index, ...props }) => {
         </Form>
     );
 };
+let add = false;
 const EditableCell = ({
     title,
     editable,
@@ -34,9 +33,15 @@ const EditableCell = ({
     }, [editing]);
     const toggleEdit = () => {
         setEditing(!editing);
-        form.setFieldsValue({
-            [dataIndex]: record[dataIndex],
-        });
+        console.log(record[dataIndex]);
+        // form.setFieldsValue({
+        //     [dataIndex]: record[dataIndex],
+        // });
+        if(record[dataIndex].$$typeof === undefined){
+            form.setFieldsValue({
+              [dataIndex]: record[dataIndex],
+            });
+        };
     };
     const save = async () => {
         try {
@@ -46,6 +51,7 @@ const EditableCell = ({
                 ...record,
                 ...values,
             });
+            console.log(values);
         } catch (errInfo) {
             console.log('Save failed:', errInfo);
         }
@@ -66,6 +72,7 @@ const EditableCell = ({
                 ]}
             >
                 <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+
             </Form.Item>
         ) : (
             <div
@@ -81,7 +88,7 @@ const EditableCell = ({
     }
     return <td {...restProps}>{childNode}</td>;
 };
-const TableAddRow = () => {
+const TableAddRow = (col) => {
     const [dataSource, setDataSource] = useState([]);
     const [count, setCount] = useState(2);
     const handleDelete = (key) => {
@@ -98,16 +105,18 @@ const TableAddRow = () => {
         {
             title: 'age',
             dataIndex: 'age',
+            editable: true,
         },
         {
             title: 'address',
             dataIndex: 'address',
+            editable: true,
         },
         {
             title: 'operation',
             dataIndex: 'operation',
             render: (_, record) =>
-                dataSource.length >= 2 ? (
+                dataSource.length >= 1 ? (
                     <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
                         <a>Delete</a>
                     </Popconfirm>
@@ -115,8 +124,12 @@ const TableAddRow = () => {
         },
     ];
     const handleAdd = () => {
+        add = true;
         const newData = {
             key: count,
+            name: <Input/>,
+            age: <Input/>,
+            address: <Input/>,
         };
         setDataSource([...dataSource, newData]);
         setCount(count + 1);
@@ -153,8 +166,16 @@ const TableAddRow = () => {
         };
     });
     return (
-        <>
-        <FilePDF/>
+        <div>
+            <Button
+                onClick={handleAdd}
+                type="primary"
+                style={{
+                    marginBottom: 16,
+                }}
+            >
+                Thêm mới
+            </Button>
             <Table
                 components={components}
                 rowClassName={() => 'editable-row'}
@@ -162,7 +183,7 @@ const TableAddRow = () => {
                 dataSource={dataSource}
                 columns={columns}
             />
-        </>
+        </div>
     );
 };
 export default TableAddRow;
