@@ -1,6 +1,8 @@
 import { clear } from '@testing-library/user-event/dist/clear';
-import { Button, Form, Input, Popconfirm, Select, Table } from 'antd';
+import { Button, Form, Input, Popconfirm, Select, Table, TimePicker } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import dayjs from 'dayjs';
+const format = 'HH:mm';
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
     const [form] = Form.useForm();
@@ -31,7 +33,12 @@ const TableAddTask = (col) => {
         }
     })
    
-    const [dataSource, setDataSource] = useState([]);
+    const [dataSource, setDataSource] = useState([
+        {
+            name: 'Ok',
+            phancong: '123'
+        }
+    ]);
     const [count, setCount] = useState(2);
     const handleDelete = (key) => {
         const newData = dataSource.filter((item) => item.key !== key);
@@ -49,17 +56,9 @@ const TableAddTask = (col) => {
         const [editing, setEditing] = useState(false);
         const inputRef = useRef(null);
         const form = useContext(EditableContext);
-        useEffect(() => {
-            if (editing) {
-                inputRef.current.focus();
-            }
-        }, [editing]);
         const toggleEdit = () => {
             setEditing(!editing);
             console.log(record[dataIndex]);
-            // form.setFieldsValue({
-            //     [dataIndex]: record[dataIndex],
-            // });
             if (record[dataIndex].$$typeof === undefined) {
                 form.setFieldsValue({
                     [dataIndex]: record[dataIndex],
@@ -80,11 +79,9 @@ const TableAddTask = (col) => {
             }
         };
         let childNode = children;
-        let typeInput = ['Select', 'Input'];
         if (editable) {
-            console.log(dataIndex);
             if (editing) {
-                if (dataIndex === 'name') {
+                if (dataIndex === 'name' || dataIndex === 'phancong') {
                     childNode = <Form.Item
                         style={{
                             margin: 0,
@@ -97,14 +94,29 @@ const TableAddTask = (col) => {
                             },
                         ]}
                     >
-                        <Select options={arrtemp} ref={inputRef} />
-
-
+                        
+                       <Select options={arrtemp}/>
+                    </Form.Item>
+                }
+                else if (dataIndex === 'time' || dataIndex === 'timeend') {
+                    childNode = <Form.Item
+                        style={{
+                            margin: 0,
+                        }}
+                        name={dataIndex}
+                        rules={[
+                            {
+                                required: true,
+                                message: `${title} is required.`,
+                            },
+                        ]}
+                    >
+                        
+                        <TimePicker defaultValue={dayjs('00:00', format)} format={format} />
                     </Form.Item>
                 }
                 else {
                     childNode = (
-
                         <Form.Item
                             style={{
                                 margin: 0,
@@ -118,7 +130,6 @@ const TableAddTask = (col) => {
                             ]}
                         >
                             <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-
                         </Form.Item>
                     )
                 }
@@ -163,7 +174,7 @@ const TableAddTask = (col) => {
         },
         {
             title: 'Hạn chót',
-            dataIndex: 'timend',
+            dataIndex: 'timeend',
             editable: true,
         },
         {
@@ -185,10 +196,10 @@ const TableAddTask = (col) => {
     const handleAdd = () => {
         const newData = {
             key: count,
-            name: <Input />,
-            phancong: <Input />,
-            time: <Select />,
-            timeend: <Input />
+            name: <Select />,
+            phancong: <Select />,
+            time: <TimePicker />,
+            timeend: <TimePicker />
         };
         setDataSource([...dataSource, newData]);
         setCount(count + 1);

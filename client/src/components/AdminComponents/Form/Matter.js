@@ -1,8 +1,10 @@
 import { Avatar, Button, Col, Form, Input, Radio, Row, Card, Space, Tabs, Table } from "antd";
 import { useState } from "react";
 import { Select, TableAddFile, TableAddRow, TableAddTask } from "~/components";
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Editor } from 'react-draft-wysiwyg';
 import SelectMltiple from "../SelectMultiple";
+import FormAddField from "./FormAddField";
 const formItemLayout = {
     labelCol: {
         xs: {
@@ -54,7 +56,7 @@ function FormMatter() {
         {
             key: '4',
             label: `Công việc`,
-            children: <TableAddTask/>,
+            children: <FormAddField/>,
         },
         {
             key: '5',

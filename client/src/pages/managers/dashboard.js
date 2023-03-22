@@ -1,8 +1,7 @@
 import { faLaptopFile, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Button, Card, Col, List, Row } from "antd";
+import { Avatar, List } from "antd";
 import { Link } from "react-router-dom";
-import { icon } from "~/assets/images";
 import "~/assets/style/Admin/Dashboard.scss"
 const data = [
     {

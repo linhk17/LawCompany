@@ -1,6 +1,6 @@
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Button, Card, Tabs, Descriptions, Space, Row, Col, Menu, Typography, Divider } from "antd";
+import { Avatar, Button, Card, Tabs, Descriptions, Space, Row, Col, Typography, Divider } from "antd";
 import { Link, useParams } from "react-router-dom";
 import { avatar } from "~/assets/images";
 const items = [

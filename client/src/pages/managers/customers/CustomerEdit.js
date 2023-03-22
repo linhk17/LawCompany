@@ -1,7 +1,6 @@
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Card, Divider, Space, Typography } from "antd";
-import { Link, useParams } from "react-router-dom";
+import { Card, Divider, Space, Typography } from "antd";
 import { FormCustomer } from "~/components";
 
 const user = {
@@ -12,7 +11,6 @@ const user = {
     type: 0,
 }
 function CustomerEdit() {
-    let { id } = useParams();
     return (
         <>
             <Card className="card-form card-detail"

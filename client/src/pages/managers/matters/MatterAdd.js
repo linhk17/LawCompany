@@ -1,12 +1,8 @@
-import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Badge, Card, Divider, Space, Steps, Typography } from "antd";
-import { useState } from "react";
+import {  Card, Steps } from "antd";
 import BreadcrumpAdmin from "~/components/AdminComponents/Breadcump";
 import FormMatter from "~/components/AdminComponents/Form/Matter";
 
 function MatterAdd() {
-    const [current, setCurrent] = useState(0);
     return (
         <>
         <BreadcrumpAdmin/>
@@ -15,7 +11,6 @@ function MatterAdd() {
                     <Steps
                         type="navigation"
                         className="site-navigation-steps"
-                        current={current}
                         items={[
                             {
                                 title: 'Tạo mới'
