@@ -1,10 +1,10 @@
-import { Avatar, Button, Col, Form, Input, Radio, Row, Card, Space, Tabs, Table } from "antd";
+import { Button, Col, Form, Input, Radio, Row, Space, Tabs, Select } from "antd";
 import { useState } from "react";
-import { Select, TableAddFile, TableAddRow, TableAddTask } from "~/components";
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { TableAddFile, TableAddRow } from "~/components";
 import { Editor } from 'react-draft-wysiwyg';
-import SelectMltiple from "../SelectMultiple";
-import FormAddField from "./FormAddField";
+import FormAddTask from "./FormAddTask";
+import FormAddPeriod from "./FormAddPeriod";
+import FormAddFee from "./FormAddFee";
 const formItemLayout = {
     labelCol: {
         xs: {
@@ -23,7 +23,7 @@ const formItemLayout = {
         }
     }
 };
-const wrapperStyle={
+const wrapperStyle = {
     border: '1px solid #F1F1F1',
     padding: '10px',
     minHeight: '40vh'
@@ -46,28 +46,28 @@ function FormMatter() {
         {
             key: '2',
             label: `Giấy tờ`,
-            children: <TableAddFile/>,
+            children: <TableAddFile />,
         },
         {
             key: '3',
             label: `Liên hệ`,
-            children: <TableAddRow/>,
+            children: <TableAddRow />,
         },
         {
             key: '4',
             label: `Công việc`,
-            children: <FormAddField/>,
+            children: <FormAddTask />,
         },
         {
             key: '5',
-            label: `Chi phí`,
-            children: <TableAddRow/>,
+            label: `Phí cố định`,
+            children: <FormAddPeriod />,
         },
         {
             key: '6',
-            label: `Lịch`,
-            children: `Content of Tab Pane 3`,
-        },
+            label: `Chi phí`,
+            children: <FormAddFee />,
+        }
     ];
     const [value, setValue] = useState(2);
 
@@ -101,7 +101,32 @@ function FormMatter() {
                             label="Luật sư phụ trách"
                             name="name"
                         >
-                            <Select />
+                            <Select
+                                showSearch
+                                allowClear
+                                style={{
+                                    width: '100%',
+                                }}
+                                options={[
+                                    {
+                                        value: 'jack',
+                                        label: 'Jack',
+                                      },
+                                      {
+                                        value: 'lucy',
+                                        label: 'Lucy',
+                                      },
+                                      {
+                                        value: 'Yiminghe',
+                                        label: 'yiminghe',
+                                      },
+                                      {
+                                        value: 'disabled',
+                                        label: 'Disabled',
+                                        disabled: true,
+                                      },
+                                ]}
+                            />
                         </Form.Item>
                     </Col>
 
@@ -119,7 +144,32 @@ function FormMatter() {
                                 },
                             ]}
                         >
-                            <Select />
+                            <Select
+                                showSearch
+                                allowClear
+                                style={{
+                                    width: '100%',
+                                }}
+                                options={[
+                                    {
+                                        value: 'jack',
+                                        label: 'Jack',
+                                      },
+                                      {
+                                        value: 'lucy',
+                                        label: 'Lucy',
+                                      },
+                                      {
+                                        value: 'Yiminghe',
+                                        label: 'yiminghe',
+                                      },
+                                      {
+                                        value: 'disabled',
+                                        label: 'Disabled',
+                                        disabled: true,
+                                      },
+                                ]}
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={12} pull={2}>
@@ -127,7 +177,32 @@ function FormMatter() {
                             label="Luật sư ban đầu"
                             name="name"
                         >
-                            <Select />
+                             <Select
+                                showSearch
+                                allowClear
+                                style={{
+                                    width: '100%',
+                                }}
+                                options={[
+                                    {
+                                        value: 'jack',
+                                        label: 'Jack',
+                                      },
+                                      {
+                                        value: 'lucy',
+                                        label: 'Lucy',
+                                      },
+                                      {
+                                        value: 'Yiminghe',
+                                        label: 'yiminghe',
+                                      },
+                                      {
+                                        value: 'disabled',
+                                        label: 'Disabled',
+                                        disabled: true,
+                                      },
+                                ]}
+                            />
                         </Form.Item>
                     </Col>
 
@@ -151,9 +226,35 @@ function FormMatter() {
                         <Col span={12} pull={2}>
                             <Form.Item
                                 label={label[value]}
-                                name="name"
+                                name="nameShow"
                             >
-                                <SelectMltiple />
+                                 <Select
+                                 mode="multiple"
+                                showSearch
+                                allowClear
+                                style={{
+                                    width: '100%',
+                                }}
+                                options={[
+                                    {
+                                        value: 'jack',
+                                        label: 'Jack',
+                                      },
+                                      {
+                                        value: 'lucy',
+                                        label: 'Lucy',
+                                      },
+                                      {
+                                        value: 'Yiminghe',
+                                        label: 'yiminghe',
+                                      },
+                                      {
+                                        value: 'disabled',
+                                        label: 'Disabled',
+                                        disabled: true,
+                                      },
+                                ]}
+                            />
                             </Form.Item>
                         </Col> : <></>
                     }

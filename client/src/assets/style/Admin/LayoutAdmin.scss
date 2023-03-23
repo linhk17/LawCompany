@@ -30,5 +30,15 @@
         display: flex;
         justify-content: center;
     }
+    .ant-input, .ant-select>.ant-select-selector{
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+        border-bottom: 1.2px solid #000 !important;
+        &:focus{
+           box-shadow: none !important;
+        }
+    }
 
 }

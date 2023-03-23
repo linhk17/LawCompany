@@ -1,16 +1,10 @@
-import { Button, Form, TimePicker, Modal, Popconfirm, Select, Table, DatePicker, Space, Divider} from "antd";
+import { Button, Form, Modal, Popconfirm, Select, Table, Space, Divider, InputNumber} from "antd";
+import Title from "antd/es/typography/Title";
 import { useState } from "react";
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import dayjs from 'dayjs';
-dayjs.extend(customParseFormat);
-const dateFormat = 'YYYY-MM-DD';
-const format = 'HH:mm';
-function TableAddFile() {
+function FormAddPeriod() {
     const [dataSource, setDataSource] = useState([]);
     const [open, setOpen] = useState(false);
     const [edit, setEdit] = useState(null);
-    const [date, setDate] = useState();
-    const [time, setTime] = useState()
     const arr = [
         {
             label: '123',
@@ -33,19 +27,16 @@ function TableAddFile() {
     const handleUpdate = (newVal) => {
         setOpen(false);
     }
-    const handleFormatDate = (date, dateString) => {
-        setDate(dateString)
-    }
-    const handleFormatTime = (time, timeString) => {
-        setTime(timeString)
-    }
     const onFinish = (values) => {
         const newVal = {
-            key: 3,
-            name: values.name,
-            phancong: values.phancong,
-            time: time,
-            timeend: date
+            key: values.periodID,
+            periodID: values.periodID,
+            periodName: values.periodName,
+            amount: values.amount,
+            unit: 'Giờ',
+            price: 100000,
+            discount: values.discount,
+            vat: values.vat
         }
         edit ? handleUpdate(newVal) : handleAdd(newVal)
 
@@ -59,27 +50,35 @@ function TableAddFile() {
             dataIndex: 'index',
         },
         {
-            title: 'Tên công việc',
-            dataIndex: 'name',
+            title: 'Mã quy trình',
+            dataIndex: 'periodID',
         },
         {
-            title: 'Phân công cho',
-            dataIndex: 'phancong',
+            title: 'Tên quy trình',
+            dataIndex: 'periodName',
         },
         {
-            title: 'Số giờ dự kiến ban đầu',
-            dataIndex: 'time',
+            title: 'Số lượng',
+            dataIndex: 'amount',
         },
         {
-            title: 'Hạn chót',
-            dataIndex: 'timeend',
+            title: 'Đơn vị tính',
+            dataIndex: 'unit',
         },
         {
-            title: 'Trạng thái',
-            dataIndex: 'status',
+            title: 'Đơn giá',
+            dataIndex: 'price',
         },
         {
-            title: 'operation',
+            title: 'Chiết khấu',
+            dataIndex: 'discount',
+        },
+        {
+            title: 'Thuế',
+            dataIndex: 'vat',
+        },
+        {
+            title: 'Thao tác',
             dataIndex: 'operation',
             render: (_, record) => (
                 <Space split={<Divider type="vertical" />}>
@@ -98,13 +97,19 @@ function TableAddFile() {
         <>
             <Button type="primary" onClick={() => {
                 setEdit(null)
+                console.log(edit);
                 setOpen(true)
             }}
             >
-                Thêm công việc
+                Thêm mới
             </Button>
             <Modal
-                title="Thêm mới"
+                title={
+                    <>
+                        <Title level={4}>Thêm công việc</Title>
+                        <Divider />
+                    </>
+                }
                 centered
                 open={open}
                 footer={null}
@@ -125,20 +130,28 @@ function TableAddFile() {
                     fields={
                         edit ? [
                             {
-                                name: ["name"],
-                                value: edit.name,
+                                name: ["periodName"],
+                                value: edit.periodName,
                             },
                             {
-                                name: ["phancong"],
-                                value: edit.phancong,
+                                name: ["periodID"],
+                                value: edit.periodID
                             },
                             {
-                                name: ["time"],
-                                value: dayjs(`Wed Mar 25 2015 ${time}:00 GMT+0700 (Indochina Time)`),
+                                name: ["amount"],
+                                value: edit.amount
                             },
                             {
-                                name: ["timeend"],
-                                value: dayjs(edit.timeend),
+                                name: ["price"],
+                                value: edit.price
+                            },
+                            {
+                                name: ["discount"],
+                                value: edit.discount
+                            },
+                            {
+                                name: ["vat"],
+                                value: edit.vat
                             }
                         ] : null
                     }
@@ -148,8 +161,20 @@ function TableAddFile() {
                     autoComplete="off"
                 >
                     <Form.Item
-                        label="Tên công việc"
-                        name="name"
+                        label="Tên quy tình"
+                        name="periodName"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input your password!',
+                            },
+                        ]}
+                    >
+                        <Select options={arr} />
+                    </Form.Item>  
+                    <Form.Item
+                        label="Mã quy trình"
+                        name="periodID"
                         rules={[
                             {
                                 required: true,
@@ -160,43 +185,24 @@ function TableAddFile() {
                         <Select options={arr} />
                     </Form.Item>
 
+                                      
                     <Form.Item
-                        label="Phân công cho"
-                        name="phancong"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your password!',
-                            },
-                        ]}
+                        label="Số lượng"
+                        name="amount"
                     >
-                        <Select options={arr} />
+                        <InputNumber min={1} max={10}/>
                     </Form.Item>
                     <Form.Item
-                        label="Số giờ dự kiến"
-                        name="time"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your password!',
-                            },
-                        ]}
+                        label="Chiết khấu"
+                        name="discount"
                     >
-                        <TimePicker format={format} onChange={handleFormatTime} />
-
+                        <InputNumber min={0} max={10}/>
                     </Form.Item>
                     <Form.Item
-                        label="Hạn chót"
-                        name="timeend"
-
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your password!',
-                            },
-                        ]}
+                        label="Thuế"
+                        name="vat"
                     >
-                        <DatePicker format={dateFormat} onChange={handleFormatDate} />
+                        <Select options={arr}/>
                     </Form.Item>
                     <Form.Item
                         wrapperCol={{
@@ -215,4 +221,4 @@ function TableAddFile() {
     );
 }
 
-export default TableAddFile;
+export default FormAddPeriod;

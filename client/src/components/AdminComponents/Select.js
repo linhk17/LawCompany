@@ -9,15 +9,19 @@ for (let i = 10; i < 36; i++) {
 const handleChange = (value) => {
   console.log(`selected ${value}`);
 };
-const SelectForm = () => (
+const SelectForm = (mode) =>{
+  console.log({mode});
+  return (
   <Select
-    mode="tags"
+    showSearch
+    allowClear
+    mode={mode}
     style={{
       width: '100%',
     }}
     onChange={handleChange}
-    tokenSeparators={[',']}
     options={options}
   />
 );
+} 
 export default SelectForm;
