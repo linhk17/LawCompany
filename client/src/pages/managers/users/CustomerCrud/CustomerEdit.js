@@ -1,16 +1,28 @@
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, Divider, Space, Typography } from "antd";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { FormCustomer } from "~/components";
+import { userService } from '../../../../services/index';
 
-const user = {
-    name: "Nguyễn Linh Trâm 1",
-    email: "linhtramn69@gmail.com",
-    phone: '0776560825',
-    address: "Cần Thơ",
-    type: 0,
-}
 function CustomerEdit() {
+
+    let { id } = useParams();
+    const [user, setUser] = useState({
+        account: {
+            sdt: '',
+            mat_khau: ''
+        }
+    });
+
+    useEffect(() => {
+        const getUser = async () => {
+            setUser((await userService.getById(id)).data)
+        };
+        getUser();
+    }, [id]);
+
     return (
         <>
             <Card className="card-form card-detail"
@@ -23,7 +35,7 @@ function CustomerEdit() {
                     </Space>
                 }
             >
-                <FormCustomer user={user}/>
+                <FormCustomer props={user} />
             </Card>
         </>
     );

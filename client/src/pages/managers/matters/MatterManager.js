@@ -8,12 +8,12 @@ import {
 } from '@ant-design/icons';
 import BreadcrumpAdmin from "~/components/AdminComponents/Breadcump";
 import Title from "antd/es/typography/Title";
-import CardMatter from "./CardMatter";
+import CardMatter from "../../../components/AdminComponents/Card/CardMatter";
 import { Link } from "react-router-dom";
 const styleCol = {
     textAlign: 'center'
 }
-function Matters() {
+function MatterManager() {
     return (
         <>
             <BreadcrumpAdmin />
@@ -178,4 +178,4 @@ function Matters() {
     );
 }
 
-export default Matters;
+export default MatterManager;

@@ -1,14 +1,17 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { privateRoutes, publicRoutes } from "./routes/routes";
-import '../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-
 import 'antd/dist/reset.css';
 import "~/assets/GlobalStyle.scss"
+import '../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import "../node_modules/react-big-calendar/lib/css/react-big-calendar.css";
+import "../node_modules/react-big-calendar/lib/addons/dragAndDrop/styles.css";
 
 function App() {
+
   let role = 1;
   let routes = publicRoutes;
   let path = '';
+
   if (role !== 0) {
     routes = privateRoutes;
   }
@@ -29,19 +32,19 @@ function App() {
     <Router>
       <div className="wrapper">
         <Routes>
-            {routes.map((route, index) => {
-              let Layout = route.layout;
-              return (
-                <Route
-                  key={index}
-                  path={path + route.path}
-                  element={
-                    <Layout>
-                      <route.component role={role}/>
-                    </Layout>
-                  } />
-              )
-            })}
+          {routes.map((route, index) => {
+            let Layout = route.layout;
+            return (
+              <Route
+                key={index}
+                path={path + route.path}
+                element={
+                  <Layout>
+                    <route.component role={role} />
+                  </Layout>
+                } />
+            )
+          })}
         </Routes>
       </div>
     </Router>

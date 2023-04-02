@@ -1,12 +1,8 @@
-import { Button, Popconfirm, Table, Upload } from "antd";
+import { Popconfirm, Table } from "antd";
 import { useState } from "react";
-
-
-
 
 function TableAddFile() {
     const [pdfFile, setPDFFile] = useState(null);
-    const [viewPdf, setViewPdf] = useState(null);
     const [dataSource, setDataSource] = useState([]);
     const handleDelete = (key) => {
         const newData = dataSource.filter((item) => item.key !== key);
@@ -43,7 +39,7 @@ function TableAddFile() {
             render: (_, record) =>
                     dataSource.length >= 1 ? (
                         <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-                            <a>Delete</a>
+                            <p>Delete</p>
                         </Popconfirm>
                     ) : null,
         },
@@ -60,7 +56,6 @@ function TableAddFile() {
             lastModifiedDate: currentDate.toString().split('GMT+0700 (Indochina Time)')
         }])
 
-        console.log();
         if (selectedFile) {
             if (selectedFile && fileType.includes(selectedFile.type)) {
                 let reader = new FileReader()
@@ -77,7 +72,7 @@ function TableAddFile() {
             console.log("please");
         }
     }
-    console.log(dataSource);
+
     return (
         <>
             <input type="file" onChange={handleChange} />

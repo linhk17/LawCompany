@@ -54,10 +54,10 @@ function TableComponent({ data, columns }) {
       onRow={(record, rowIndex) => {
         return {
           onClick: (event) => {
-            navigate(`/admin/customer/${record._id}`)
+            navigate(`${record._id}`)
           }, // click row
         }
-    }}
+      }}
     />
   )
     ;

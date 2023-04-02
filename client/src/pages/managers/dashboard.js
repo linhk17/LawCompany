@@ -1,6 +1,6 @@
 import { faLaptopFile, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, List } from "antd";
+import { Avatar, List} from "antd";
 import { Link } from "react-router-dom";
 import "~/assets/style/Admin/Dashboard.scss"
 const data = [
@@ -24,18 +24,25 @@ const data = [
     {
         icon: faUser,
         title: "Lịch làm việc",
-        color: `var(--gold)`,
-        link: 'schedule'
+        color: `var(--gold)`
     },
     {
         icon: faUser,
         title: "Báo giá",
-        color: `var(--magenta)`
+        color: `var(--magenta)`,
+        link: 'quotes'
     },
     {
         icon: faUser,
         title: "Nhân viên",
-        color: `var(--oranger)`
+        color: `var(--oranger)`,
+        link: "staff"
+    },
+    {
+        icon: faUser,
+        title: "Lịch làm việc",
+        color: `var(--oranger)`,
+        link: "calendar"
     }
     
 ];

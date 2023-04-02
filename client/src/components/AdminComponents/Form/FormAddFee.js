@@ -1,17 +1,17 @@
-import { Button, Form, TimePicker, Modal, Popconfirm, Select, Table, DatePicker, Space, Divider, InputNumber, Input, Row, Col, Checkbox } from "antd";
+import { Button, Form, Modal, Popconfirm, Select, Table, DatePicker, Space, Divider, InputNumber, Input, Row, Col, Checkbox } from "antd";
 import { useState } from "react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
-import { Option } from "antd/es/mentions";
 import Title from "antd/es/typography/Title";
 dayjs.extend(customParseFormat);
 const dateFormat = 'YYYY-MM-DD';
+
 function FormAddFee() {
     const [dataSource, setDataSource] = useState([]);
     const [open, setOpen] = useState(false);
     const [edit, setEdit] = useState(null);
-    const [money, setMoney] = useState(null);
     const [date, setDate] = useState();
+
     const arr = [
         {
             label: '123',
@@ -46,11 +46,6 @@ function FormAddFee() {
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
-    const formatMoney = (value) => {
-        const config = { style: 'currency', currency: 'VND', maximumFractionDigits: 9 }
-        const formated = new Intl.NumberFormat('vi-VN', config).format(value);
-        return formated
-    }
     const columns = [
         {
             title: 'Ngày lập',

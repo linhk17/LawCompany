@@ -1,16 +1,12 @@
-import { Button, Form, TimePicker, Modal, Popconfirm, Select, Table, DatePicker, Space, Divider } from "antd";
+import { Button, Form, Modal, Popconfirm, Select, Table, DatePicker, Space, Divider } from "antd";
 import { useState } from "react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
-import TitleCardModal from "../TitleCardModal";
 import Title from "antd/es/typography/Title";
 
 dayjs.extend(customParseFormat);
 const dateFormat = 'YYYY-MM-DD';
-const formStyle = {
-    bordeTop: 'none',
 
-}
 function FormAddTask() {
     const [dataSource, setDataSource] = useState([]);
     const [open, setOpen] = useState(false);

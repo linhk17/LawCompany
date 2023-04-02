@@ -1,9 +1,6 @@
-import { Button, Col, Radio, Row, Segmented, Space, TreeSelect } from 'antd';
+import { Button, Col, Row, Space, TreeSelect } from 'antd';
 import { useState } from 'react';
-import {
-  AppstoreOutlined,
-  BarsOutlined
-} from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 const treeData = [
   {
     value: 'parent 1',
@@ -54,8 +51,7 @@ function Filter({ seg }) {
       <Row>
         <Col md={{ span: 4 }}>
           <Space>
-            <Button type="primary" className="btn-primary">CREATE</Button>
-            <Button className="btn-outline-primary">CREATE</Button>
+            <Link to={`add`}><Button type="primary" className="btn-primary">CREATE</Button></Link>
           </Space>
         </Col>
         <Col md={{ span: 8, push: 10 }}>

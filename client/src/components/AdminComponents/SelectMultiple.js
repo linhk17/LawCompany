@@ -1,4 +1,4 @@
-import { Select, Space } from 'antd';
+import { Select } from 'antd';
 const options = [];
 for (let i = 10; i < 36; i++) {
   options.push({
@@ -9,7 +9,7 @@ for (let i = 10; i < 36; i++) {
 const handleChange = (value) => {
   console.log(`selected ${value}`);
 };
-const SelectMltiple = () => (
+const SelectMultiple = () => (
     <Select
       mode="multiple"
       allowClear
@@ -22,4 +22,4 @@ const SelectMltiple = () => (
       options={options}
     />
 );
-export default SelectMltiple;
+export default SelectMultiple;
