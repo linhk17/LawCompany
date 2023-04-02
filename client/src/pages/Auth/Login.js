@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import "~/assets/style/AuthPage.scss"
 import { useState } from "react";
 function LoginPage() {
-
     const [status, setStatus] = useState("");
     const onFinish = (values) => {
         setStatus("success");
@@ -63,9 +62,7 @@ function LoginPage() {
                                 },
                             ]}
                         >
-                            <Input style={{
-                                border: '1px solid var(--dark-blue)'
-                            }}/>
+                            <Input/>
                         </Form.Item>
                         <Form.Item
                         className="login-form-item"
@@ -79,9 +76,6 @@ function LoginPage() {
                             ]}
                         >
                             <Input.Password
-                            style={{
-                                border: '1px solid var(--dark-blue)'
-                            }}
                                 type="password"
                             />
                         </Form.Item>
@@ -108,7 +102,7 @@ function LoginPage() {
                                 span: 16,
                             }}
                         >
-                            <button type="primary" htmltype="submit" className="login-form-button">
+                            <button type="submit" className="login-form-button">
                                 Đăng nhập
                             </button>
                         </Form.Item>

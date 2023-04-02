@@ -1,4 +1,4 @@
-import { convertFromRaw, EditorState, ContentState, convertFromHTML } from 'draft-js';
+import { EditorState } from 'draft-js';
 import { useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 

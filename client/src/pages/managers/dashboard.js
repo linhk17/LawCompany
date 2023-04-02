@@ -40,8 +40,8 @@ const data = [
     },
     {
         icon: faUser,
-        title: "Lịch làm việc",
-        color: `var(--oranger)`,
+        title: "Lịch hẹn",
+        color: `var(--cyan)`,
         link: "calendar"
     }
     

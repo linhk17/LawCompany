@@ -1,11 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { privateRoutes, publicRoutes } from "./routes/routes";
 import 'antd/dist/reset.css';
-import "~/assets/GlobalStyle.scss"
-import '../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import "../node_modules/react-big-calendar/lib/css/react-big-calendar.css";
-import "../node_modules/react-big-calendar/lib/addons/dragAndDrop/styles.css";
-
+import "~/assets/style/GlobalStyle.scss"
 function App() {
 
   let role = 1;

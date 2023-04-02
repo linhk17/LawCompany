@@ -1,162 +1,157 @@
 import {
     PhoneOutlined,
-    MailOutlined,
-    UserOutlined,
     ContactsOutlined,
-    InstagramFilled,
-    FacebookFilled,
-    EnvironmentOutlined,
-    PrinterOutlined,
+    MailOutlined,
+    UserOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-
-const styleIcon = {
-    fontSize: '16px'
-};
-
-const itemsHeadTop = [
+import styleIcon from './assets/js/styleicon';
+import { icon } from '~/assets/images/index';
+const items = [
     {
-        label: '(316) 268-0200',
+        label: '077-656-0825',
         key: 'phone',
-        icon: <PhoneOutlined />,
+        icon: <PhoneOutlined />
     },
     {
-        label: 'Estimating@Law-Co.Com',
+        label: 'Contact',
+        key: 'contact',
+        icon: <ContactsOutlined />
+    },
+    {
+        label: 'lawktl@gmail.com',
         key: 'mail',
         icon: <MailOutlined />
     },
     {
-        label: 'Liên hệ',
-        key: 'contact',
-        icon: <ContactsOutlined style={styleIcon} />
+        key: 'search',
+        icon: <Link to='/login'><UserOutlined style={styleIcon} /></Link>
+    }
+]
+const itemsNav = [
+    {
+        key: '/',
+        label: <Link to='/'>Trang chủ</Link>
     },
     {
-        label: <Link to='/login'><UserOutlined style={styleIcon} /></Link>,
-        key: 'user',
-    },
-];
-
-const itemsHeadBot = [
-    {
-        label: <Link to="/">Trang chủ</Link>,
-        key: 'home',
+        key: 'about',
+        label: <Link to='/service'>Giới thiệu</Link>
+        
     },
     {
-        label: <Link to="/service">Dịch vụ</Link>,
-        key: 'service'
-    },
-    {
-        label: 'Luật sư tư vấn',
-        key: 'advisory lawyer',
+        key: '/service',
+        label: 'Dịch vụ luật sư',
         children: [
             {
-                type: 'group',
-                children: [
-                    {
-                        label: 'Dân sự',
-                        key: 'people',
-                    },
-                    {
-                        label: 'Đất đai',
-                        key: 'land',
-                    },
-                    {
-                        label: 'Hợp đồng',
-                        key: 'contract',
-                    },
-                    {
-                        label: 'Doanh nghiệp',
-                        key: 'business',
-                    },
-                    {
-                        label: 'Lao động',
-                        key: 'work',
-                    },
-                    {
-                        label: 'Hôn nhân',
-                        key: 'love',
-                    },
-                    {
-                        label: 'Luật sư đại diện',
-                        key: 'representative lawyer',
-                    },
-                ],
+                label: 'Doanh nghiệp'
+            }, 
+            {
+                label: 'Sở hữu trí tuệ'
+            },
+            {
+                label: 'Đầu tư'
+            },
+            {
+                label: 'Giấy phép'
+            },
+            {
+                label: 'Hôn nhân gia đình'
+            },
+            {
+                label: 'Đất đai - thừa kế'
             }
         ]
     },
-    // {
-    //     label: 'Đăng ký kinh doanh',
-    //     key: 'business registration',
-    //     children: [
-    //         {
-    //             type: 'group',
-    //             children: [
-    //                 {
-    //                     label: 'An toàn thực phẩm',
-    //                     key: 'food safety',
-    //                 },
-    //                 {
-    //                     label: 'Công ty, doanh nghiệp',
-    //                     key: 'business license',
-    //                 },
-    //                 {
-    //                     label: 'Thay đổi giấy phép kinh doanh',
-    //                     key: 'change of business license',
-    //                 },
-    //             ],
-    //         }
-    //     ]
-    // },
     {
-        label: 'Đội ngũ chúng tôi',
-        key: 'team',
-    },
-    {
-        label: 'Liên hệ',
-        key: 'contact',
-    },
-];
+        key: 'advice',
+        label: <Link to='/'>Kiến thức pháp luật</Link>
+    }
 
+]
+const services = [
+    {
+        icon: icon.iconLawer,
+        label: "Luật hành chính"
+    },
+    {
+        icon: icon.iconTranhTung,
+        label: "Luật tranh tụng"
+    },
+    {
+        icon: icon.iconDanSu,
+        label: "Luật dân sự"
+    },
+    {
+        icon: icon.iconDatDai,
+        label: "Luật đất đai"
+    },
+    {
+        icon: icon.iconHinhSu,
+        label: "Luật hình sự"
+    },
+    {
+        icon: icon.iconLyHon,
+        label: "Luật ly hôn"
+    },
+    {
+        icon: icon.iconKinhTe,
+        label: "Luật kinh tế"
+    },
+    {
+        icon: icon.iconLawer,
+        label: "Luật sư tư vấn"
+    }
+]
+const attribute = [
+    {
+        img: icon.iconLawer,
+        title: "luật hành chính"
+    },
+    {
+        img: icon.iconTranhTung,
+        title: "luật tranh tụng"
+    },
+    {
+        img: icon.iconDanSu,
+        title: "luật dân sự"
+    },
+    {
+        img: icon.iconDatDai,
+        title: "luật đất đai"
+    },
+    {
+        img: icon.iconHinhSu,
+        title: "luật hình sự"
+    },
+    {
+        img: icon.iconLyHon,
+        title: "luật ly hôn"
+    },
+    {
+        img: icon.iconKinhTe,
+        title: "luật kinh tế"
+    },
+    {
+        img: icon.iconLawer,
+        title: "luật sư tư vấn"
+    }
+]
+// const lawer = [
+//     {
+//        avt: lawers.jack,
+//        name: 'Tran Kim Linh',
+//        description : 'Prior to the construction processs, The Law Company plans, analyzes and assists in the'
+//     },
+//     {
+//         avt: lawers.jack,
+//         name: 'Tran Kim Linh',
+//         description : 'Prior to the construction processs, The Law Company plans, analyzes and assists in the'
+//      },
+//      {
+//         avt: lawers.jack,
+//         name: 'Tran Kim Linh',
+//         description : 'Prior to the construction processs, The Law Company plans, analyzes and assists in the'
+//      }
+// ]
 
-const itemsFootTop = [
-    {
-        title: 'Office: (316) 268-0200',
-        icon: <PhoneOutlined />,
-    },
-    {
-        title: '3/2 Đại học Cần Thơ, Ninh Kiều, Cần Thơ',
-        icon: <EnvironmentOutlined />,
-    },
-    {
-        title: 'Fax: (316) 268-0210',
-        icon: <PrinterOutlined />
-    },
-    {
-        title: 'Estimating@Law-Co.Com',
-        icon: <MailOutlined />,
-    },
-];
-
-const itemsFootBot = [
-    {
-        label: '©THE LAW COMPANY 2023'
-    },
-    {
-        label: 'Khảo sát khách hàng'
-    },
-    {
-        label: 'Chính sách hỗ trợ',
-    },
-    {
-        label: 'Bản đồ',
-    },
-    {
-        icon: <FacebookFilled style={styleIcon} />,
-    },
-    {
-        icon: <InstagramFilled style={styleIcon} />
-    },
-
-];
-
-export { itemsHeadTop, itemsHeadBot, itemsFootTop, itemsFootBot };
+export {attribute, items, itemsNav, services};

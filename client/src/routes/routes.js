@@ -13,14 +13,18 @@ import StaffEdit from "~/pages/managers/users/StaffCrud/StaffEdit"
 import StaffAdd from "~/pages/managers/users/StaffCrud/StaffAdd"
 import QuotesManager from "~/pages/managers/quotes/QuotesManager"
 import QuotesAdd from "~/pages/managers/quotes/QuotesAdd"
-import HomePage from "~/pages/user/HomePage"
-import UserLayout from "~/layouts/UserLayout/UserLayout"
+import HomePage from "~/pages/User/HomePage"
+import LayoutUser from "~/layouts/UserLayout"
+import LoginPage from "~/pages/Auth/Login"
+import QuoteRegister from "~/pages/User/QuoteRegister"
+import CalendarManager from "~/pages/managers/calendars/CalendarManager"
 import QuoteDetail from "~/pages/managers/quotes/QuoteDetail"
 import QuoteEdit from "~/pages/managers/quotes/QuoteEdit"
-import CalendarManager from "~/pages/managers/calendars/CalendarManager"
 
 const publicRoutes = [
-    {path: config.routes.user.home, component: HomePage,  layout: UserLayout},
+    {path: config.routes.user.home, component: HomePage,  layout: LayoutUser},
+    {path: config.routes.login, component: LoginPage,  layout: LayoutUser},
+    {path: config.routes.user.quoteRegister, component: QuoteRegister,  layout: LayoutUser},
 ]
 
 const privateRoutes = [
@@ -44,8 +48,10 @@ const privateRoutes = [
     { path: config.routes.admin.quotesAdd, component: QuotesAdd, layout: LayoutAdmin },
     { path: config.routes.admin.quoteDetail, component: QuoteDetail, layout: LayoutAdmin },
     { path: config.routes.admin.quoteEdit, component: QuoteEdit, layout: LayoutAdmin },
+
     //Calendar
     { path: config.routes.admin.calendarManager, component: CalendarManager, layout: LayoutAdmin },
+
 
 
 ]
