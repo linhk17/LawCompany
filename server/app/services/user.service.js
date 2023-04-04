@@ -76,6 +76,10 @@ class User {
         const result = await this.User.findOneAndDelete(id);
         return result;
     }
+    async findAllByBoPhan(id_bo_phan){
+        const result = await this.User.find({ "bo_phan.id": id_bo_phan });
+        return result.toArray();
+    }
 
     async login(payload){
         const result = await this.User.findOne({

@@ -1,4 +1,5 @@
 const { ObjectId } = require("mongodb");
+const ApiError = require("../api-error");
 
 class TimeAppointment {
     constructor(client){
@@ -13,7 +14,6 @@ class TimeAppointment {
             thoi_gian: payload.thoi_gian,
             mo_ta: payload.mo_ta,
             ghi_chu: payload.ghi_chu,
-            nguoi_tham_du: payload.nguoi_tham_du,
             phieu_bao_gia: payload.phieu_bao_gia,
             khach_hang: payload.khach_hang,
             nhan_vien: payload.nhan_vien,
@@ -41,8 +41,25 @@ class TimeAppointment {
 
     async create(payload){
         const timeAppointment = this.extractConactData(payload);
-        const result = await this.TimeAppointment.insertOne(timeAppointment);
-        return result;
+        const isExist = await this.TimeAppointment.find({
+            nhan_vien: timeAppointment.nhan_vien,
+            "thoi_gian.start": { 
+                $gte: timeAppointment.thoi_gian.start,
+                $lte: timeAppointment.thoi_gian.end
+            },
+            "thoi_gian.end": { 
+                $gte: timeAppointment.thoi_gian.start,
+                $lte: timeAppointment.thoi_gian.end
+            }
+        }).toArray()
+        console.log(isExist);
+        if(isExist.length == 0){
+            const result = await this.TimeAppointment.insertOne(timeAppointment);
+            return result;
+        }
+        return next(
+            new ApiError(500, "An error occured while create document")
+        )
     }
 
     async update(id, payload){
