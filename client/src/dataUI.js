@@ -6,7 +6,7 @@ import {
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import styleIcon from './assets/js/styleicon';
-import { icon } from '~/assets/images/index';
+import { icon, lawers } from '~/assets/images/index';
 const items = [
     {
         label: '077-656-0825',
@@ -136,22 +136,22 @@ const attribute = [
         title: "luật sư tư vấn"
     }
 ]
-// const lawer = [
-//     {
-//        avt: lawers.jack,
-//        name: 'Tran Kim Linh',
-//        description : 'Prior to the construction processs, The Law Company plans, analyzes and assists in the'
-//     },
-//     {
-//         avt: lawers.jack,
-//         name: 'Tran Kim Linh',
-//         description : 'Prior to the construction processs, The Law Company plans, analyzes and assists in the'
-//      },
-//      {
-//         avt: lawers.jack,
-//         name: 'Tran Kim Linh',
-//         description : 'Prior to the construction processs, The Law Company plans, analyzes and assists in the'
-//      }
-// ]
+const lawer = [
+    {
+       avt: lawers.jack,
+       name: 'Tran Kim Linh',
+       description : 'Prior to the construction processs, The Law Company plans, analyzes and assists in the'
+    },
+    {
+        avt: lawers.jack,
+        name: 'Tran Kim Linh',
+        description : 'Prior to the construction processs, The Law Company plans, analyzes and assists in the'
+     },
+     {
+        avt: lawers.jack,
+        name: 'Tran Kim Linh',
+        description : 'Prior to the construction processs, The Law Company plans, analyzes and assists in the'
+     }
+]
 
-export {attribute, items, itemsNav, services};
+export {attribute, items, itemsNav, services, lawer};

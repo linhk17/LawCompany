@@ -1,24 +1,28 @@
-import { notification, Col, Row, Card, Space, Divider, Button, FloatButton, Typography, Avatar, Form, Input } from "antd";
+import { notification, Col, Row, Card, Space, Divider, Button, FloatButton, Typography, Avatar, Form, Input, Rate, message } from "antd";
 import {
     SlackOutlined,
     RightOutlined,
-    QuestionCircleOutlined
+    QuestionCircleOutlined,
+    CheckOutlined,
+    WechatFilled
 } from '@ant-design/icons';
 import "~/assets/style/User/HomePage.scss";
-import { attribute } from "~/dataUI";
-import { banner, avatar } from '~/assets/images/index';
+import { attribute, lawer } from "~/dataUI";
+import { banner, avatar, lawers } from '~/assets/images/index';
 import { Link } from "react-router-dom";
 import Title from "antd/es/typography/Title";
 import TextArea from "antd/es/input/TextArea";
 import Message from "~/components/Message";
 import { useState } from "react";
 import { quoteService } from "~/services";
+import Meta from "antd/es/card/Meta";
+
 const { Text } = Typography;
 function HomePage() {
     const [form] = Form.useForm();
     const [api, contextHolder] = notification.useNotification();
-    const message = ['', 'Yêu cầu báo giá thành công', 'Gửi yêu cầu thất bại']
-    const [isSubmit, setIsSubmit] = useState(null)
+    const [messageApi, contextHolderMess] = message.useMessage();
+
     const onFinish = async (values) => {
         const data = {
             khach_hang: {
@@ -29,18 +33,25 @@ function HomePage() {
             van_de: values.description,
             status: 0
         }
-        
+
         try {
             await quoteService.create(data).data;
-            setIsSubmit(1);
+            messageApi.open({
+                type: 'success',
+                content: "Gửi yêu cầu báo giá thành công",
+              })
+
         }
         catch (error) {
+            messageApi.open({
+                type: 'error',
+                content: 'Gửi yêu cầu thất bại',
+              });
             console.log(error);
-            setIsSubmit(2);
         }
         form.resetFields();
     }
-const openNotification = (placement) => {
+    const openNotification = (placement) => {
         api.open({
             duration: false,
             message: <Space size={20}>
@@ -54,7 +65,7 @@ const openNotification = (placement) => {
             </Space>,
             description: <Card title="Yêu cầu báo giá">
                 <Form
-                form={form}
+                    form={form}
                     layout="vertical"
                     name="basic"
                     initialValues={{
@@ -143,7 +154,7 @@ const openNotification = (placement) => {
                 </Space>
             </section>
             <section className="banner-attribute">
-                <h1>Lĩnh vực hành nghề</h1>
+                <h1>LĨNH VỰC HÀNH NGHỀ</h1>
                 <Divider style={{ color: `var(--deep-blue)` }}><SlackOutlined /></Divider>
                 <Row className="list-banner-attribute">
                     {attribute.map((value, index) => {
@@ -180,13 +191,13 @@ const openNotification = (placement) => {
                 </Row>
             </section>
             <section className="banner-list-lawer">
-                <h1>Đội ngũ luật sư</h1>
+                <h1 style={{ marginLeft: 40 }}>ĐỘI NGŨ LUẬT SƯ</h1>
                 <Divider></Divider>
-                {/* <Row>
+                <Row>
                     {lawer.map((lawer, index) => {
                         return (
                             <Col md={{ span: 7, push: 1 }} xs={{ span: 12 }} key={index} className="list-lawer-card">
-                                <Card 
+                                <Card
                                     hoverable
                                     cover={<img alt="" src={lawer.avt} />}
                                     actions={[
@@ -211,7 +222,7 @@ const openNotification = (placement) => {
                             </Col>
                         )
                     })}
-                </Row> */}
+                </Row>
             </section>
             <FloatButton
                 trigger="click"
@@ -220,7 +231,7 @@ const openNotification = (placement) => {
                     left: 50,
                 }}
                 onClick={() => openNotification('bottomLeft')}
-                icon={<QuestionCircleOutlined />}
+                icon={<WechatFilled />}
             >
             </FloatButton>
             {contextHolder}
@@ -237,9 +248,7 @@ const openNotification = (placement) => {
                 <br />
                 <FloatButton.BackTop visibilityHeight={0} />
             </FloatButton.Group>
-          {isSubmit ? <Message props={isSubmit} mess={message[isSubmit]}/> : null}
-           
-            
+            {contextHolderMess}
         </>
     );
 }

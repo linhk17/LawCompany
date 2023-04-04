@@ -15,13 +15,14 @@ const Message = ({props, mess}) => {
     });
   };
   useEffect(() => {
+    console.log(props);
     if (props === 1) {
         success();
     }
     else if (props === 2) {
         error();
     }
-}, [props])
+})
 
   return (
     <>

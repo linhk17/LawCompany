@@ -40,7 +40,6 @@ function FormQuotes({ quote }) {
     let navigate = useNavigate();
     const [form] = Form.useForm();
     const [state, dispatch] = useStore();
-    const arrTypeServices = [];
     const arrServices = [];
     const arrCustomer = [];
     const arrTimePay = []
@@ -72,12 +71,12 @@ function FormQuotes({ quote }) {
         )
     })
 
-    state.type_services.map((value) => {
+    const arrTypeServices = state.type_services.map((value) => {
         return (
-            arrTypeServices.push({
+            {
                 value: JSON.stringify(value),
                 label: value.ten_linh_vuc
-            })
+            }
         )
     })
 
@@ -131,7 +130,6 @@ function FormQuotes({ quote }) {
         catch (error) {
             console.log(error);
         }
-
     }
     const handleEdit = async (data) => {
         try {

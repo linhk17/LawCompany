@@ -262,7 +262,7 @@ function FormLaw({ props }) {
                         </Form.Item>
                     </Col>
                     <Col md={{ span: 8, push: 1 }}>
-                        <Form.Item
+                        {/* <Form.Item
                             label="Mật khẩu tài khoản"
                             name="password"
                             rules={[
@@ -273,7 +273,7 @@ function FormLaw({ props }) {
                             ]}
                         >
                             <Input.Password />
-                        </Form.Item>
+                        </Form.Item> */}
                     </Col>
                 </Row>
                 <Row>

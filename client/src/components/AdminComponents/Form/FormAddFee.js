@@ -3,10 +3,9 @@ import { useState } from "react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import Title from "antd/es/typography/Title";
-dayjs.extend(customParseFormat);
-const dateFormat = 'YYYY-MM-DD';
-
 function FormAddFee() {
+    dayjs.extend(customParseFormat);
+    const dateFormat = 'YYYY-MM-DD';
     const [dataSource, setDataSource] = useState([]);
     const [open, setOpen] = useState(false);
     const [edit, setEdit] = useState(null);
@@ -217,10 +216,10 @@ function FormAddFee() {
                     <Divider />
                     <Row>
                         <Col span={10} push={1}>
-                        <Form.Item>
-                               <Checkbox>
-                               <Title level={5}>Thêm vào hóa đơn khách hàng</Title>
-                               </Checkbox>
+                            <Form.Item>
+                                <Checkbox>
+                                    <Title level={5}>Thêm vào hóa đơn khách hàng</Title>
+                                </Checkbox>
                             </Form.Item>
                             <Form.Item
                                 label="Khách hàng"
@@ -231,17 +230,17 @@ function FormAddFee() {
                                         width: 250,
                                     }}
                                 />
-                            </Form.Item>    
+                            </Form.Item>
                         </Col>
                         <Col span={10} push={2}>
-                        <Form.Item>
-                               <Title level={5}>Tài khoản bồi hoàn</Title>
+                            <Form.Item>
+                                <Title level={5}>Tài khoản bồi hoàn</Title>
                             </Form.Item>
                             <Form.Item
                                 label="Ngân hàng"
                                 name="nameCreditCard"
                             >
-                                <Select options={arr}/>
+                                <Select options={arr} />
                             </Form.Item>
                             <Form.Item
                                 label="Tên tài khoản"
@@ -265,7 +264,7 @@ function FormAddFee() {
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Divider/>
+                    <Divider />
                     <Form.Item
                         wrapperCol={{
                             offset: 18,

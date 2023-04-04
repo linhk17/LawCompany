@@ -19,6 +19,7 @@ const routes = {
         staffAdd: '/staff/add',
         // Matter
         matterManager: '/matter',
+        matetrList: '/matter/list',
         matetrAdd: '/matter/add',
         
         //Quotes

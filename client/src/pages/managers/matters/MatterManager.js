@@ -9,11 +9,12 @@ import {
 import BreadcrumpAdmin from "~/components/AdminComponents/Breadcump";
 import Title from "antd/es/typography/Title";
 import CardMatter from "../../../components/AdminComponents/Card/CardMatter";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const styleCol = {
     textAlign: 'center'
 }
 function MatterManager() {
+    let navigate = useNavigate();
     return (
         <>
             <BreadcrumpAdmin />
@@ -40,7 +41,7 @@ function MatterManager() {
                         </Col>
                         <Col md={{ span: 18, push: 2 }} xs={{ span: 19, push: 1 }}>
                             <Row gutter={8}>
-                                <CardMatter title="Đang thực hiện" total={0} />
+                                <CardMatter title="Đang thực hiện" total={0} url={'/admin/matter/list'} />
                                 <CardMatter title="Tạm ngưng" total={6} />
                                 <CardMatter title="Đã đóng" total={0} />
                             </Row>

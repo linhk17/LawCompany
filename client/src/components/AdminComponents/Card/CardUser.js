@@ -19,8 +19,8 @@ function CardUser({ info }) {
                 description={
                     <>
                         <Row>
-                            <Col md={{ span: 16 }} sm={{ span: 24 }} xs={{ span: 16 }}>{info.address} </Col>
-                            <Col md={{ span: 8 }} sm={{ span: 24 }} xs={{ span: 8 }}>
+                            <Col md={{ span: 15 }} sm={{ span: 24 }} xs={{ span: 16 }}>{info.address} </Col>
+                            <Col md={{ span: 9 }} sm={{ span: 24 }} xs={{ span: 8 }}>
                                 {
                                     info.role === 0 ?
                                         <Tag color={

@@ -4,10 +4,10 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import Title from "antd/es/typography/Title";
 
-dayjs.extend(customParseFormat);
-const dateFormat = 'YYYY-MM-DD';
 
 function FormAddTask() {
+    dayjs.extend(customParseFormat);
+    const dateFormat = 'YYYY-MM-DD';
     const [dataSource, setDataSource] = useState([]);
     const [open, setOpen] = useState(false);
     const [edit, setEdit] = useState(null);

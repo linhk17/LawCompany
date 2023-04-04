@@ -245,7 +245,7 @@ function FormCustomer({ props }) {
 
                 <Row>
                     <Col md={{ span: 8 }}>
-                        <Form.Item
+                        {/* <Form.Item
                             label="Mật khẩu tài khoản"
                             name="password"
                             rules={[
@@ -256,6 +256,14 @@ function FormCustomer({ props }) {
                             ]}
                         >
                             <Input.Password />
+                        </Form.Item> */}
+                        <Form.Item
+                            label='Hoạt động'
+                            name="active"
+                            valuePropName="checked"
+                            initialValue={user.active}
+                        >
+                            <Switch checkedChildren="Hoạt động" unCheckedChildren="Khoá" success="false" />
                         </Form.Item>
                     </Col>
 
@@ -273,7 +281,7 @@ function FormCustomer({ props }) {
 
                 </Row>
                 <Row>
-                    <Col md={{ span: 8 }}>
+                    {/* <Col md={{ span: 8 }}>
                         <Form.Item
                             label='Hoạt động'
                             name="active"
@@ -282,7 +290,7 @@ function FormCustomer({ props }) {
                         >
                             <Switch checkedChildren="Hoạt động" unCheckedChildren="Khoá" success="false" />
                         </Form.Item>
-                    </Col>
+                    </Col> */}
                 </Row>
                 <Form.Item
                     wrapperCol={{
