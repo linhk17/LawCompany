@@ -1,12 +1,14 @@
-import { SET_MATTERS, SET_QUOTES, SET_QUOTE_BY_ID, SET_SERVICES, SET_TIME_PAY, SET_TYPE_SERVICES, SET_USERS } from "./constants"
+import { SET_MATTER, SET_MATTERS, SET_QUOTES, SET_QUOTE_BY_ID, SET_SERVICES, SET_TIME_PAY, SET_TYPE_SERVICES, SET_USERS } from "./constants"
 const initState = {
     users: [],
     matters: [],
+    matter: null,
     type_services: [],
     services: [],
     quotes: [],
     quoteOne: {},
-    timePay: {}
+    timePay: {},
+    
 }
 
 function reducer(state, action) {
@@ -21,6 +23,11 @@ function reducer(state, action) {
                 ...state,
                 matters: action.payload
             }
+        case SET_MATTER:
+                return {
+                    ...state,
+                    matter: action.payload
+                }
         case SET_TYPE_SERVICES:
             return {
                 ...state,

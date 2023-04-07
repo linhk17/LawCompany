@@ -56,6 +56,7 @@ function MatterList() {
     }, [])
     const data = matters.map((value, index) => {
         return {
+            _id: value._id,
             index: index + 1,
             nameMatter: value.ten_vu_viec,
             typeService: value.linh_vuc.ten_linh_vuc,

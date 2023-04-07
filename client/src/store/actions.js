@@ -6,6 +6,7 @@ import {
     SET_QUOTES,
     SET_QUOTE_BY_ID,
     SET_TIME_PAY,
+    SET_MATTER
 } from './constants'
 
 export const setUsers = payload => (
@@ -50,3 +51,9 @@ export const setTimePay = payload => (
         payload
     }
  )
+export const setMatter = payload => (
+    {
+        type: SET_MATTER,
+        payload
+    }
+)

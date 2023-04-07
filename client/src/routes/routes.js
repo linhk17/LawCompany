@@ -20,6 +20,8 @@ import CalendarManager from "~/pages/managers/calendars/CalendarManager"
 import QuoteDetail from "~/pages/managers/quotes/QuoteDetail"
 import QuoteEdit from "~/pages/managers/quotes/QuoteEdit"
 import MatterList from "~/pages/managers/matters/MatterList"
+import MatterEdit from "~/pages/managers/matters/MatterEdit"
+import MatterDetail from "~/pages/managers/matters/MatterDetail"
 
 const publicRoutes = [
     {path: config.routes.user.home, component: HomePage,  layout: LayoutUser},
@@ -43,6 +45,8 @@ const privateRoutes = [
     { path: config.routes.admin.matterManager, component: Matter, layout: LayoutAdmin },
     { path: config.routes.admin.matetrAdd, component: MatterAdd, layout: LayoutAdmin },
     { path: config.routes.admin.matetrList, component: MatterList, layout: LayoutAdmin },
+    { path: config.routes.admin.matetrEdit, component: MatterEdit, layout: LayoutAdmin },
+    { path: config.routes.admin.matterDetail, component: MatterDetail, layout: LayoutAdmin },
     //Quotes
     { path: config.routes.admin.quotesManager, component: QuotesManager, layout: LayoutAdmin },
     { path: config.routes.admin.quotesAdd, component: QuotesAdd, layout: LayoutAdmin },

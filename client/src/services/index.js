@@ -5,6 +5,7 @@ export { default as typeServiceService } from './typeService.service';
 export { default as serviceService } from './service.service';
 export { default as matterService } from './matter.service';
 export { default as quoteService } from './quotes.service';
+export { default as typePayService } from './typePay.service';
 export { default as timePayService } from './timePay.service';
 export { default as typeAppointmentService } from './typeAppointment.service';
 export { default as timeAppointmentService } from './timeAppointment.service';
