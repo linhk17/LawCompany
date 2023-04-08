@@ -11,5 +11,7 @@ router.route("/:id")
     .get(matter.findById)
     .put(matter.update)
     .delete(matter.delete);
+router.route("/findByStatus/:id")
+    .get(matter.findByStatus);
 
 module.exports = router;

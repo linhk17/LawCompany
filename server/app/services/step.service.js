@@ -12,6 +12,7 @@ class Step {
             mo_ta_qt: payload.mo_ta_qt,
             don_gia_qt: payload.don_gia_qt,
             don_vi_tinh: payload.don_vi_tinh,
+            dich_vu: payload.dich_vu
         };
 
         Object.keys(step).forEach(
@@ -24,7 +25,20 @@ class Step {
         const result = await this.Step.find();
         return result.toArray();
     }
+    async findByIdService(id) {
+        const result = await this.Step.find({ dich_vu: id });
+        return result.toArray();
+    }
 
+    // lay ra theo chi phi co dinh 
+    async findByChiPhiCoDinh(array) {
+        const arrNew = [];
+        array.forEach(function (item) {
+            arrNew.push(new ObjectId(item))
+        })
+        const result = await this.Step.find({ _id: { $in: arrNew } })
+        return result.toArray();
+    }
     async findById(id){
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null

@@ -29,6 +29,7 @@ const thanhToanRoute = require("./app/routes/thanhToan.route");
 const timePayRoute = require("./app/routes/timePay.route");
 const timeAppointmentRoute = require("./app/routes/timeAppointment.route");
 const typeAppointmentRoute = require("./app/routes/typeAppointment.route");
+const typePayRoute = require("./app/routes/typePay.route");
 
 // use Route
 app.use("/api/type-service", typeServiceRoute);
@@ -50,7 +51,8 @@ app.use("/api/fee", feeRoute);
 app.use("/api/period", periodRoute);
 app.use("/api/bill", billRoute);
 app.use("/api/hinh-thuc-thanh-toan", thanhToanRoute);
-app.use("/api/dieu-khoan-thanh-toan", timePayRoute);
+app.use("/api/type-pay", typePayRoute);
+app.use("/api/time-pay", timePayRoute);
 app.use("/api/time-appointment", timeAppointmentRoute);
 app.use("/api/type-appointment", typeAppointmentRoute);
 

@@ -80,7 +80,14 @@ class User {
         const result = await this.User.find({ "bo_phan.id": id_bo_phan });
         return result.toArray();
     }
-
+    async findByMatter(array) {
+        const oids = [];
+        array.forEach(function (item) {
+            oids.push(new ObjectId(item));
+        });
+        const result = await this.User.find({ _id: {$in : oids}});
+        return result.toArray();
+    }
     async login(payload){
         const result = await this.User.findOne({
             "account.sdt": payload.sdt,
