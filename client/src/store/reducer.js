@@ -1,14 +1,16 @@
-import { SET_MATTER, SET_MATTERS, SET_QUOTES, SET_QUOTE_BY_ID, SET_SERVICES, SET_TIME_PAY, SET_TYPE_SERVICES, SET_USERS } from "./constants"
+import { SET_FILES, SET_MATTER, SET_MATTERS, SET_QUOTES, SET_QUOTE_BY_ID, SET_SERVICES, SET_TASKS, SET_TIME_PAY, SET_TYPE_SERVICES, SET_USERS } from "./constants"
 const initState = {
     users: [],
     matters: [],
-    matter: null,
     type_services: [],
     services: [],
     quotes: [],
+    matter: {},
     quoteOne: {},
     timePay: {},
-    
+    tasks: [],
+    files: []
+
 }
 
 function reducer(state, action) {
@@ -24,10 +26,9 @@ function reducer(state, action) {
                 matters: action.payload
             }
         case SET_MATTER:
-                return {
-                    ...state,
-                    matter: action.payload
-                }
+            return {
+                matter: action.payload
+            }
         case SET_TYPE_SERVICES:
             return {
                 ...state,
@@ -50,6 +51,16 @@ function reducer(state, action) {
         case SET_TIME_PAY:
             return {
                 timePay: action.payload
+            }
+        case SET_TASKS:
+            return {
+                ...state,
+                tasks: action.payload
+            }
+        case SET_FILES:
+            return {
+                ...state,
+                files: action.payload
             }
         default:
             throw new Error('Invalid action')

@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Col, Descriptions, Divider, List, Row, Space, Tabs, Tag, Typography } from "antd";
+import { Avatar, Button, Card, Col, Descriptions, Divider, List, Row, Space, Table, Tabs, Tag, Typography } from "antd";
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useParams } from "react-router-dom";
@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { matterService, userService } from "~/services";
 import { actions, useStore } from "~/store";
 import { avatar } from "~/assets/images";
+import moment from "moment";
+import FormAddFile from "~/components/AdminComponents/Form/FormAddFile";
 const item = [
     {
         title: 'Đang thực hiện'
@@ -18,28 +20,62 @@ const item = [
         title: 'Đã hủy'
     },
 ]
+const columnsTask = [
+    {
+        title: 'Tên công việc',
+        dataIndex: 'ten_cong_viec',
+    },
+    {
+        title: 'Phân công cho',
+        dataIndex: 'nguoi_phu_trach',
+    },
+    {
+        title: 'Hạn chót',
+        dataIndex: 'han_chot_cong_viec',
+    },
+    {
+        title: 'Trạng thái',
+        dataIndex: 'status',
+    }
+];
+
 function MatterDetail() {
     let { id } = useParams();
     const [state, dispatch] = useStore();
     const [access, setAccess] = useState([]);
+    const [dataTask, setDataTask] = useState([]);
     useEffect(() => {
         const getMatter = async () => {
-            dispatch(actions.setMatter((await matterService.getById(id)).data))
+            const result = (await matterService.getById(id)).data
+            dispatch(actions.setMatter(result))
         }
         getMatter()
-    }, [])
-    useEffect( ()=> {
+    }, [id, dispatch])
+    useEffect(() => {
         const getAccess = async () => {
-                const arr1 = state.matter.truy_cap.nhan_vien;
-                const arr2 =  state.matter.truy_cap.khach_hang;
-                setAccess((await userService.getByMatter(arr1.concat(arr2))).data)
+            const arr1 = state.matter.truy_cap.nhan_vien;
+            const arr2 =  state.matter.truy_cap.khach_hang;
+            setAccess((await userService.getByMatter(arr1.concat(arr2))).data)
         }
+        dispatch(actions.setTasks(state.matter.cong_viec))
+        dispatch(actions.setFiles(state.matter.tai_lieu))
         getAccess();
     }, [state.matter])
-    console.log(access);
+    useEffect(() => {
+        const data = state.tasks ? state.tasks.map((value) => {
+            return ({
+                key: value.key,
+                ten_cong_viec: value.ten_cong_viec,
+                nguoi_phu_trach: value.nguoi_phu_trach.ho_ten,
+                han_chot_cong_viec: moment(value.han_chot_cong_viec).format('YYYY-MM-DD LT')
+            })
+        }) : []
+        setDataTask(data)
+    }, [state.tasks])
+    
     return (
         <>
-            {state.matter ?
+            {state.matter._id ?
                 <Card
 
                     title={<Title level={4} style={{ marginTop: 10 }}>Thông tin chi tiết</Title>}
@@ -154,6 +190,7 @@ function MatterDetail() {
                         {
                             key: '2',
                             label: `Giấy tờ`,
+                            children: <FormAddFile props={1}/>
                         },
                         {
                             key: '3',
@@ -162,6 +199,7 @@ function MatterDetail() {
                         {
                             key: '4',
                             label: `Công việc`,
+                           children: <Table columns={columnsTask} dataSource={dataTask}/>,
                         },
                         {
                             key: '5',
@@ -176,7 +214,8 @@ function MatterDetail() {
                     <Link to={`/admin/matters/edit/${id}`}>
                         <Button type="primary" className="btn-primary">Chỉnh sửa</Button>
                     </Link>
-                </Card> : null
+                </Card>
+                 : null
             }
         </>
     );

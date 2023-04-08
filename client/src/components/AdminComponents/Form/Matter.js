@@ -7,8 +7,8 @@ import FormAddPeriod from "./FormAddPeriod";
 import FormAddFee from "./FormAddFee";
 import { matterService, serviceService, timePayService, typePayService, typeServiceService, userService } from '~/services/index';
 import { useNavigate } from "react-router-dom";
-import { useStore } from "~/store";
-const { Option } = Select;
+import { actions, useStore } from "~/store";
+import FormAddFile from "./FormAddFile";
 
 const formItemLayout = {
     labelCol: {
@@ -32,17 +32,17 @@ const label = [
     'Nội bộ được phép truy cập',
     'Khách hàng được phép truy cập'
 ]
-
 function FormMatter({ props }) {
     const matter = { ...props }
     const arrCustomer = [];
     const arrStaff = [];
     const arrCustomerAccess = [];
     const arrStaffAccess = [];
+    const [state, dispatch] = useStore()
     const [users, setUsers] = useState([]);
     const [value, setValue] = useState(matter ? 1 : 0);
     const [typeServices, setTypeServices] = useState([]);
-    const [services, setServices] = useState([{...matter.dich_vu}]);
+    const [services, setServices] = useState([{ ...matter.dich_vu }]);
     const [access, setAccess] = useState([]);
     const [typePay, setTypePay] = useState([]);
     const [timePay, setTimePay] = useState([]);
@@ -135,6 +135,7 @@ function FormMatter({ props }) {
     const handleAdd = async (data) => {
         try {
             let result = (await matterService.create(data)).data;
+            dispatch(actions.setTasks(null))
             navigate(`/admin/matter`);
         }
         catch (error) {
@@ -144,7 +145,7 @@ function FormMatter({ props }) {
     const handleUpdate = async (data) => {
         const newData = {
             ...data,
-            truy_cap:{
+            truy_cap: {
                 khach_hang: data.customerAccess,
                 nhan_vien: data.staffAccess,
             }
@@ -152,6 +153,8 @@ function FormMatter({ props }) {
         try {
             if (window.confirm(`Bạn muốn cập nhật lại vụ việc ${matter.ten_vu_viec} ?`)) {
                 await matterService.update(matter._id, newData);
+                dispatch(actions.setTasks(null))
+
                 navigate(`/admin/matters/${matter._id}`);
             }
         }
@@ -169,6 +172,8 @@ function FormMatter({ props }) {
                 khach_hang: values.customerAccess,
                 nhan_vien: values.staffAccess
             },
+            cong_viec: matter._id ? state.tasks : null,
+            tai_lieu: matter._id ? state.files : null,
             status: 0
         }
         matter._id ? handleUpdate(newData) :
@@ -390,7 +395,7 @@ function FormMatter({ props }) {
                     {
                         key: '2',
                         label: `Giấy tờ`,
-                        children: <TableAddFile />,
+                        children: <FormAddFile/>,
                         disabled: matter ? false : true
                     },
                     {
@@ -402,7 +407,7 @@ function FormMatter({ props }) {
                     {
                         key: '4',
                         label: `Công việc`,
-                        children: <FormAddTask />,
+                        children: <FormAddTask props={matter.cong_viec} />,
                         disabled: matter ? false : true
                     },
                     {

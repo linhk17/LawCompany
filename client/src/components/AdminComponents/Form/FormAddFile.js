@@ -1,38 +1,49 @@
-import { Table } from "antd";
+import { Button, Popconfirm, Table } from "antd";
+import moment from "moment";
+import { useEffect } from "react";
 import { useState } from "react";
+import { actions, useStore } from "~/store";
 
-function FormAddFile() {
-    const [selectedFile, setSelectedFile] = useState();
-    const [fileName, setFileName] = useState(null);
-    const [dataSource, setDataSource] = useState([]);
+function FormAddFile({ props }) {
+    const [state, dispatch] = useStore();
+    const [dataSource, setDataSource] = useState(state.files ? state.files : []);
+    console.log(state.files);
+    useEffect(() => {
+        dispatch(actions.setFiles(dataSource))
+    }, [dataSource])
     const handleChange = (e) => {
         let selected = e.target.files[0]
         console.log(selected);
-        setFileName(selected ? selected.name : null);
-        setDataSource([...dataSource, {
-            key: dataSource.length,
-            lastModified: selected.lastModified,
-            name: selected.name,
-            size: selected.size,
-            type: selected.type,
-            file: selected
-        }])
-    }
-    console.log(dataSource);
-    const onButtonClick = (file, name) => {
-        let fileDowload = '';
-        let reader = new FileReader()
-        reader.readAsDataURL(file)
+        let reader = new FileReader();
+        reader.readAsDataURL(selected);
         reader.onload = (e) => {
-            let a = document.createElement("a");
-            a.href = `${e.target.result}`;
-            a.download = `${name}`;
-            document.body.appendChild(a);
-            a.click();
-            a.parentNode.removeChild(a);
+            setDataSource([...dataSource, {
+                key: dataSource.length,
+                lastModified: selected.lastModified,
+                lastModifiedDate: moment(selected.lastModifiedDate).format('DD-MM-YYYY LTS'),
+                name: selected.name,
+                size: selected.size,
+                type: selected.type,
+                file: e.target.result
+            }])
         }
-        
+        console.log(dataSource);
+
     }
+    const onButtonClick = (file, name) => {
+        console.log(file);
+        let a = document.createElement("a");
+        a.href = `${file}`;
+        a.download = `${name}`;
+        document.body.appendChild(a);
+        a.click();
+        a.parentNode.removeChild(a);
+
+    }
+    const handleDelete = (key) => {
+        const newData = dataSource.filter((item) => item.key !== key);
+        setDataSource(newData);
+    };
     const columns = [
         {
             title: 'Số',
@@ -60,20 +71,31 @@ function FormAddFile() {
             key: 'lastModifiedDate',
         },
         {
-            title: 'Thao tác',
-            dataIndex: 'actions',
+            title: 'Tải xuống',
+            dataIndex: 'download',
             render: (_, record) => (
                 <a onClick={() => onButtonClick(record.file, record.name)}>
                     Dowload File
                 </a>
             )
         },
+      !props ?   {
+            title: 'Thao tac',
+            dataIndex: 'actions',
+            render: (_, record) => (
+                <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                    <Button>Delete</Button>
+                </Popconfirm>
+            )
+        } : <></>
     ];
     return (
         <>
-            <input type="file" onChange={handleChange} />
+            {!props ?
+                <input type="file" onChange={handleChange} />
+                : <></>
+            }
             <Table columns={columns} dataSource={dataSource} />
-
         </>
     );
 }

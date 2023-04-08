@@ -3,10 +3,13 @@ import { useState } from "react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import Title from "antd/es/typography/Title";
+import moment from "moment";
 function FormAddFee() {
     dayjs.extend(customParseFormat);
     const dateFormat = 'YYYY-MM-DD';
+    const [form] = Form.useForm();
     const [dataSource, setDataSource] = useState([]);
+    const [dataTemp, setDatatemp] = useState([]);
     const [open, setOpen] = useState(false);
     const [edit, setEdit] = useState(null);
     const [date, setDate] = useState();
@@ -23,14 +26,33 @@ function FormAddFee() {
     ]
     const handleDelete = (key) => {
         const newData = dataSource.filter((item) => item.key !== key);
+        const newDataTemp = dataTemp.filter((item) => item.key !== key);
         setDataSource(newData);
+        setDatatemp(newDataTemp);
     };
     const handleAdd = (values) => {
+        const key =  moment(values.timeCreate).format('DDMMYYYYhhmmss')
         setOpen(false);
-        console.log(values);
-        setDataSource([...dataSource, values])
+        setDataSource([...dataSource, {
+            ...values,
+            key: key,
+            total: values.total.toLocaleString(
+                'vi', { style: 'currency', currency: 'VND' }),
+        }])
+        setDatatemp([
+            ...dataTemp,
+            {
+                ...values,
+                key: key,
+                total: values.total
+            }
+        ])
+
     }
+    console.log(dataTemp);
+    console.log(dataSource);
     const handleUpdate = (newVal) => {
+        console.log(newVal);
         setOpen(false);
     }
     const handleFormatDate = (date, dateString) => {
@@ -38,9 +60,11 @@ function FormAddFee() {
     }
     const onFinish = (values) => {
         const newVal = {
+            ...values,
+            timeCreate: moment(new Date()).format('DD-MM-YYYY LTS'),
         }
+        form.resetFields();
         edit ? handleUpdate(newVal) : handleAdd(newVal)
-
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -48,7 +72,7 @@ function FormAddFee() {
     const columns = [
         {
             title: 'Ngày lập',
-            dataIndex: 'date',
+            dataIndex: 'timeCreate',
         },
         {
             title: 'Mô tả',
@@ -115,9 +139,26 @@ function FormAddFee() {
                     style={{
                         maxWidth: 1000,
                     }}
+                    form={form}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
+                    fields={
+                        edit ? [
+                            {
+                                name: ["description"],
+                                value: edit.description,
+                            },
+                            {
+                                name: ["typeFee"],
+                                value: edit.typeFee,
+                            },
+                            {
+                                name: ["total"],
+                                value:(edit.total).replace('₫', ''),
+                            },
+                        ] : null
+                    }
                 >
                     <Row>
                         <Col span={24} pull={4}>
@@ -148,23 +189,6 @@ function FormAddFee() {
                                     options={arr} />
                             </Form.Item>
                             <Form.Item
-                                label="Ngày lên chi phí"
-                                name="timeCreate"
-
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your password!',
-                                    },
-                                ]}
-                            >
-                                <DatePicker
-                                    style={{
-                                        width: 250
-                                    }}
-                                    format={dateFormat} onChange={handleFormatDate} />
-                            </Form.Item>
-                            <Form.Item
                                 label="Tổng tiền"
                                 name="total"
                             >
@@ -183,7 +207,7 @@ function FormAddFee() {
                         <Col span={10} push={2}>
                             <Form.Item
                                 label="Mã / Số hóa đơn"
-                                name="total"
+                                name="idHD"
                             >
                                 <Input
                                     style={{
