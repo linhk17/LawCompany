@@ -13,5 +13,6 @@ router.route("/:id")
     .delete(matter.delete);
 router.route("/findByStatus/:id")
     .get(matter.findByStatus);
-
+router.route("/findByIdAccess")
+    .post(matter.findByIdAccess);
 module.exports = router;
