@@ -7,7 +7,7 @@ import FormAddPeriod from "./FormAddPeriod";
 import FormAddFee from "./FormAddFee";
 import { matterService, serviceService, timePayService, typePayService, typeServiceService, userService } from '~/services/index';
 import { useNavigate } from "react-router-dom";
-import { actions, useStore } from "~/store";
+import { useStore } from "~/store";
 import FormAddFile from "./FormAddFile";
 
 const formItemLayout = {
@@ -32,13 +32,15 @@ const label = [
     'Nội bộ được phép truy cập',
     'Khách hàng được phép truy cập'
 ]
+
 function FormMatter({ props }) {
+
     const matter = { ...props }
+    const [state, dispatch] = useStore();
     const arrCustomer = [];
     const arrStaff = [];
     const arrCustomerAccess = [];
     const arrStaffAccess = [];
-    const [state, dispatch] = useStore()
     const [users, setUsers] = useState([]);
     const [value, setValue] = useState(matter ? 1 : 0);
     const [typeServices, setTypeServices] = useState([]);
@@ -50,6 +52,7 @@ function FormMatter({ props }) {
         matter._id ? matter.linh_vuc._id : null
     );
     let navigate = useNavigate();
+
     useEffect(() => {
         const getService = async () => {
             setServices((await serviceService.getByType(type)).data)
@@ -73,7 +76,6 @@ function FormMatter({ props }) {
         const getTypePay = async () => {
             setTypePay((await typePayService.get()).data)
         };
-
         const getTimePay = async () => {
             setTimePay((await timePayService.get()).data)
         };
@@ -135,7 +137,6 @@ function FormMatter({ props }) {
     const handleAdd = async (data) => {
         try {
             let result = (await matterService.create(data)).data;
-            dispatch(actions.setTasks(null))
             navigate(`/admin/matter`);
         }
         catch (error) {
@@ -153,8 +154,6 @@ function FormMatter({ props }) {
         try {
             if (window.confirm(`Bạn muốn cập nhật lại vụ việc ${matter.ten_vu_viec} ?`)) {
                 await matterService.update(matter._id, newData);
-                dispatch(actions.setTasks(null))
-
                 navigate(`/admin/matters/${matter._id}`);
             }
         }
@@ -172,13 +171,18 @@ function FormMatter({ props }) {
                 khach_hang: values.customerAccess,
                 nhan_vien: values.staffAccess
             },
+            status: 0,
             cong_viec: matter._id ? state.tasks : null,
-            tai_lieu: matter._id ? state.files : null,
-            status: 0
+            phi_co_dinh: matter._id ? state.steps : null,
+            chi_phi_phat_sinh: matter._id ? state.fees : null
         }
+
+        console.log(newData);
         matter._id ? handleUpdate(newData) :
             handleAdd(newData)
     }
+
+
     return (
         <>
             <Form
@@ -395,7 +399,7 @@ function FormMatter({ props }) {
                     {
                         key: '2',
                         label: `Giấy tờ`,
-                        children: <FormAddFile/>,
+                        children: <FormAddFile />,
                         disabled: matter ? false : true
                     },
                     {
@@ -413,13 +417,13 @@ function FormMatter({ props }) {
                     {
                         key: '5',
                         label: `Phí cố định`,
-                        children: <FormAddPeriod />,
+                        children: <FormAddPeriod props={matter.phi_co_dinh} />,
                         disabled: matter ? false : true
                     },
                     {
                         key: '6',
                         label: `Chi phí`,
-                        children: <FormAddFee />,
+                        children: <FormAddFee props={matter.chi_phi_phat_sinh} />,
                         disabled: matter ? false : true
                     }
                 ]} />

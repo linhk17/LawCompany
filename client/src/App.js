@@ -1,52 +1,72 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { privateRoutes, publicRoutes } from "./routes/routes";
-import 'antd/dist/reset.css';
+import * as React from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { privateRoutes, publicRoutes, staffRouter } from "./routes/routes";
 import "~/assets/style/GlobalStyle.scss"
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+import { RequireAuth } from "./pages/Auth/RequireAuth";
+import { useToken } from "./store";
+import LoginPage from "./pages/Auth/Login";
+import HomePage from "./pages/User/HomePage";
+import LayoutUser from "./layouts/UserLayout";
+
 function App() {
-
-  let role = 1;
-  let routes = publicRoutes;
-  let path = '';
-
-  if (role !== 0) {
-    routes = privateRoutes;
-  }
-  switch (role) {
-    case 1: {
-      path = '/admin';
-      break;
-    }
-    case 2: {
-      path = '/law';
-      break;
-    }
-    default:
-      path = ''
-  }
-
+  const {token, setToken} = useToken()
   return (
-    <Router>
-      <div className="wrapper">
-        <Routes>
-          {routes.map((route, index) => {
-            let Layout = route.layout;
+    <>
+    <div className="wrapper">
+      <Router>
+      <Routes>
+        {
+          !token ? 
+          publicRoutes.map((route, index) => {
+            let Layout = route.layout
             return (
-              <Route
-                key={index}
-                path={path + route.path}
-                element={
-                  <Layout>
-                    <route.component role={role} />
-                  </Layout>
-                } />
+              <Route key={index} path={route.path} element={
+                <Layout>
+                  <route.component />
+                </Layout>
+              } />
             )
-          })}
-        </Routes>
-      </div>
+          })
+          : token && token.account.quyen == 1 ?
+            privateRoutes.map((route, index) => {
+            let Layout = route.layout
+            return (
+              <Route key={index} path={'/admin' + route.path} element={
+                <Layout>
+                  <route.component />
+                </Layout>
+  
+              } />
+            )
+          })
+          : token && token.account.quyen == 2 ?
+          staffRouter.map((route, index) => {
+            let Layout = route.layout
+            return (
+              <Route key={index} path={'/staff' + route.path} element={
+                <Layout>
+                  <route.component />
+                </Layout>
+
+              } />
+            )
+          })
+          :
+          <Route  path='/' element={
+            <LayoutUser>
+              <HomePage/>
+            </LayoutUser>
+
+        } />
+        }
+      </Routes>
+      
     </Router>
 
+    </div>
+    </>
+    
+    
   );
 }
-
 export default App;

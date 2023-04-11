@@ -12,13 +12,13 @@ function User({ props, columns }) {
     const [maxValue, setMaxValue] = useState(8)
     const [tab, setTab] = useState("Kanban");
     const numEachPage = 8
-
     useEffect(() => {
         const getUsers = async () => {
             dispatch(actions.setUsers((await userService.get()).data))
         };
         getUsers()
     }, [dispatch]);
+
     let chuc_vu = null;
     let bo_phan = null;
     state.users.map((value, index) => {

@@ -1,5 +1,5 @@
 import { Button, Form, Modal, Popconfirm, Select, Table, DatePicker, Space, Divider, Input } from "antd";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import Title from "antd/es/typography/Title";
@@ -9,8 +9,9 @@ import { useEffect } from "react";
 import moment from "moment";
 
 dayjs.extend(customParseFormat);
-const dateFormat = 'YYYY-MM-DD hh:mm A';
+const dateFormat = 'DD-MM-YYYY hh:mm A';
 function FormAddTask({ props }) {
+
     const [state, dispatch] = useStore()
     const [form] = Form.useForm();
     const [dataTemp, setDataTemp] = useState(props ? [...props] : [])
@@ -21,6 +22,7 @@ function FormAddTask({ props }) {
     const [date, setDate] = useState();
     const [phuTrach, setPhuTrach] = useState();
     const [idPhuTrach, setIdPhuTrach] = useState();
+
     useEffect(() => {
         dispatch(actions.setTasks([...dataTemp]));
     }, [dataTemp])
@@ -49,13 +51,12 @@ function FormAddTask({ props }) {
                 key: value.key,
                 ten_cong_viec: value.ten_cong_viec,
                 nguoi_phu_trach: value.nguoi_phu_trach.ho_ten,
-                han_chot_cong_viec: moment(value.han_chot_cong_viec).format('YYYY-MM-DD LT')
+                han_chot_cong_viec: moment(value.han_chot_cong_viec).format('DD-MM-YYYY LT')
             })
 
         }) : []
         setDataSource(data)
     }, [])
-
 
     const arrStaffDetail = staff.map((value) => {
         return ({
@@ -73,7 +74,6 @@ function FormAddTask({ props }) {
         setDataSource(newData);
     };
     const handleAdd = (values, data) => {
-        console.log(values);
         setOpen(false);
         setDataTemp([...dataTemp, {
             ...values,
@@ -89,8 +89,8 @@ function FormAddTask({ props }) {
         /** Update dataSoure Table */
         const newVal = {
             ...value,
-            han_chot_cong_viec: date ? date : 
-            moment(edit.han_chot_cong_viec.$d).format('YYYY-MM-DD LT'),
+            han_chot_cong_viec: date ? date :
+                moment(edit.han_chot_cong_viec.$d).format('DD-MM-YYYY LT'),
             nguoi_phu_trach: edit.nguoi_phu_trach,
             key: key
         }
@@ -114,8 +114,7 @@ function FormAddTask({ props }) {
         setOpen(false);
     }
     const onSubmit = (values) => {
-        console.log(values);
-        const newVal = edit ? { ...edit } : {
+        const newVal = {
             ten_cong_viec: values.ten_cong_viec,
             key: Math.floor(Math.random() * 100000),
             nguoi_phu_trach: values.nguoi_phu_trach,
@@ -223,18 +222,7 @@ function FormAddTask({ props }) {
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 >
-                    <Form.Item
-                        label="Tên công việc"
-                        name="ten_cong_viec"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Vui lòng nhập tên công việc!',
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
+
 
                     <Form.Item
                         label="Phân công cho"
@@ -247,6 +235,18 @@ function FormAddTask({ props }) {
                         ]}
                     >
                         <Select options={arrStaffDetail} onChange={handleChangePhuTrach} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Tên công việc"
+                        name="ten_cong_viec"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập tên công việc!',
+                            },
+                        ]}
+                    >
+                        <Input />
                     </Form.Item>
                     <Form.Item
                         label="Hạn chót"

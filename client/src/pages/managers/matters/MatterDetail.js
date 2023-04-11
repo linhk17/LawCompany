@@ -1,11 +1,11 @@
-import { Avatar, Button, Card, Col, Descriptions, Divider, List, Row, Space, Table, Tabs, Tag, Typography } from "antd";
+import { Avatar, Button, Card, Col, Descriptions, Divider, List, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useParams } from "react-router-dom";
 import Title from "antd/es/typography/Title";
 import { useEffect, useState } from "react";
-import { matterService, userService } from "~/services";
-import { actions, useStore } from "~/store";
+import { matterService, stepService, userService } from "~/services";
+import { actions, useStore, useToken } from "~/store";
 import { avatar } from "~/assets/images";
 import moment from "moment";
 import FormAddFile from "~/components/AdminComponents/Form/FormAddFile";
@@ -38,12 +38,66 @@ const columnsTask = [
         dataIndex: 'status',
     }
 ];
+const columnsStep = [
+    {
+        title: 'Tên quy trình',
+        dataIndex: 'periodName',
+        width: 650,
+        ellipsis: {
+            showTitle: false,
+        },
+        render: (step) => (
+            <Tooltip placement="topLeft" title={step}>
+                {step}
+            </Tooltip>
+        ),
+    },
+    {
+        title: 'Đơn vị tính',
+        dataIndex: 'unit',
+    },
+    {
+        title: 'Đơn giá',
+        dataIndex: 'price',
+    },
+];
+const columnsFees = [
+    {
+        title: 'Ngày lập',
+        dataIndex: 'ngay_lap',
+        width: 200
+    },
+    {
+        title: 'Mô tả',
+        dataIndex: 'mo_ta',
+        width: 350
+    },
+    {
+        title: 'Nhân viên',
+        dataIndex: 'staff',
+        width: 250
+    },
+    {
+        title: 'Tổng',
+        dataIndex: 'don_gia',
+        width: 200
+    },
+    {
+        title: 'Trạng thái',
+        dataIndex: 'status',
+    },
+];
+const url = ['', 'admin', 'staff']
 
 function MatterDetail() {
+
     let { id } = useParams();
     const [state, dispatch] = useStore();
     const [access, setAccess] = useState([]);
     const [dataTask, setDataTask] = useState([]);
+    const [dataStep, setDataStep] = useState([]);
+    const [dataFee, setDataFee] = useState([]);
+    const {token} = useToken()
     useEffect(() => {
         const getMatter = async () => {
             const result = (await matterService.getById(id)).data
@@ -54,11 +108,13 @@ function MatterDetail() {
     useEffect(() => {
         const getAccess = async () => {
             const arr1 = state.matter.truy_cap.nhan_vien;
-            const arr2 =  state.matter.truy_cap.khach_hang;
+            const arr2 = state.matter.truy_cap.khach_hang;
             setAccess((await userService.getByMatter(arr1.concat(arr2))).data)
         }
         dispatch(actions.setTasks(state.matter.cong_viec))
         dispatch(actions.setFiles(state.matter.tai_lieu))
+        dispatch(actions.setSteps(state.matter.phi_co_dinh))
+        dispatch(actions.setFees(state.matter.chi_phi_phat_sinh))
         getAccess();
     }, [state.matter])
     useEffect(() => {
@@ -67,12 +123,35 @@ function MatterDetail() {
                 key: value.key,
                 ten_cong_viec: value.ten_cong_viec,
                 nguoi_phu_trach: value.nguoi_phu_trach.ho_ten,
-                han_chot_cong_viec: moment(value.han_chot_cong_viec).format('YYYY-MM-DD LT')
+                han_chot_cong_viec: moment(value.han_chot_cong_viec).format('DD-MM-YYYY LT')
             })
         }) : []
-        setDataTask(data)
-    }, [state.tasks])
-    
+        const showDataSource = async () => {
+            const rs = (await stepService.getByIdChiPhiCoDinh(state.steps)).data
+            const dataShow = rs.map((value) => {
+                return {
+                    _id: value._id,
+                    periodName: value.ten_qt,
+                    price: value.don_gia_qt,
+                    unit: value.don_vi_tinh
+                }
+            })
+            setDataStep(dataShow);
+        }
+        const dataFee = state.fees ? state.fees.map((value) => {
+            return ({
+                key: value.key,
+                ngay_lap: value.ngay_lap,
+                mo_ta: value.mo_ta,
+                staff: value.nhan_vien,
+                don_gia: `${value.don_gia}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'
+            })
+        }) : []
+        setDataTask(data);
+        showDataSource();
+        setDataFee(dataFee);
+    }, [state.tasks, state.steps, state.fees])
+
     return (
         <>
             {state.matter._id ?
@@ -163,16 +242,16 @@ function MatterDetail() {
                                                 renderItem={(item) => (
                                                     <List.Item key={item.ho_ten}>
                                                         <List.Item.Meta
-                                                        avatar={<Avatar src={avatar.user}/>}
+                                                            avatar={<Avatar src={avatar.user} />}
                                                             title={<a href="https://ant.design">{item.ho_ten}</a>}
                                                             description={item.email}
                                                         />
                                                         <div>
                                                             {
                                                                 item.account.quyen === 0 ?
-                                                                <Tag color="blue">Khách hàng</Tag>
-                                                                : <Tag color="gold">Nhân viên</Tag>
-                                                            
+                                                                    <Tag color="blue">Khách hàng</Tag>
+                                                                    : <Tag color="gold">Nhân viên</Tag>
+
                                                             }
                                                         </div>
                                                     </List.Item>
@@ -190,7 +269,7 @@ function MatterDetail() {
                         {
                             key: '2',
                             label: `Giấy tờ`,
-                            children: <FormAddFile props={1}/>
+                            children: <FormAddFile props={1} />
                         },
                         {
                             key: '3',
@@ -199,23 +278,26 @@ function MatterDetail() {
                         {
                             key: '4',
                             label: `Công việc`,
-                           children: <Table columns={columnsTask} dataSource={dataTask}/>,
+                            children: <Table columns={columnsTask} dataSource={dataTask} />,
                         },
                         {
                             key: '5',
                             label: `Phí cố định`,
+                            children: <Table columns={columnsStep} dataSource={dataStep} />,
+
                         },
                         {
                             key: '6',
                             label: `Chi phí`,
+                            children: <Table columns={columnsFees} dataSource={dataFee} />,
                         }
                     ]} />
 
-                    <Link to={`/admin/matters/edit/${id}`}>
+                    <Link to={`/${url[token.account.quyen]}/matter/edit/${id}`}>
                         <Button type="primary" className="btn-primary">Chỉnh sửa</Button>
                     </Link>
                 </Card>
-                 : null
+                : null
             }
         </>
     );

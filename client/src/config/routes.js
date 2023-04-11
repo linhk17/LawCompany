@@ -22,8 +22,7 @@ const routes = {
         matetrList: '/matters',
         matetrAdd: '/matter/add',
         matterDetail: '/matters/:id',
-        matetrEdit: '/matters/edit/:id',
-        
+        matetrEdit: '/matter/edit/:id',
         //Quotes
         quotesManager: '/quotes',
         quotesAdd: '/quotes/add',
@@ -32,6 +31,13 @@ const routes = {
         quoteEdit: '/quotes/edit/:id',
 
         //Calendar
+        calendarManager: '/calendar'
+    },
+    staff: {
+        matterManager: '/',
+        matetrList: '/matters',
+        matterDetail: '/matter/:id',
+        matetrEdit: '/matter/edit/:id',
         calendarManager: '/calendar'
 
     }

@@ -8,9 +8,18 @@ import {
     SET_TIME_PAY,
     SET_MATTER,
     SET_TASKS,
-    SET_FILES
+    SET_FILES,
+    SET_USER,
+    SET_STEP,
+    SET_STEPS,
+    SET_FEES
 } from './constants'
-
+export const setUser = payload => (
+    {
+        type: SET_USER,
+        payload
+    }
+)
 export const setUsers = payload => (
     {
         type: SET_USERS,
@@ -68,6 +77,24 @@ export const setTasks = payload => (
 export const setFiles = payload => (
     {
         type: SET_FILES,
+        payload
+    }
+)
+export const setStep = payload => (
+    {
+        type: SET_STEP,
+        payload
+    }
+)
+export const setSteps = payload => (
+    {
+        type: SET_STEPS,
+        payload
+    }
+)
+export const setFees = payload => (
+    {
+        type: SET_FEES,
         payload
     }
 )

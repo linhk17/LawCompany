@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { TableComponent } from "~/components";
 import { matterService, typeServiceService } from "~/services";
+import { useToken } from "~/store";
 const columns = [
     {
         title: 'STT',
@@ -46,14 +47,21 @@ const columns = [
     
 ]
 function MatterList() {
+    const {token} = useToken()
     const [matters, setMatters] = useState([]);
     const [typeService, setTypeService] = useState([]);
+    console.log(token._id);
     useEffect(() => {
         const getMatters = async() => {
+            token.account.quyen === 1 ?
             setMatters((await matterService.get()).data)
+            : setMatters((await matterService.findByIdAccess({
+                id: token._id
+            })).data)
         }
         getMatters()
     }, [])
+    console.log(matters);
     const data = matters.map((value, index) => {
         return {
             _id: value._id,
@@ -63,7 +71,6 @@ function MatterList() {
             service: value.dich_vu.ten_dv,
             customer: value.khach_hang.ho_ten,
             law: value.luat_su.ho_ten
-            
         }
     })
     return ( 

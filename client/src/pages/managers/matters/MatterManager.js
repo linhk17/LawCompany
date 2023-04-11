@@ -1,4 +1,4 @@
-import { Avatar, Button, Col, Divider, Progress, Row, Space, } from "antd";
+import { Avatar, Button, Col, Divider, Progress, Row, Segmented, Space, } from "antd";
 import {
     ReconciliationFilled,
     CreditCardFilled,
@@ -6,18 +6,19 @@ import {
     CalendarFilled,
     TeamOutlined,
 } from '@ant-design/icons';
-import BreadcrumpAdmin from "~/components/AdminComponents/Breadcump";
 import Title from "antd/es/typography/Title";
 import CardMatter from "../../../components/AdminComponents/Card/CardMatter";
 import { Link, useNavigate } from "react-router-dom";
+import { useToken } from "~/store";
 const styleCol = {
     textAlign: 'center'
 }
+const url = ['', 'admin', 'staff']
 function MatterManager() {
+    const {token} = useToken()
     let navigate = useNavigate();
     return (
         <>
-            <BreadcrumpAdmin />
             <Space wrap direction="horizontal">
               <Link to="add">
               <Button className="btn-cyan" icon={<ReconciliationFilled />} block>Vụ việc mới</Button>
@@ -41,7 +42,7 @@ function MatterManager() {
                         </Col>
                         <Col md={{ span: 18, push: 2 }} xs={{ span: 19, push: 1 }}>
                             <Row gutter={8}>
-                                <CardMatter title="Đang thực hiện" total={0} url={'/admin/matters/'} />
+                                <CardMatter title="Đang thực hiện" total={0} url={`/${url[token.account.quyen]}/matters/`} />
                                 <CardMatter title="Tạm ngưng" total={6} />
                                 <CardMatter title="Đã đóng" total={0} />
                             </Row>

@@ -1,18 +1,35 @@
 import { Menu, Checkbox, Form, Input, Space } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "~/assets/style/AuthPage.scss"
 import { useState } from "react";
+import { useToken } from "~/store";
+import { userService } from "~/services";
+import PropTypes from 'prop-types';
 function LoginPage() {
+    const navigate = useNavigate();
     const [status, setStatus] = useState("");
-    const onFinish = (values) => {
-        setStatus("success");
-        console.log(status);
-    };
+    const {setToken} = useToken();
+    const onFinish = async(values) => {
+       try{
+        const token = (await userService.login(values)).data
+        setToken(token)
+        if(token.token.account.quyen === 1)
+            window.location.href = '/admin'
+        else if(token.token.account.quyen === 0)
+             window.location.href = '/'
+        else window.location.href = '/staff'
+
+       }
+       catch(error){
+        console.log(error);
+       }
+    }
+
     const onFinishFailed = (errorInfo) => {
         setStatus("error");
         console.log(status);
     };
-    
+
     return (
         <>
             <div className="auth-page">
@@ -52,9 +69,9 @@ function LoginPage() {
                         autoComplete="off"
                     >
                         <Form.Item
-                        className="login-form-item"
+                            className="login-form-item"
                             label="Username"
-                            name="username"
+                            name="sdt"
                             rules={[
                                 {
                                     required: true,
@@ -62,12 +79,12 @@ function LoginPage() {
                                 },
                             ]}
                         >
-                            <Input/>
+                            <Input />
                         </Form.Item>
                         <Form.Item
-                        className="login-form-item"
+                            className="login-form-item"
                             label="Mật khẩu"
-                            name="password"
+                            name="mat_khau"
                             rules={[
                                 {
                                     required: true,
@@ -112,5 +129,7 @@ function LoginPage() {
         </>
     );
 }
-
+LoginPage.propTypes = {
+    setToken: PropTypes.func.isRequired
+  };
 export default LoginPage;
