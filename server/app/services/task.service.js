@@ -11,7 +11,7 @@ class Task {
             ten_cong_viec: payload.ten_cong_viec,
             han_chot_cong_viec: payload.han_chot_cong_viec,
             tien_do_cong_viec: payload.tien_do_cong_viec,
-            lich: payload.lich,
+            vu_viec: payload.vu_viec,
             giai_doan: payload.giai_doan,
             nguoi_phu_trach: payload.nguoi_phu_trach,
         };

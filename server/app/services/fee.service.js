@@ -3,19 +3,21 @@ const { ObjectId } = require("mongodb");
 class Fee {
     constructor(client){
         this.Fee = client.db().collection("fee");
+        this.User = client.db().collection("user");
     }
 
     // define csdl
     extractConactData(payload){
         const fee = {
-            mo_ta_cpps: payload.mo_ta_cpps,
-            don_gia_cpps: payload.don_gia_cpps,
-            so_hoa_don_cpps: payload.so_hoa_don_cpps,
-            hinh_anh_cpps: payload.hinh_anh_cpps,
-            ngay_lap_cpps: payload.ngay_lap_cpps,
+            mo_ta: payload.mo_ta,
+            vu_viec: payload.vu_viec,
+            don_gia: payload.don_gia,
+            so_hoa_don: payload.so_hoa_don,
+            hinh_anh: payload.hinh_anh,
+            ngay_lap: payload.ngay_lap,
             status: payload.status,
-            loai_chi_phi_phat_sinh: payload.loai_chi_phi_phat_sinh,
-            cong_viec: payload.cong_viec,
+            tai_khoan: payload.tai_khoan,
+            nhan_vien: payload.nhan_vien
         };
 
         Object.keys(fee).forEach(
@@ -36,10 +38,20 @@ class Fee {
         const result = await this.Fee.findOne(id);
         return result;
     }
+    async findByMatter(payload){
+        const result = await this.Fee.find({
+            vu_viec : {$eq : payload.id}
+        });
+        return result.toArray();
+    }
 
     async create(payload){
         const fee = this.extractConactData(payload);
-        const result = await this.Fee.insertOne(fee);
+        const newVal = {
+            ...fee,
+            nhan_vien: await this.User.findOne({ _id: new ObjectId(payload.nhan_vien) })
+        }
+        const result = await this.Fee.insertOne(newVal);
         return result;
     }
 

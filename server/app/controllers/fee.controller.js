@@ -28,6 +28,20 @@ exports.findById = async (req, res, next) => {
         );
     }
 };
+exports.findByMatter = async (req, res, next) => {
+    try{
+        console.log(req.body);
+        const fee = new Fee(MongoDB.client);
+        const documents = await fee.findByMatter(req.body);
+        console.log(documents);
+        return res.send(documents);
+    }
+    catch(error){
+        return next(
+            new ApiError(500, "An error occured while find fee by id")
+        );
+    }
+};
 
 exports.create = async (req, res, next) => {
     try{

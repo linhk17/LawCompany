@@ -33,9 +33,10 @@ class Step {
     // lay ra theo chi phi co dinh 
     async findByChiPhiCoDinh(array) {
         const arrNew = [];
-        array.forEach(function (item) {
-            arrNew.push(new ObjectId(item))
-        })
+        if(array.length > 0)
+            array.forEach(function (item) {
+                arrNew.push(new ObjectId(item))
+            })
         const result = await this.Step.find({ _id: { $in: arrNew } })
         return result.toArray();
     }
