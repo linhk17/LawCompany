@@ -36,10 +36,9 @@ const routes = {
     staff: {
         matterManager: '/',
         matetrList: '/matters',
-        matterDetail: '/matter/:id',
+        matterDetail: '/matters/:id',
         matetrEdit: '/matter/edit/:id',
         calendarManager: '/calendar'
-
     }
 }
 export default routes;

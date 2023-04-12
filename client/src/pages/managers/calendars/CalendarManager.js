@@ -5,7 +5,6 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import CalendarBig from './CalendarBig';
 import ModalAdd from './ModalAdd';
-import { timeAppointmentService } from '~/services';
 
 function CalendarManager() {
     const [dateSelect, setDateSelect] = useState(moment().toDate())

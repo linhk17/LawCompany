@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Col, Descriptions, Divider, List, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
+import { Avatar, Badge, Button, Card, Col, Descriptions, Divider, List, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useParams } from "react-router-dom";
@@ -88,7 +88,6 @@ const columnsFees = [
     },
 ];
 const url = ['', 'admin', 'staff']
-
 function MatterDetail() {
 
     let { id } = useParams();
@@ -157,13 +156,18 @@ function MatterDetail() {
             {state.matter._id ?
                 <Card
 
-                    title={<Title level={4} style={{ marginTop: 10 }}>Thông tin chi tiết</Title>}
+                    title={<Title level={4} style={{ marginTop: 10 }}>
+                        {
+                            state.matter.status == 0 ? <Badge status="processing" text="Đang thực hiện" />
+                            : state.matter.status == 1 ? <Badge status="success" text="Hoàn thành" />
+                            :  <Badge status="warning" text="Tạm ngưng" />
+                        }
+                    </Title>}
                     extra={
                         <Space split={<Divider type="vertical" />}>
-                            <Typography.Link><FontAwesomeIcon icon={faHouse} /> Vụ việc</Typography.Link>
-                            <Typography.Link><FontAwesomeIcon icon={faTasks} /> Hợp đồng</Typography.Link>
-                            <Typography.Link><FontAwesomeIcon icon={faTasks} /> Báo giá</Typography.Link>
-                            <Typography.Link><FontAwesomeIcon icon={faReceipt} /> Hóa đơn</Typography.Link>
+                            <Typography.Link><FontAwesomeIcon icon={faHouse} /> Công việc</Typography.Link>
+                            <Typography.Link><FontAwesomeIcon icon={faTasks} /> Chi phí</Typography.Link>
+                            <Typography.Link><FontAwesomeIcon icon={faTasks} /> Liên hệ</Typography.Link>
 
                         </Space>
                     }
@@ -206,7 +210,7 @@ function MatterDetail() {
                     <Divider />
                     <Tabs type="card" defaultActiveKey="0" items={[
                         {
-                            key: 0,
+                            key: 1,
                             label: 'Thiết lập',
                             children:
                                 <Descriptions
@@ -261,10 +265,6 @@ function MatterDetail() {
                                     </Row>
 
                                 </Descriptions>
-                        },
-                        {
-                            key: '1',
-                            label: `Mô tả`,
                         },
                         {
                             key: '2',

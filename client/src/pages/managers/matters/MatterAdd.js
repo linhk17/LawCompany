@@ -1,5 +1,4 @@
 import {  Card } from "antd";
-import BreadcrumpAdmin from "~/components/AdminComponents/Breadcump";
 import FormMatter from "~/components/AdminComponents/Form/Matter";
 import TitleCardModal from "~/components/AdminComponents/TitleCardModal";
 const item = [
@@ -16,7 +15,6 @@ const item = [
 function MatterAdd() {
     return (
         <>
-        <BreadcrumpAdmin/>
             <Card
                 title={
                    <TitleCardModal title="Thêm vụ việc" current={0} item={item}/>

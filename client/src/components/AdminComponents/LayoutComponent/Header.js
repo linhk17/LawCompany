@@ -84,7 +84,7 @@ function HeaderAdmin() {
         {
           label: <button onClick={() => {
             sessionStorage.removeItem('token')
-            navigate('/login')
+            window.location.href = '/login'
           }}>Đăng xuất</button>,
           key: 'logout',
 

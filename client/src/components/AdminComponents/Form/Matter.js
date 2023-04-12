@@ -129,7 +129,7 @@ function FormMatter({ props }) {
     })
     const handleChangeTypeService = async (value) => {
         setType(value)
-        matter._id ? matter.linh_vuc._id = value : matter = null
+        matter._id ? matter.linh_vuc._id = value : matter.linh_vuc = null
     };
     const onAccessChange = (e) => {
         setValue(e.target.value);
@@ -315,7 +315,7 @@ function FormMatter({ props }) {
                 <Divider />
                 <Tabs style={{ width: '100%' }} type="card" defaultActiveKey="0" items={[
                     {
-                        key: '0',
+                        key: '1',
                         label: `Thiết lập`,
                         children: <Row style={{ paddingTop: 30 }}>
                             <Col md={{ span: 10 }}>
@@ -390,11 +390,6 @@ function FormMatter({ props }) {
                                 })()}
                             </Col>
                         </Row>,
-                    },
-                    {
-                        key: '1',
-                        label: `Mô tả`,
-                        children: <Description />,
                     },
                     {
                         key: '2',

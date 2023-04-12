@@ -2,9 +2,7 @@ import * as React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { privateRoutes, publicRoutes, staffRouter } from "./routes/routes";
 import "~/assets/style/GlobalStyle.scss"
-import { RequireAuth } from "./pages/Auth/RequireAuth";
 import { useToken } from "./store";
-import LoginPage from "./pages/Auth/Login";
 import HomePage from "./pages/User/HomePage";
 import LayoutUser from "./layouts/UserLayout";
 

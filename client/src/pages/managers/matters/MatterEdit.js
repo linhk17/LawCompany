@@ -1,4 +1,5 @@
-import {  Card } from "antd";
+import {  Badge, Card } from "antd";
+import { Title } from "chart.js";
 import FormMatter from "~/components/AdminComponents/Form/Matter";
 import TitleCardModal from "~/components/AdminComponents/TitleCardModal";
 import { useStore } from "~/store";
@@ -18,9 +19,12 @@ function MatterEdit() {
         return (
             <>
                 <Card
-                    title={
-                       <TitleCardModal title="Thêm vụ việc" current={0} item={item}/>
-                    }>
+                   title=
+                   {
+                       state.matter.status == 0 ? <Badge status="processing" text="Đang thực hiện" />
+                       : state.matter.status == 1 ? <Badge status="success" text="Hoàn thành" />
+                       :  <Badge status="warning" text="Tạm ngưng" />
+                   }>
                     <FormMatter props={state.matter}/>
                 </Card>
             </>

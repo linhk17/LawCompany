@@ -1,7 +1,6 @@
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import { useState } from 'react';
-import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { useEffect } from 'react';
 import { timeAppointmentService, userService } from '~/services';
 import { Col, Descriptions, Divider, Modal, Row, Tabs } from 'antd';

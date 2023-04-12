@@ -8,7 +8,7 @@ class MatterService {
         return (await API.get(`/matter/${id}`));
     }
     async getByStatus(status){
-        return ((await API.get(`matter/findByStatus/${status}`)))
+        return ((await API.post(`matter/findByStatus/${status}`)))
     }
     async findByIdAccess(data){
         return (await API.post(`matter/findByIdAccess`, data))
