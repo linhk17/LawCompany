@@ -6,8 +6,9 @@ import FormAddPeriod from "./FormAddPeriod";
 import FormAddFee from "./FormAddFee";
 import { matterService, serviceService, timePayService, typePayService, typeServiceService, userService } from '~/services/index';
 import { useNavigate } from "react-router-dom";
-import { useStore } from "~/store";
+import { useStore, useToken } from "~/store";
 import FormAddFile from "./FormAddFile";
+import ErrorResult from "~/pages/Result/Error";
 
 const formItemLayout = {
     labelCol: {
@@ -33,8 +34,8 @@ const label = [
 ]
 
 function FormMatter({ props }) {
-
     const matter = { ...props }
+    const { token } = useToken();
     const [state, dispatch] = useStore();
     const arrCustomer = [];
     const arrStaff = [];
@@ -235,8 +236,13 @@ function FormMatter({ props }) {
                 ] : null}
 
             >
+                <Form.Item style={{float: 'right'}}>
+                    <Button type="primary" className="btn btn-dark-blue" htmlType="submit">Lưu thông tin</Button>
+                </Form.Item>
+                <Divider />
                 <Row>
                     <Col span={12} pull={2}>
+
                         <Form.Item
                             label="Tên vụ việc"
                             name="ten_vu_viec"
@@ -289,6 +295,7 @@ function FormMatter({ props }) {
                             <Select
                                 showSearch
                                 allowClear
+                                disabled={token.account.quyen != 1}
                                 style={{
                                     width: '100%',
                                 }}
@@ -298,10 +305,12 @@ function FormMatter({ props }) {
                         <Form.Item
                             label="Luật sư phụ trách"
                             name="luat_su"
+
                         >
                             <Select
                                 showSearch
                                 allowClear
+                                disabled={token.account.quyen != 1}
                                 style={{
                                     width: '100%',
                                 }}
@@ -312,10 +321,11 @@ function FormMatter({ props }) {
                     </Col>
                 </Row>
                 <Divider />
-                <Tabs style={{ width: '100%' }} type="card" defaultActiveKey="0" items={[
+                <Tabs style={{ width: '100%' }} type="card" defaultActiveKey={token.account.quyen == 1 ? '1' : '2'} items={[
                     {
                         key: '1',
                         label: `Thiết lập`,
+                        disabled: token.account.quyen != 1 ? true : false,
                         children: <Row style={{ paddingTop: 30 }}>
                             <Col md={{ span: 10 }}>
                                 <Form.Item
@@ -421,14 +431,8 @@ function FormMatter({ props }) {
                         disabled: matter ? false : true
                     }
                 ]} />
-                <Form.Item
-                    wrapperCol={{
-                        offset: 20,
-                    }}
-                >
-                    <Button type="primary" htmlType="submit" className="btn-primary">SAVE</Button>
-                </Form.Item>
             </Form>
+           
         </>
     );
 }

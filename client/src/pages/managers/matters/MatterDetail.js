@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Col, Descriptions, Divider, List, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
+import { Avatar, Badge, Button, Card, Col, Descriptions, Divider, List, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useParams } from "react-router-dom";
@@ -187,7 +187,11 @@ function MatterDetail() {
             {state.matter._id ?
                 <Card
 
-                    title={<Title level={4} style={{ marginTop: 10 }}>Thông tin chi tiết</Title>}
+                    title={
+                        state.matter.status == 0 ? <Badge status="processing" text="Đang thực hiện" />
+                                : state.matter.status == 1 ? <Badge status="success" text="Hoàn thành" />
+                                    : <Badge status="warning" text="Tạm ngưng" />
+                    }
                     extra={
                         <Space split={<Divider type="vertical" />}>
                             <Typography.Link><FontAwesomeIcon icon={faHouse} /> Vụ việc</Typography.Link>
@@ -322,10 +326,14 @@ function MatterDetail() {
                             children: <Table columns={columnsFees} dataSource={dataFee} />,
                         }
                     ]} />
-
-                    <Link to={`/${url[token.account.quyen]}/matter/edit/${id}`}>
+                    {
+                        state.matter.status != 1 ?  
+                        <Link to={`/${url[token.account.quyen]}/matter/edit/${id}`}>
                         <Button type="primary" className="btn-primary">Chỉnh sửa</Button>
-                    </Link>
+                        </Link>
+                        : <></>
+                    }
+                   
                 </Card>
                 : null
             }
