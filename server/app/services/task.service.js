@@ -3,6 +3,7 @@ const { ObjectId } = require("mongodb");
 class Task {
     constructor(client){
         this.Task = client.db().collection("task");
+        this.User = client.db().collection("user");
     }
 
     // define csdl
@@ -10,9 +11,9 @@ class Task {
         const task = {
             ten_cong_viec: payload.ten_cong_viec,
             han_chot_cong_viec: payload.han_chot_cong_viec,
-            tien_do_cong_viec: payload.tien_do_cong_viec,
+            status: payload.status,
             vu_viec: payload.vu_viec,
-            giai_doan: payload.giai_doan,
+            ngay_giao: payload.ngay_giao,
             nguoi_phu_trach: payload.nguoi_phu_trach,
         };
 
@@ -27,6 +28,12 @@ class Task {
         return result.toArray();
     }
 
+    async findByStaff(payload){
+        const result = await this.Task.find({
+            "nguoi_phu_trach._id":  new ObjectId(payload.id) 
+        });
+        return result.toArray();
+    }
     async findById(id){
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null
@@ -34,10 +41,20 @@ class Task {
         const result = await this.Task.findOne(id);
         return result;
     }
-
+    async findByMatter(payload){
+        const result = await this.Task.find({
+            vu_viec :  payload.id
+        });
+        console.log(result);
+        return result.toArray();
+    }
     async create(payload){
         const task = this.extractConactData(payload);
-        const result = await this.Task.insertOne(task);
+        const newVal = {
+            ...task,
+            nguoi_phu_trach: await this.User.findOne({_id: new ObjectId(task.nguoi_phu_trach)})
+        }
+        const result = await this.Task.insertOne(newVal);
         return result;
     }
 
@@ -46,9 +63,13 @@ class Task {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null
         };
         const task = this.extractConactData(payload);
+        const newVal = {
+            ...task,
+            nguoi_phu_trach: await this.User.findOne({_id: new ObjectId(task.nguoi_phu_trach)})
+        }
         const result = await this.Task.findOneAndUpdate(
             id,
-            { $set: task },
+            { $set: newVal },
             { returnDocument: "after" }
         );
         return result.value;

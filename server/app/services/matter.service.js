@@ -111,7 +111,19 @@ class Matter {
         );
         return result.value;
     }
+    async setStatus(id, payload){
+        id = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null
+        };
+        const matter = this.extractConactData(payload);
+        const rs = await this.Matter.findOneAndUpdate(
+            id,
+            {$set: matter},
+            { returnDocument: "after" }
+        );
+        return rs.value;
 
+    }
     async delete(id) {
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null

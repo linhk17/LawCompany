@@ -11,6 +11,8 @@ router.route("/:id")
     .get(matter.findById)
     .put(matter.update)
     .delete(matter.delete);
+router.route("/setStatus/:id")
+    .patch(matter.setStatus);
 router.route("/findByStatus")
     .post(matter.findByStatus);
 router.route("/findByIdAccess")
