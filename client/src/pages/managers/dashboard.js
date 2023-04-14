@@ -19,7 +19,8 @@ const data = [
     {
         icon: faUser,
         title: "Kế toán",
-        color: `var(--green)`
+        color: `var(--green)`,
+        link: "fee"
     },
     {
         icon: faUser,
@@ -30,7 +31,7 @@ const data = [
         icon: faUser,
         title: "Báo giá",
         color: `var(--magenta)`,
-        link: 'quotes'
+        link: 'quote'
     },
     {
         icon: faUser,

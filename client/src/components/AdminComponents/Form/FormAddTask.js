@@ -1,128 +1,108 @@
-import { Button, Form, Modal, Popconfirm, Select, Table, DatePicker, Space, Divider, Input } from "antd";
+import { Button, Form, Modal, Popconfirm, Select, Table, DatePicker, Space, Divider, Input, Tag } from "antd";
 import { useLayoutEffect, useState } from "react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import Title from "antd/es/typography/Title";
 import { actions, useStore } from "~/store";
-import { userService } from "~/services";
+import { taskService, userService } from "~/services";
 import { useEffect } from "react";
 import moment from "moment";
 
 dayjs.extend(customParseFormat);
 const dateFormat = 'DD-MM-YYYY hh:mm A';
-function FormAddTask({ props }) {
+const statusText = ['Đã giao', 'Đã duyệt']
+
+function FormAddTask() {
 
     const [state, dispatch] = useStore()
     const [form] = Form.useForm();
-    const [dataTemp, setDataTemp] = useState(props ? [...props] : [])
-    const [staff, setStaff] = useState([]);
-    const [dataSource, setDataSource] = useState([]);
     const [open, setOpen] = useState(false);
-    const [edit, setEdit] = useState();
-    const [date, setDate] = useState();
-    const [phuTrach, setPhuTrach] = useState();
-    const [idPhuTrach, setIdPhuTrach] = useState();
-
+    const [dataSource, setDataSource] = useState([]);
+    const [staff, setStaff] = useState([]);
+    const [task, setTask] = useState([]);
+    const [edit, setEdit] = useState()
+    let data = []
     useEffect(() => {
-        dispatch(actions.setTasks([...dataTemp]));
-    }, [dataTemp])
-    useEffect(() => {
+        const getTask = async () => {
+            setTask((await taskService.findByMatter({ id: state.matter._id })).data)
+        }
+        getTask();
         const getStaff = async () => {
             setStaff((await userService.getByMatter(state.matter.truy_cap.nhan_vien)).data)
         }
         getStaff();
-    }, [])
+    }, [edit])
     useEffect(() => {
-        const getPhuTrachById = async () => {
-            setPhuTrach((await userService.getById(idPhuTrach)).data);
-        }
-        getPhuTrachById()
-    }, [idPhuTrach])
-    useEffect(() => {
-        setEdit(edit ? {
-            ...edit,
-            han_chot_cong_viec: date ? date : edit.han_chot_cong_viec,
-            nguoi_phu_trach: phuTrach.ho_ten
-        } : null)
-    }, [phuTrach, date])
-    useEffect(() => {
-        const data = props ? props.map((value) => {
-            return ({
-                key: value.key,
-                ten_cong_viec: value.ten_cong_viec,
-                nguoi_phu_trach: value.nguoi_phu_trach.ho_ten,
-                han_chot_cong_viec: moment(value.han_chot_cong_viec).format('DD-MM-YYYY LT')
+        if (task.length > 0) {
+            data = task.map((value, index) => {
+                return {
+                    key: index,
+                    _id: value._id,
+                    ten_cong_viec: value.ten_cong_viec,
+                    ngay_giao: moment(value.ngay_giao).format('DD-MM-YYYY LTS'),
+                    nguoi_phu_trach: value.nguoi_phu_trach.ho_ten,
+                    status: value.status,
+                    han_chot_cong_viec: moment(value.han_chot_cong_viec).format('DD-MM-YYYY LTS')
+                }
             })
-
-        }) : []
+        }
         setDataSource(data)
-    }, [])
-
-    const arrStaffDetail = staff.map((value) => {
+    }, [task])
+    const arrStaff = staff.map((value) => {
         return ({
             value: value._id,
             label: value.ho_ten
         })
     })
-    const handleChangePhuTrach = (value) => {
-        setIdPhuTrach(value);
+    const handleEdit = async (value, id, key) => {
+        try {
+            let result = (await taskService.update(id, value)).data
+            const index = dataSource.findIndex((item) => key === item.key);
+            const item = dataSource[index];
+            dataSource.splice(index, 1, {
+                ...result,
+                key: key,
+                ngay_giao: moment(result.ngay_giao).format('DD-MM-YYYY LTS'),
+                nguoi_phu_trach: result.nguoi_phu_trach.ho_ten,
+                han_chot_cong_viec: moment(result.han_chot_cong_viec).format('DD-MM-YYYY LTS')
+
+            });
+            setDataSource([...dataSource]);
+            setEdit(null)
+            form.resetFields()
+            setOpen(false)
+        } catch (err) {
+            console.log(err);
+        }
     }
     const handleDelete = (key) => {
-        const newData = dataSource.filter((item) => item.key !== key);
-        const data = dataTemp.filter((item) => item.key !== key);
-        setDataTemp(data)
+        const newData = dataSource.filter((item) => item._id !== key);
         setDataSource(newData);
     };
-    const handleAdd = (values, data) => {
+    const handleAdd = async (values) => {
         setOpen(false);
-        setDataTemp([...dataTemp, {
-            ...values,
-            nguoi_phu_trach: phuTrach
-        }]);
-        setDataSource([...dataSource, {
-            ...values,
-            nguoi_phu_trach: phuTrach.ho_ten,
-            han_chot_cong_viec: date
-        }])
-    }
-    const handleUpdate = (value, key) => {
-        /** Update dataSoure Table */
-        const newVal = {
-            ...value,
-            han_chot_cong_viec: date ? date :
-                moment(edit.han_chot_cong_viec.$d).format('DD-MM-YYYY LT'),
-            nguoi_phu_trach: edit.nguoi_phu_trach,
-            key: key
+        try {
+            let result = (await taskService.create(values)).data;
+            const taskNew = (await taskService.getById(result.insertedId)).data
+            setTask([...task, taskNew])
+            form.resetFields() 
         }
-        const index = dataSource.findIndex((item) => key === item.key);
-        const item = dataSource[index];
-        dataSource.splice(index, 1, {
-            ...item,
-            ...newVal
-        });
-        /* Update data in MongoDB*/
-        dataTemp.splice(index, 1, {
-            ...dataTemp[index],
-            key: key,
-            ...value,
-            han_chot_cong_viec: dayjs(value.han_chot_cong_viec, dateFormat),
-            nguoi_phu_trach: phuTrach
-        })
-        setDataTemp([...dataTemp])
-        setDataSource([...dataSource]);
-        form.resetFields()
-        setOpen(false);
+        catch (err) {
+            console.log(err);
+        }
     }
     const onSubmit = (values) => {
         const newVal = {
             ten_cong_viec: values.ten_cong_viec,
-            key: Math.floor(Math.random() * 100000),
             nguoi_phu_trach: values.nguoi_phu_trach,
             vu_viec: state.matter._id,
-            han_chot_cong_viec: values.han_chot_cong_viec
+            han_chot_cong_viec: values.han_chot_cong_viec,
+            ngay_giao: new Date(),
+            status: 0
         }
         form.resetFields();
-        edit ? handleUpdate(newVal, edit.key) : handleAdd(newVal)
+        edit ? handleEdit(newVal, edit._id, edit.key) :
+            handleAdd(newVal)
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -137,26 +117,42 @@ function FormAddTask({ props }) {
             dataIndex: 'nguoi_phu_trach',
         },
         {
+            title: 'Ngày giao',
+            dataIndex: 'ngay_giao',
+        },
+        {
             title: 'Hạn chót',
             dataIndex: 'han_chot_cong_viec',
         },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
+            render: (status) => (
+                <Tag
+                    color={status === 0 ? 'volcano' : 'success'}
+                >
+                    {statusText[status]}
+                </Tag>
+            ),
         },
         {
             title: 'Thao tác',
+
             dataIndex: 'operation',
             render: (_, record) => (
                 <Space split={<Divider type="vertical" />}>
                     <Button onClick={() => {
                         setEdit({
-                            ...record,
-                            han_chot_cong_viec: dayjs(record.han_chot_cong_viec, dateFormat)
-                        })
+                            ...task[record.key],
+                            key: record.key
+                        }
+                        );
+                        console.log(edit);
                         setOpen(true)
-                    }}>Edit</Button>
-                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                    }
+
+                    }>Edit</Button>
+                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
                         <Button>Delete</Button>
                     </Popconfirm>
                 </Space>)
@@ -166,10 +162,8 @@ function FormAddTask({ props }) {
     return (
         <>
             <Button type="primary" onClick={() => {
-                setEdit(null)
                 setOpen(true)
-            }}
-            >
+            }}>
                 Thêm công việc
             </Button>
             <Modal
@@ -201,29 +195,25 @@ function FormAddTask({ props }) {
                         {
                             maxWidth: 600
                         }}
-                    fields={
-                        edit ? [
-                            {
-                                name: ["ten_cong_viec"],
-                                value: edit.ten_cong_viec,
-                            },
-                            {
-                                name: ["nguoi_phu_trach"],
-                                value: edit.nguoi_phu_trach,
-                            },
-                            {
-                                name: ["han_chot_cong_viec"],
-                                value: dayjs(edit.han_chot_cong_viec, dateFormat),
-
-                            }
-                        ] : null
-                    }
                     onFinish={onSubmit}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
+                    fields={edit ? [
+                        {
+                            name: ['nguoi_phu_trach'],
+                            value: edit.nguoi_phu_trach._id,
+                            label: edit.nguoi_phu_trach.ho_ten
+                        },
+                        {
+                            name: ['ten_cong_viec'],
+                            value: edit.ten_cong_viec
+                        },
+                        {
+                            name: ['han_chot_cong_viec'],
+                            value: dayjs(edit.han_chot_cong_viec)
+                        }
+                    ] : null}
                 >
-
-
                     <Form.Item
                         label="Phân công cho"
                         name="nguoi_phu_trach"
@@ -234,7 +224,7 @@ function FormAddTask({ props }) {
                             },
                         ]}
                     >
-                        <Select options={arrStaffDetail} onChange={handleChangePhuTrach} />
+                        <Select options={arrStaff} />
                     </Form.Item>
                     <Form.Item
                         label="Tên công việc"
@@ -252,7 +242,7 @@ function FormAddTask({ props }) {
                         label="Hạn chót"
                         name="han_chot_cong_viec"
                     >
-                        <DatePicker showTime format={dateFormat} onChange={(date, dateString) => setDate(dateString)} />
+                        <DatePicker showTime />
                     </Form.Item>
                     <Form.Item
                         wrapperCol={{

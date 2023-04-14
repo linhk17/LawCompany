@@ -13,27 +13,35 @@ import "~/assets/style/Admin/Header.scss"
 import Search from "antd/es/transfer/search";
 import { Link, useNavigate } from "react-router-dom";
 import { useToken } from "~/store";
-const url = ['', 'admin', 'staff']
 
 function HeaderAdmin() {
   const [current, setCurrent] = useState('mail');
   const { token } = useToken();
-  let navigate = useNavigate()
+  let navigate = useNavigate();
+  let url = 'admin'
+  if(token.chuc_vu.id == 'LS02')
+    url = 'staff'
+  else if(token.chuc_vu.id == 'TVV02')
+    url = 'tu-van-vien'
+  else if(token.chuc_vu.id == 'KT02')
+    url = 'ke-toan'
   const items = [
     {
-      icon: <Link to={`/${url[token.account.quyen]}`}>
+      icon: <Link to={`/${url}`}>
         <FontAwesomeIcon icon={faHouse} />
       </Link>,
       key: 'title',
     },
     {
-      label: <Link to={`/${url[token.account.quyen]}`}>
-        Quản lý vụ việc
+      label: <Link to={`/${url}`}>
+        {
+          url == 'tu-van-vien' ? 'Quản lý công việc' : 'Quản lý vụ việc'
+        }
       </Link>,
       key: 'customer-service',
     },
     {
-      label: <Link to={`/${url[token.account.quyen]}/calendar`}>
+      label: <Link to={`/${url}/calendar`}>
         Quản lý lịch hẹn
       </Link>,
       key: 'dashboard',
@@ -98,14 +106,13 @@ function HeaderAdmin() {
   return (
     <>
       <Row className="header-admin">
-        <Col md={{ span: 12, pull: 2 }}>
+        <Col md={{ span: 10}}>
           <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={items} />
         </Col>
-        <Col md={{ span: 10, push: 1 }}>
+        <Col md={{ span: 14}}>
           <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={items1} />
         </Col>
       </Row>
-
     </>
   );
 }

@@ -24,14 +24,18 @@ const routes = {
         matterDetail: '/matters/:id',
         matetrEdit: '/matter/edit/:id',
         //Quotes
-        quotesManager: '/quotes',
+        quotesManager: '/quote',
+        quoteList: '/quotes',
         quotesAdd: '/quotes/add',
         quoteDetail: '/quotes/:id',
         quoteDetail: '/quotes/:id',
         quoteEdit: '/quotes/edit/:id',
 
         //Calendar
-        calendarManager: '/calendar'
+        calendarManager: '/calendar',
+
+        //ketoan
+        feeManager: '/fee',
     },
     staff: {
         matterManager: '/',
@@ -39,6 +43,15 @@ const routes = {
         matterDetail: '/matters/:id',
         matetrEdit: '/matter/edit/:id',
         calendarManager: '/calendar'
+    },
+    tvv: {
+        taskManager: '/',
+        taskList: '/tasks',
+        quotesManager: '/quotes',
+    },
+    keToan: {
+        feeManager: '/',
+        feeList: '/fees'
     }
 }
 export default routes;

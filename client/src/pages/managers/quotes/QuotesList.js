@@ -46,7 +46,7 @@ const columns = [
     },
 ];
 
-function QuotesManager() {
+function QuotesList() {
 
     const [state, dispatch] = useStore();
     const arrQuotes = [];
@@ -80,4 +80,4 @@ function QuotesManager() {
     );
 }
 
-export default QuotesManager;
+export default QuotesList;

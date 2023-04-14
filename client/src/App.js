@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { privateRoutes, publicRoutes, staffRouter } from "./routes/routes";
+import { KeToanRouter, TuVanVienRouter, privateRoutes, publicRoutes, staffRouter } from "./routes/routes";
 import "~/assets/style/GlobalStyle.scss"
 import { useToken } from "./store";
 import HomePage from "./pages/User/HomePage";
@@ -37,11 +37,35 @@ function App() {
               } />
             )
           })
-          : token && token.account.quyen == 2 ?
-          staffRouter.map((route, index) => {
+          : token && token.account.quyen == 2 && token.chuc_vu.id == 'LS02' ?
+            staffRouter.map((route, index) => {
             let Layout = route.layout
             return (
               <Route key={index} path={'/staff' + route.path} element={
+                <Layout>
+                  <route.component />
+                </Layout>
+
+              } />
+            )
+          })
+          : token && token.account.quyen == 2 && token.chuc_vu.id == 'TVV02' ?
+          TuVanVienRouter.map((route, index) => {
+            let Layout = route.layout
+            return (
+              <Route key={index} path={'/tu-van-vien' + route.path} element={
+                <Layout>
+                  <route.component />
+                </Layout>
+
+              } />
+            )
+          })
+          : token && token.account.quyen == 2 && token.chuc_vu.id == 'KT02' ?
+          KeToanRouter.map((route, index) => {
+            let Layout = route.layout
+            return (
+              <Route key={index} path={'/ke-toan' + route.path} element={
                 <Layout>
                   <route.component />
                 </Layout>

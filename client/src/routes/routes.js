@@ -11,7 +11,7 @@ import MatterAdd from "~/pages/managers/matters/MatterAdd"
 import StaffManager from "~/pages/managers/users/StaffManager"
 import StaffEdit from "~/pages/managers/users/StaffCrud/StaffEdit"
 import StaffAdd from "~/pages/managers/users/StaffCrud/StaffAdd"
-import QuotesManager from "~/pages/managers/quotes/QuotesManager"
+import QuotesManager from "~/pages/managers/quotes/QuoteManager"
 import QuotesAdd from "~/pages/managers/quotes/QuotesAdd"
 import HomePage from "~/pages/User/HomePage"
 import LayoutUser from "~/layouts/UserLayout"
@@ -22,6 +22,11 @@ import QuoteEdit from "~/pages/managers/quotes/QuoteEdit"
 import MatterList from "~/pages/managers/matters/MatterList"
 import MatterEdit from "~/pages/managers/matters/MatterEdit"
 import MatterDetail from "~/pages/managers/matters/MatterDetail"
+import TaskManager from "~/pages/managers/tasks/TaskManager"
+import TaskList from "~/pages/managers/tasks/TaskList"
+import FeeManager from "~/pages/managers/fees/FeeManager"
+import FeeList from "~/pages/managers/fees/FeeList"
+import QuotesList from "~/pages/managers/quotes/QuotesList"
 
 const publicRoutes = [
     {path: config.routes.user.home, component: HomePage,  layout: LayoutUser},
@@ -49,11 +54,14 @@ const privateRoutes = [
     { path: config.routes.admin.matterDetail, component: MatterDetail, layout: LayoutAdmin },
     //Quotes
     { path: config.routes.admin.quotesManager, component: QuotesManager, layout: LayoutAdmin },
+    { path: config.routes.admin.quoteList, component: QuotesList, layout: LayoutAdmin },
     { path: config.routes.admin.quotesAdd, component: QuotesAdd, layout: LayoutAdmin },
     { path: config.routes.admin.quoteDetail, component: QuoteDetail, layout: LayoutAdmin },
     { path: config.routes.admin.quoteEdit, component: QuoteEdit, layout: LayoutAdmin },
     //Calendar
     { path: config.routes.admin.calendarManager, component: CalendarManager, layout: LayoutAdmin },
+    //Fee
+    { path: config.routes.admin.feeManager, component: FeeManager, layout: LayoutAdmin },
 
 ]
 const staffRouter = [
@@ -64,5 +72,13 @@ const staffRouter = [
     { path: config.routes.staff.calendarManager, component: CalendarManager, layout: LayoutAdmin },
 
 ]
-
-export { privateRoutes, publicRoutes, staffRouter }
+const TuVanVienRouter = [
+    {path: config.routes.tvv.taskManager, component: TaskManager, layout: LayoutAdmin},
+    {path: config.routes.tvv.taskList, component: TaskList, layout: LayoutAdmin},
+    { path: config.routes.tvv.quotesManager, component: QuotesManager, layout: LayoutAdmin },
+]
+const KeToanRouter = [
+    {path: config.routes.keToan.feeManager, component: FeeManager, layout: LayoutAdmin},
+    {path: config.routes.keToan.feeList, component: FeeList, layout: LayoutAdmin},
+]
+export { privateRoutes, publicRoutes, staffRouter, TuVanVienRouter, KeToanRouter }

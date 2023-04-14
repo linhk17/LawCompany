@@ -8,21 +8,29 @@ import PropTypes from 'prop-types';
 function LoginPage() {
     const navigate = useNavigate();
     const [status, setStatus] = useState("");
-    const {setToken} = useToken();
-    const onFinish = async(values) => {
-       try{
-        const token = (await userService.login(values)).data
-        setToken(token)
-        if(token.token.account.quyen === 1)
-            window.location.href = '/admin'
-        else if(token.token.account.quyen === 0)
-             window.location.href = '/'
-        else window.location.href = '/staff'
+    const { setToken } = useToken();
+    const onFinish = async (values) => {
+        try {
+            const token = (await userService.login(values)).data
+            setToken(token)
+            console.log(token.token.chuc_vu.id);
+            if (token.token.account.quyen === 1)
+                window.location.href = '/admin'
+            else if (token.token.account.quyen === 0)
+                window.location.href = '/'
+            else if (token.token.account.quyen === 2) {
+                if (token.token.chuc_vu.id == 'LS02')
+                    window.location.href = '/staff'
+                else if (token.token.chuc_vu.id == 'TVV02')
+                    window.location.href = '/tu-van-vien'
+                else
+                    window.location.href = '/ke-toan'
+            }
 
-       }
-       catch(error){
-        console.log(error);
-       }
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 
     const onFinishFailed = (errorInfo) => {
@@ -131,5 +139,5 @@ function LoginPage() {
 }
 LoginPage.propTypes = {
     setToken: PropTypes.func.isRequired
-  };
+};
 export default LoginPage;

@@ -1,14 +1,16 @@
-import { Avatar, Badge, Button, Card, Col, Descriptions, Divider, List, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
+import { Avatar, Button, Card, Col, Descriptions, Divider, List, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useParams } from "react-router-dom";
 import Title from "antd/es/typography/Title";
 import { useEffect, useState } from "react";
-import { matterService, stepService, userService } from "~/services";
+import { matterService, stepService, taskService, userService } from "~/services";
 import { actions, useStore, useToken } from "~/store";
 import { avatar } from "~/assets/images";
 import moment from "moment";
 import FormAddFile from "~/components/AdminComponents/Form/FormAddFile";
+const statusText = ['Đã trình', 'Đã duyệt']
+
 const item = [
     {
         title: 'Đang thực hiện'
@@ -30,12 +32,23 @@ const columnsTask = [
         dataIndex: 'nguoi_phu_trach',
     },
     {
+        title: 'Ngày giao',
+        dataIndex: 'ngay_giao',
+    },
+    {
         title: 'Hạn chót',
         dataIndex: 'han_chot_cong_viec',
     },
     {
         title: 'Trạng thái',
         dataIndex: 'status',
+        render: (status) => (
+            <Tag
+                color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : 'success'}
+            >
+                {statusText[status]}
+            </Tag>
+        ),
     }
 ];
 const columnsStep = [
@@ -85,9 +98,17 @@ const columnsFees = [
     {
         title: 'Trạng thái',
         dataIndex: 'status',
+        render: (status) => (
+            <Tag
+                color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : 'success'}
+            >
+                {statusText[status]}
+            </Tag>
+        ),
     },
 ];
 const url = ['', 'admin', 'staff']
+
 function MatterDetail() {
 
     let { id } = useParams();
@@ -96,13 +117,20 @@ function MatterDetail() {
     const [dataTask, setDataTask] = useState([]);
     const [dataStep, setDataStep] = useState([]);
     const [dataFee, setDataFee] = useState([]);
-    const {token} = useToken()
+    const { token } = useToken();
+
     useEffect(() => {
         const getMatter = async () => {
             const result = (await matterService.getById(id)).data
             dispatch(actions.setMatter(result))
         }
+        const getTask = async () => {
+            const result = (await taskService.findByMatter({id: id})).data
+            console.log(result);
+            dispatch(actions.setTasks(result))
+        }
         getMatter()
+        getTask()
     }, [id, dispatch])
     useEffect(() => {
         const getAccess = async () => {
@@ -110,19 +138,22 @@ function MatterDetail() {
             const arr2 = state.matter.truy_cap.khach_hang;
             setAccess((await userService.getByMatter(arr1.concat(arr2))).data)
         }
-        dispatch(actions.setTasks(state.matter.cong_viec))
+        
+        // dispatch(actions.setTasks(state.tasks))
         dispatch(actions.setFiles(state.matter.tai_lieu))
         dispatch(actions.setSteps(state.matter.phi_co_dinh))
-        dispatch(actions.setFees(state.matter.chi_phi_phat_sinh))
+        dispatch(actions.setFees(state.fees))
         getAccess();
     }, [state.matter])
     useEffect(() => {
-        const data = state.tasks ? state.tasks.map((value) => {
+        const dataTask = state.tasks ? state.tasks.map((value) => {
             return ({
                 key: value.key,
                 ten_cong_viec: value.ten_cong_viec,
                 nguoi_phu_trach: value.nguoi_phu_trach.ho_ten,
-                han_chot_cong_viec: moment(value.han_chot_cong_viec).format('DD-MM-YYYY LT')
+                han_chot_cong_viec: moment(value.han_chot_cong_viec).format('DD-MM-YYYY LT'),
+                ngay_giao: moment(value.ngay_giao).format('DD-MM-YYYY LT'),
+                status: value.status
             })
         }) : []
         const showDataSource = async () => {
@@ -146,7 +177,7 @@ function MatterDetail() {
                 don_gia: `${value.don_gia}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'
             })
         }) : []
-        setDataTask(data);
+        setDataTask(dataTask);
         showDataSource();
         setDataFee(dataFee);
     }, [state.tasks, state.steps, state.fees])
@@ -156,18 +187,13 @@ function MatterDetail() {
             {state.matter._id ?
                 <Card
 
-                    title={<Title level={4} style={{ marginTop: 10 }}>
-                        {
-                            state.matter.status == 0 ? <Badge status="processing" text="Đang thực hiện" />
-                            : state.matter.status == 1 ? <Badge status="success" text="Hoàn thành" />
-                            :  <Badge status="warning" text="Tạm ngưng" />
-                        }
-                    </Title>}
+                    title={<Title level={4} style={{ marginTop: 10 }}>Thông tin chi tiết</Title>}
                     extra={
                         <Space split={<Divider type="vertical" />}>
-                            <Typography.Link><FontAwesomeIcon icon={faHouse} /> Công việc</Typography.Link>
-                            <Typography.Link><FontAwesomeIcon icon={faTasks} /> Chi phí</Typography.Link>
-                            <Typography.Link><FontAwesomeIcon icon={faTasks} /> Liên hệ</Typography.Link>
+                            <Typography.Link><FontAwesomeIcon icon={faHouse} /> Vụ việc</Typography.Link>
+                            <Typography.Link><FontAwesomeIcon icon={faTasks} /> Hợp đồng</Typography.Link>
+                            <Typography.Link><FontAwesomeIcon icon={faTasks} /> Báo giá</Typography.Link>
+                            <Typography.Link><FontAwesomeIcon icon={faReceipt} /> Hóa đơn</Typography.Link>
 
                         </Space>
                     }
@@ -210,7 +236,7 @@ function MatterDetail() {
                     <Divider />
                     <Tabs type="card" defaultActiveKey="0" items={[
                         {
-                            key: 1,
+                            key: 0,
                             label: 'Thiết lập',
                             children:
                                 <Descriptions
@@ -265,6 +291,10 @@ function MatterDetail() {
                                     </Row>
 
                                 </Descriptions>
+                        },
+                        {
+                            key: '1',
+                            label: `Mô tả`,
                         },
                         {
                             key: '2',

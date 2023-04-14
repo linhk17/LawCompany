@@ -22,33 +22,29 @@ ChartJS.register(
 
 
 const labels = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-
-
-
 export function Chart(props) {
-    console.log(props);
-    const options = {
-        axis: 'y',
-        plugins: {
-          title: {
-            display: true,
-            text: props.title,
-          },
-        },
-        responsive: true,
-        interaction: {
-          mode: 'nearest' ,
-          intersect: false,
-        },
-        scales: {
-          x: {
-            stacked: true,
-          },
-          y: {
-            stacked: true,
-          },
-        },
-      };
+  const options = {
+    axis: 'y',
+    plugins: {
+      title: {
+        display: true,
+        text: props.title,
+      },
+    },
+    responsive: true,
+    interaction: {
+      mode: 'nearest' ,
+      intersect: false,
+    },
+    scales: {
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true,
+      },
+    },
+  };
       const data= {
         labels:  labels,
         datasets: [{

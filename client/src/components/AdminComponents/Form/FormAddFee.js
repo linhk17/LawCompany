@@ -1,13 +1,19 @@
-import { Button, Form, Modal, Popconfirm, Select, Table, Space, Divider, InputNumber, Input, Row, Col, Checkbox, Badge, Tag } from "antd";
+import { Button, Form, Modal, Popconfirm, Select, Table, 
+    Space, Divider, InputNumber, Input, Row, Col, Upload, Tag } from "antd";
 import { useEffect, useState } from "react";
+import {
+    PlusOutlined
+} from '@ant-design/icons';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import Title from "antd/es/typography/Title";
 import moment from "moment";
-import { actions, useStore, useToken } from "~/store";
+import { useStore, useToken } from "~/store";
 import axios from "axios";
 import { Option } from "antd/es/mentions";
 import { feeService } from "~/services";
+import UploadImg from "../UploadImg";
+import AvatarChanger from "../UploadImg";
 
 dayjs.extend(customParseFormat);
 const statusText = ['Đã trình', 'Đã duyệt', 'Đã kết toán']
@@ -53,7 +59,7 @@ function FormAddFee({ props }) {
     }, [fee])
     const handleDelete = async (value) => {
         try {
-          let rs =  (await feeService.delete(value)).data
+            let rs = (await feeService.delete(value)).data
         } catch (err) {
             console.log(err);
         }
@@ -164,7 +170,7 @@ function FormAddFee({ props }) {
                         maxWidth: 1000,
                     }}
                     form={form}
-                    onFinish={onFinish}
+                    // onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
                     fields={[
@@ -247,25 +253,7 @@ function FormAddFee({ props }) {
                     </Row>
                     <Divider />
                     <Row>
-                        <Col span={10} push={1}>
-                            <Form.Item>
-                                <Checkbox>
-                                    <Title level={5}>Thêm vào hóa đơn khách hàng</Title>
-                                </Checkbox>
-                            </Form.Item>
-                            <Form.Item
-                                label="Khách hàng"
-                                name="customer"
 
-                            >
-                                <Input
-                                    disabled
-                                    style={{
-                                        width: 250,
-                                    }}
-                                />
-                            </Form.Item>
-                        </Col>
                         <Col span={10} push={2}>
                             <Form.Item>
                                 <Title level={5}>Tài khoản bồi hoàn</Title>
@@ -307,6 +295,14 @@ function FormAddFee({ props }) {
                                 />
                             </Form.Item>
                         </Col>
+                        <Col span={10} push={4}>
+                            <Form.Item>
+                                <Title level={5}>Hình ảnh hóa đơn (nếu có)</Title>
+                            </Form.Item>
+                            <Form.Item>
+                             <AvatarChanger/>
+                            </Form.Item>
+                        </Col>
                     </Row>
                     <Divider />
                     <Form.Item
@@ -315,9 +311,9 @@ function FormAddFee({ props }) {
                             span: 6,
                         }}
                     >
-                        <Button type="primary" htmlType="submit">
+                        {/* <Button type="primary" htmlType="submit">
                             Tạo mới
-                        </Button>
+                        </Button> */}
                     </Form.Item>
                 </Form>
             </Modal>
