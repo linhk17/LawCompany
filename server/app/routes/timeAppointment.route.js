@@ -11,5 +11,6 @@ router.route("/:id")
     .get(timeAppointment.findById)
     .put(timeAppointment.update)
     .delete(timeAppointment.delete);
-
+router.route("/findByStaff")
+    .post(timeAppointment.findByStaff)
 module.exports = router;

@@ -38,6 +38,12 @@ class TimeAppointment {
         const result = await this.TimeAppointment.findOne(id);
         return result;
     }
+    async findByStaff(payload){
+        const result = await this.TimeAppointment.find({
+            nhan_vien: payload.id
+        });
+        return result.toArray();
+    }
 
     async create(payload){
         const timeAppointment = this.extractConactData(payload);

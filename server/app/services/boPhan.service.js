@@ -23,8 +23,8 @@ class BoPhan {
     }
 
     async findById(id){
-        const result = await this.BoPhan.findOne({ _id: id });
-        return result;
+        const result = await this.BoPhan.find({ _id: id });
+        return result.toArray();
     }
 
     async create(payload){

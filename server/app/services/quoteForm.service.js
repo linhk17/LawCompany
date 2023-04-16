@@ -3,6 +3,7 @@ const { ObjectId } = require("mongodb");
 class QuoteForm {
     constructor(client){
         this.QuoteForm = client.db().collection("quoteForm");
+        this.TypeService = client.db().collection("typeService");
     }
 
     // define csdl
@@ -44,7 +45,11 @@ class QuoteForm {
 
     async create(payload){
         const quoteForm = this.extractConactData(payload);
-        const result = await this.QuoteForm.insertOne(quoteForm);
+        const newVal = {
+            ...quoteForm,
+            linh_vuc: await this.TypeService.findOne({ _id: payload.linh_vuc })
+        }
+        const result = await this.QuoteForm.insertOne(newVal);
         return result;
     }
 
