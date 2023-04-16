@@ -3,6 +3,7 @@ import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
 import { boPhanService, timeAppointmentService, userService } from "~/services";
 import typeAppointment from "~/services/typeAppointment.service";
+import { useToken } from "~/store";
 const { RangePicker } = DatePicker;
 const formItemLayout = {
     labelCol: {
@@ -23,13 +24,16 @@ const formItemLayout = {
     }
 };
 function ModalAdd(props) {
+    const {token} = useToken()
     const [type, setType] = useState([]);
     const [boPhan, setBoPhan] = useState([]);
     const [staff, setStaff] = useState([]);
     const [messageApi, contextHolder] = message.useMessage();
     useEffect(() => {
         const getBoPhan = async () => {
-            setBoPhan((await boPhanService.get()).data)
+            token.bo_phan.id === 'LS' ?
+                setBoPhan((await boPhanService.getById('LS')).data)
+            : setBoPhan((await boPhanService.get()).data)
         }
         const getType = async () => {
             setType((await typeAppointment.get()).data)
@@ -73,7 +77,6 @@ function ModalAdd(props) {
             setTimeout(() => {
                  props.onCancel(false)
             }, 1000)
-           
         }
         catch (error) {
             messageApi.open({ type: 'error', content: "Nhân viên đã có lịch vào thời gian này" })
@@ -87,7 +90,7 @@ function ModalAdd(props) {
         <>
             <Modal title="Thêm công việc" width={1000} {...props}
                 footer={null}>
-                      <Button onClick={() => {props.handleRecive('OKKKK')}}>OK</Button>
+                    <Divider/>
                 <Form
                     {...formItemLayout}
                     onFinish={onFinish}>
@@ -207,7 +210,7 @@ function ModalAdd(props) {
                             span: 6,
                         }}
                     >
-                        <Button htmlType="submit">Submit</Button>
+                        <Button htmlType="submit" className="btn-status">Submit</Button>
                     </Form.Item>
                 </Form>
             </Modal >

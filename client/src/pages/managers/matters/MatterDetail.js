@@ -2,7 +2,6 @@ import { Avatar, Badge, Button, Card, Col, Descriptions, Divider, List, Row, Spa
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useParams } from "react-router-dom";
-import Title from "antd/es/typography/Title";
 import { useEffect, useState } from "react";
 import { matterService, stepService, taskService, userService } from "~/services";
 import { actions, useStore, useToken } from "~/store";
@@ -10,7 +9,6 @@ import { avatar } from "~/assets/images";
 import moment from "moment";
 import FormAddFile from "~/components/AdminComponents/Form/FormAddFile";
 const statusText = ['Đã trình', 'Đã duyệt']
-
 const item = [
     {
         title: 'Đang thực hiện'
@@ -138,8 +136,6 @@ function MatterDetail() {
             const arr2 = state.matter.truy_cap.khach_hang;
             setAccess((await userService.getByMatter(arr1.concat(arr2))).data)
         }
-        
-        // dispatch(actions.setTasks(state.tasks))
         dispatch(actions.setFiles(state.matter.tai_lieu))
         dispatch(actions.setSteps(state.matter.phi_co_dinh))
         dispatch(actions.setFees(state.fees))
@@ -186,10 +182,9 @@ function MatterDetail() {
         <>
             {state.matter._id ?
                 <Card
-
                     title={
-                        state.matter.status == 0 ? <Badge status="processing" text="Đang thực hiện" />
-                                : state.matter.status == 1 ? <Badge status="success" text="Hoàn thành" />
+                        state.matter.status === 0 ? <Badge status="processing" text="Đang thực hiện" />
+                                : state.matter.status === 1 ? <Badge status="success" text="Hoàn thành" />
                                     : <Badge status="warning" text="Tạm ngưng" />
                     }
                     extra={
@@ -327,7 +322,7 @@ function MatterDetail() {
                         }
                     ]} />
                     {
-                        state.matter.status != 1 ?  
+                        state.matter.status !== 1 ?  
                         <Link to={`/${url[token.account.quyen]}/matter/edit/${id}`}>
                         <Button type="primary" className="btn-primary">Chỉnh sửa</Button>
                         </Link>

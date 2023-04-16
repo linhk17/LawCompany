@@ -5,11 +5,13 @@ import { useEffect } from 'react';
 import { timeAppointmentService, userService } from '~/services';
 import { Col, Descriptions, Divider, Modal, Row, Tabs } from 'antd';
 import { Link } from 'react-router-dom';
+import { useToken } from '~/store';
 const localizer = momentLocalizer(moment)
 
-function CalendarBig({ dateSelect, onReceive }) {
+function CalendarBig({ dateSelect, onReceive, select }) {
     const [events, setEvents] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const {token} = useToken()
     const [event, setEvent] = useState({
         thoi_gian: {},
         khach_hang: {}
@@ -20,11 +22,13 @@ function CalendarBig({ dateSelect, onReceive }) {
         }
     })
     useEffect(() => {
-        const getTime = async () => {
-            setEvents((await timeAppointmentService.get()).data)
+        const getTime = async () => { 
+           select == 1 ? setEvents((await timeAppointmentService.get()).data)
+           : setEvents((await timeAppointmentService.findByStaff({id: token._id})).data)
         }
         getTime()
-    }, [onReceive]);
+        
+    }, [onReceive, select]);
     useEffect(() => {
         const getStaff = async () => {
             setStaff((await userService.getById(event.nhan_vien)).data)

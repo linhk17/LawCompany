@@ -80,11 +80,6 @@
     }
 
     .calendar-big {
-
-        // .fc .fc-col-header-cell-cushion {
-        //     display: inline-block;
-        //     padding: 2px 4px;
-        //   }
         .rbc-btn-group {
             background-color: #fff;
         }
@@ -95,7 +90,10 @@
             background-color: #fff;
             box-shadow: 3px 3px 10px #bebebefd
         }
-        .rbc-agenda-table>thead, .rbc-month-header, .rbc-time-header-cell{
+
+        .rbc-agenda-table>thead,
+        .rbc-month-header,
+        .rbc-time-header-cell {
             height: 40px;
             line-height: 40px;
             background-color: var(--grey-blue);
@@ -110,10 +108,6 @@
             font-weight: 600;
         }
 
-        // .rbc-day-bg{
-        //     border-top: 1px solid #000;
-        //     border-left: 1px solid #000;
-        // }
         .rbc-month-header,
         .rbc-time-header-cell {
             font-size: 1rem;
@@ -122,6 +116,25 @@
         }
     }
 
-
+    .ant-radio-group {
+        margin-left: 15px;
+        .ant-radio-button-wrapper {
+            &:not(:first-child)::before {
+                width: 0;
+            }
+            &:hover{
+                background-color: #e1e1e1;
+                color: #000;
+            }
+        }
+        .ant-radio-button-wrapper-checked{
+            &:not(.ant-radio-button-wrapper-disabled) {
+                z-index: 0;
+                border-color: transparent;
+                color: #fff;
+                background: var(--cyan);
+            }
+        }
+    }
 
 }

@@ -8,7 +8,6 @@ const styleCard1 = {
     backgroundColor: `var(--grey-blue)`,
 }
 function CardMatter({ title, total, url }) {
-    
     return (
         <Col md={{span: 8}} xs={{span: 8}}>
             <Link to={url}><div className="card-matter" style={

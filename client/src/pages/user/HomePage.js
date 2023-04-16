@@ -1,4 +1,4 @@
-import { notification, Col, Row, Card, Space, Divider, Button, FloatButton, Typography, Avatar, Form, Input, Rate, message } from "antd";
+import { notification, Col, Row, Card, Space, Divider, Button, FloatButton, Typography, Avatar, Form, Input, Rate, message, Select } from "antd";
 import {
     SlackOutlined,
     RightOutlined,
@@ -8,20 +8,35 @@ import {
 } from '@ant-design/icons';
 import "~/assets/style/User/HomePage.scss";
 import { attribute, lawer } from "~/dataUI";
-import { banner, avatar, lawers } from '~/assets/images/index';
+import { banner, avatar } from '~/assets/images/index';
 import { Link } from "react-router-dom";
 import Title from "antd/es/typography/Title";
 import TextArea from "antd/es/input/TextArea";
-import Message from "~/components/Message";
-import { useState } from "react";
-import { quoteService } from "~/services";
+import { quoteService, typeServiceService } from "~/services";
 import Meta from "antd/es/card/Meta";
-
+import { useEffect } from "react";
+import { useState } from "react";
 const { Text } = Typography;
+
 function HomePage() {
     const [form] = Form.useForm();
     const [api, contextHolder] = notification.useNotification();
     const [messageApi, contextHolderMess] = message.useMessage();
+    const [type, setType] = useState([]);
+    
+    
+    useEffect(() => {
+        const getTypes = async () => {
+            setType((await typeServiceService.get()).data)
+        } 
+        getTypes()
+    }, [])
+    const arrTypeService =  type.map((value) => {
+        return ({
+            value: value._id,
+            label: value.ten_linh_vuc
+        })
+    })
 
     const onFinish = async (values) => {
         const data = {
@@ -30,6 +45,7 @@ function HomePage() {
                 sdt: values.sdt,
                 email: values.email
             },
+            linh_vuc: values.typeService,
             van_de: values.description,
             status: 0
         }
@@ -112,6 +128,12 @@ function HomePage() {
                         <Input />
                     </Form.Item>
 
+                    <Form.Item
+                        label="Lĩnh vực"
+                        name="typeService"
+                    >
+                        <Select options={arrTypeService} />
+                    </Form.Item>
 
                     <Form.Item
                         label="Vấn đề của bạn"
