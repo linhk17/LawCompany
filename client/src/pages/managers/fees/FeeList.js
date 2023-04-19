@@ -1,10 +1,11 @@
-import { Tag, Tooltip } from "antd";
+import { Tag } from "antd";
+import moment from "moment";
 import { useEffect } from "react";
 import { useState } from "react";
 import { TableComponent } from "~/components";
-import { taskService } from "~/services";
+import { feeService } from "~/services";
 import { useToken } from "~/store";
-const statusText = ['Đã giao', 'Hoàn thành', 'Tạm ngưng']
+const statusText = ['Đang chờ xử lý', 'Đã duyệt', 'Đã kết toán', 'Đã từ chối']
 const columns = [
     {
         title: 'STT',
@@ -13,24 +14,24 @@ const columns = [
         width: 60
     },
     {
-        title: 'Tên công việc',
-        dataIndex: 'nameTask',
-        key: 'nameTask',
+        title: 'Mô tả',
+        dataIndex: 'mo_ta',
+        key: 'mo_ta',
     },
     {
-        title: 'Phụ trách',
+        title: 'Đơn giá',
+        dataIndex: 'don_gia',
+        key: 'don_gia',
+    },
+    {
+        title: 'Ngày lập',
+        dataIndex: 'ngay_lap',
+        key: 'ngay_lap',
+    },
+    {
+        title: 'Nhân viên',
         dataIndex: 'staff',
         key: 'staff',
-    },
-    {
-        title: 'Ngày giao',
-        dataIndex: 'dateStart',
-        key: 'dateStart',
-    },
-    {
-        title: 'Hạn chót',
-        dataIndex: 'dateEnd',
-        key: 'dateEnd',
     },
     {
         title: 'Tiến độ công việc',
@@ -39,46 +40,47 @@ const columns = [
         ellipsis: {
             showTitle: false,
         },
-            render: (status) => (
-                <Tag
-                    color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : 'success'}
-                >
-                    {statusText[status]}
-                </Tag>
-            ),
+        render: (status) => (
+            <Tag
+                color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : status === 2 ? 'success' : 'error'}
+            >
+                {statusText[status]}
+            </Tag>
+        ),
     }
-    
+
 ]
 function FeeList() {
-    const {token} = useToken()
-    const [matters, setMatters] = useState([]);
-    const [task, setTask] = useState([]);
-    console.log(token._id);
+
+    const { token } = useToken();
+    const [fee, setFees] = useState([]);
+
     useEffect(() => {
-      const getTask = async() => {
-        setTask((await taskService.finByStaff({
-            id: token._id
-        })).data)
-      }
-      getTask()
+        const getFees = async () => {
+            token.account.quyen === 1 || token.bo_phan.id === 'KT'
+                ? setFees((await feeService.get()).data)
+                : setFees((await feeService.findByIdAccess({ id: token._id })).data)
+        }
+        getFees()
     }, [])
-    console.log(task);
-    const data = task.length > 0 ? task.map((value, index) => {
+
+    const data = fee.length > 0 ? fee.map((value, index) => {
         return {
             _id: value._id,
             index: index + 1,
-            nameTask: value.ten_cong_viec,
-            staff: value.nguoi_phu_trach.ho_ten,
-            dateStart: value.ngay_giao,
-            dateEnd: value.han_chot_cong_viec,
+            mo_ta: value.mo_ta,
+            don_gia: value.don_gia,
+            ngay_lap: moment(value.ngay_lap).format('DD-MM-YYYY LT'),
+            staff: value.nhan_vien.ho_ten,
             status: value.status
         }
     }) : null
-    return ( 
+
+    return (
         <>
-        <TableComponent columns={columns} data={data}/>
+            <TableComponent columns={columns} data={data} />
         </>
-     );
+    );
 }
 
 export default FeeList;

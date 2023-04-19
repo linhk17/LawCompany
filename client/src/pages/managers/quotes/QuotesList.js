@@ -28,11 +28,6 @@ const columns = [
         key: 'email',
     },
     {
-        title: 'Lĩnh vực',
-        dataIndex: 'type',
-        key: 'type',
-    },
-    {
         title: 'Thời gian lập phiếu',
         dataIndex: 'date',
         key: 'date',
@@ -51,7 +46,7 @@ const columns = [
     },
 ];
 
-function QuotesList() {
+function QuotesManager() {
 
     const [state, dispatch] = useStore();
     const arrQuotes = [];
@@ -69,7 +64,6 @@ function QuotesList() {
                 customer: value.khach_hang.ho_ten,
                 sdt: value.khach_hang.sdt,
                 email: value.khach_hang.email,
-                type: value.linh_vuc.ten_linh_vuc,
                 date: value.ngay_gui_phieu ? 
                 moment(value.ngay_gui_phieu).format('YYYY-MM-DD LTS')  : 
                 moment(value.ngay_gui_phieu).format('YYYY-MM-DD LTS'),
@@ -86,4 +80,4 @@ function QuotesList() {
     );
 }
 
-export default QuotesList;
+export default QuotesManager;

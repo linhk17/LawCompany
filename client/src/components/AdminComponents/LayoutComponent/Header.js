@@ -1,4 +1,4 @@
-import { Col, Menu, Row, Breadcrumb, Button } from "antd";
+import { Col, Menu, Row } from "antd";
 import {
   UserOutlined,
   BellFilled,
@@ -9,15 +9,14 @@ import {
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
-import "~/assets/style/Admin/Header.scss"
-import Search from "antd/es/transfer/search";
+import "~/assets/style/Admin/Header.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useToken } from "~/store";
+const url = ['', 'admin', 'staff']
 
 function HeaderAdmin() {
   const [current, setCurrent] = useState('mail');
   const { token } = useToken();
-  let navigate = useNavigate();
   let url = 'admin'
   if(token.chuc_vu.id == 'LS02')
     url = 'staff'
@@ -27,45 +26,58 @@ function HeaderAdmin() {
     url = 'ke-toan'
   const items = [
     {
-      icon: <Link to={`/${url}`}>
-        <FontAwesomeIcon icon={faHouse} />
-      </Link>,
-      key: 'title',
+      icon:  <Link to={`/${url}`}>
+      <FontAwesomeIcon icon={faHouse} />
+    </Link>,
+      key: 'dashboard',
     },
     {
-      label: <Link to={`/${url}`}>
-        {
-          url == 'tu-van-vien' ? 'Quản lý công việc' : 'Quản lý vụ việc'
-        }
+      label: <Link to={`/${url}/matters/all`}>
+        Vụ việc
       </Link>,
       key: 'customer-service',
     },
     {
-      label: <Link to={`/${url}/calendar`}>
-        Quản lý lịch hẹn
+      label: <Link to={`/${url}/tasks/all`}>
+        Công việc
       </Link>,
-      key: 'dashboard',
+      key: 'task',
     },
     {
-      label: 'Search',
-      key: 'search',
+      label: <Link to={`/${url}/calendar`}>
+        Lịch hẹn
+      </Link>,
+      key: 'calendar',
     },
     {
-      label: 'Matters',
-      key: 'matters',
+      label: <Link to={`/${url}/quote`}>
+        Báo giá
+      </Link>,
+      key: 'quote',
+    },
+    {
+      label: <Link to={`/${url}/staff`}>
+        Nhân viên
+      </Link>,
+      key: 'staff',
+    },
+    {
+      label: <Link to={`/${url}/customer`}>
+        Khách hàng
+      </Link>,
+      key: 'customer',
+    },
+    {
+      label: <Link to={`/${url}/fee`}>
+       Kế toán
+      </Link>,
+      key: 'fee',
     },
   ];
-  const itemTVV = [
-
-  ]
   const onClick = (e) => {
     setCurrent(e.key);
   };
   const items1 = [
-    {
-      key: 'notification',
-      icon: <BellFilled />
-    },
     {
       label: token.email,
       icon: <MailOutlined />,
@@ -90,7 +102,12 @@ function HeaderAdmin() {
           icon: <SettingOutlined />
         },
         {
-          label: <button onClick={() => {
+          label: <button
+          style={{
+            border: 0,
+            backgroundColor: 'transparent'
+          }}
+          onClick={() => {
             sessionStorage.removeItem('token')
             window.location.href = '/login'
           }}>Đăng xuất</button>,
@@ -106,13 +123,14 @@ function HeaderAdmin() {
   return (
     <>
       <Row className="header-admin">
-        <Col md={{ span: 10}}>
+        <Col md={{ span: 16, push: 1}}>
           <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={items} />
         </Col>
-        <Col md={{ span: 14}}>
+        <Col md={{ span: 8 }}>
           <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={items1} />
         </Col>
       </Row>
+
     </>
   );
 }

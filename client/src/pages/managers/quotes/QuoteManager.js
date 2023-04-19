@@ -1,23 +1,17 @@
-import { Avatar, Button, Col, Divider, Progress, Row, Segmented, Space, } from "antd";
+import { Avatar, Button, Col, Divider, Row, Space, } from "antd";
 import {
     ReconciliationFilled,
-    CreditCardFilled,
     UsbFilled,
     CalendarFilled,
 } from '@ant-design/icons';
 import Title from "antd/es/typography/Title";
 import CardMatter from "../../../components/AdminComponents/Card/CardMatter";
-import { Link, useNavigate } from "react-router-dom";
-import { useToken } from "~/store";
-import { Chart } from "../matters/Chart";
 import  { DoughnutChart } from "../Chart/Doughnut";
 const styleCol = {
     textAlign: 'center'
 }
-const url = ['', 'admin', 'staff']
+
 function QuoteManager() {
-    const { token } = useToken()
-    let navigate = useNavigate();
     return (
         <>
 
@@ -89,10 +83,10 @@ function QuoteManager() {
 
                 </Col>
                 <Col md={{ span: 12, push: 2 }} xs={{ span: 24 }}>
-                    <Chart title="Vụ việc tính phí trong năm" data={[10, 15, 18, 30, 32, 39, 45, 69, 54, 23, 12, 36]} />
+                <DoughnutChart title="Lĩnh vực được quan tâm" data={[10, 15, 18, 30, 32]} />
                     <Divider />
                     <DoughnutChart title="Lĩnh vực được quan tâm" data={[10, 15, 18, 30, 32]} />
-                  
+
                 </Col>
             </Row>
         </>

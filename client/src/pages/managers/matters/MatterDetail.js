@@ -1,54 +1,17 @@
-import { Avatar, Badge, Button, Card, Col, Descriptions, Divider, List, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
+import { Avatar, Badge, Button, Card, Col, Descriptions, Divider, List, Modal, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { matterService, stepService, taskService, userService } from "~/services";
+import { feeService, matterService, stepService, taskService, userService } from "~/services";
 import { actions, useStore, useToken } from "~/store";
 import { avatar } from "~/assets/images";
 import moment from "moment";
 import FormAddFile from "~/components/AdminComponents/Form/FormAddFile";
-const statusText = ['Đã trình', 'Đã duyệt']
-const item = [
-    {
-        title: 'Đang thực hiện'
-    },
-    {
-        title: 'Hoàn thành'
-    },
-    {
-        title: 'Đã hủy'
-    },
-]
-const columnsTask = [
-    {
-        title: 'Tên công việc',
-        dataIndex: 'ten_cong_viec',
-    },
-    {
-        title: 'Phân công cho',
-        dataIndex: 'nguoi_phu_trach',
-    },
-    {
-        title: 'Ngày giao',
-        dataIndex: 'ngay_giao',
-    },
-    {
-        title: 'Hạn chót',
-        dataIndex: 'han_chot_cong_viec',
-    },
-    {
-        title: 'Trạng thái',
-        dataIndex: 'status',
-        render: (status) => (
-            <Tag
-                color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : 'success'}
-            >
-                {statusText[status]}
-            </Tag>
-        ),
-    }
-];
+const url = ['', 'admin', 'staff'];
+const statusTask = ['Đã giao', 'Đã hoàn thành', 'Tạm ngưng'];
+const statusFee = ['Đã trình', 'Đã duyệt', 'Đã kết toán', 'Đã huỷ'];
+
 const columnsStep = [
     {
         title: 'Tên quy trình',
@@ -72,6 +35,7 @@ const columnsStep = [
         dataIndex: 'price',
     },
 ];
+
 const columnsFees = [
     {
         title: 'Ngày lập',
@@ -81,12 +45,12 @@ const columnsFees = [
     {
         title: 'Mô tả',
         dataIndex: 'mo_ta',
-        width: 350
+        width: 400
     },
     {
         title: 'Nhân viên',
         dataIndex: 'staff',
-        width: 250
+        width: 300
     },
     {
         title: 'Tổng',
@@ -98,14 +62,72 @@ const columnsFees = [
         dataIndex: 'status',
         render: (status) => (
             <Tag
-                color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : 'success'}
+                color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : status === 2 ? 'success' : 'error'}
             >
-                {statusText[status]}
+                {statusFee[status]}
             </Tag>
         ),
     },
+    {
+        title: '',
+        dataIndex: '',
+        width: 130,
+        render: (_, record) => (
+            <p
+                onClick={() => detail(record)}
+                style={{
+                    color: "#1677ff",
+                    cursor: 'pointer'
+                }}
+            >
+                Xem chi tiết</p>
+        )
+    },
 ];
-const url = ['', 'admin', 'staff']
+const detail = (data) => Modal.info({
+    title: 'Chi tiết hoá đơn',
+    width: 700,
+    content: (
+        <>
+            <Descriptions
+                style={{ marginTop: 10 }}
+                column={{
+                    lg: 4,
+                    md: 4,
+                    sm: 2,
+                }}
+            >
+                <Descriptions.Item span={2} label="Mô tả">{data.mo_ta}</Descriptions.Item>
+                <Descriptions.Item span={2} label="Đơn giá">{data.don_gia}</Descriptions.Item>
+                <Descriptions.Item span={2} label="Mã số hoá đơn">{data.idHD}</Descriptions.Item>
+                <Descriptions.Item span={2} label="Ngày lập hoá đơn">{data.ngay_lap}</Descriptions.Item>
+                <Descriptions.Item span={4} label="Trạng thái"> <Badge status=
+                    {data.status === 0 ? 'warning'
+                        : data.status === 1 ? 'processing'
+                            : data.status === 2 ? 'success' : 'error'}
+                    text={statusFee[data.status]} /></Descriptions.Item>
+            </Descriptions>
+            <Divider />
+            <Descriptions
+                style={{ marginTop: 10 }}
+                column={{
+                    lg: 4,
+                    md: 4,
+                    sm: 2,
+                }}
+                title="Thông tin người lập"
+            >
+                <Descriptions.Item span={2} label="Họ tên">{data.staff}</Descriptions.Item>
+                <Descriptions.Item span={2} label="Số điện thoại">{data.sdt}</Descriptions.Item>
+                <Descriptions.Item span={4} label="Email">{data.email}</Descriptions.Item>
+                <Descriptions.Item span={4} label="Ngân hàng">{data.nameBank}</Descriptions.Item>
+                <Descriptions.Item span={2} label="Tên tài khoản">{data.nameCreditCard}</Descriptions.Item>
+                <Descriptions.Item span={2} label="Số tài khoản">{data.numberCreditCard}</Descriptions.Item>
+            </Descriptions>
+        </>
+    ),
+    onOk() { },
+});
 
 function MatterDetail() {
 
@@ -123,12 +145,16 @@ function MatterDetail() {
             dispatch(actions.setMatter(result))
         }
         const getTask = async () => {
-            const result = (await taskService.findByMatter({id: id})).data
-            console.log(result);
+            const result = (await taskService.findByMatter({ id: id })).data
             dispatch(actions.setTasks(result))
+        }
+        const getFee = async () => {
+            const result = (await feeService.findByMatter({ id: id })).data
+            dispatch(actions.setFees(result))
         }
         getMatter()
         getTask()
+        getFee()
     }, [id, dispatch])
     useEffect(() => {
         const getAccess = async () => {
@@ -138,12 +164,12 @@ function MatterDetail() {
         }
         dispatch(actions.setFiles(state.matter.tai_lieu))
         dispatch(actions.setSteps(state.matter.phi_co_dinh))
-        dispatch(actions.setFees(state.fees))
         getAccess();
     }, [state.matter])
     useEffect(() => {
         const dataTask = state.tasks ? state.tasks.map((value) => {
             return ({
+                _id: value._id,
                 key: value.key,
                 ten_cong_viec: value.ten_cong_viec,
                 nguoi_phu_trach: value.nguoi_phu_trach.ho_ten,
@@ -167,10 +193,18 @@ function MatterDetail() {
         const dataFee = state.fees ? state.fees.map((value) => {
             return ({
                 key: value.key,
-                ngay_lap: value.ngay_lap,
+                ngay_lap: moment(value.ngay_lap).format('DD-MM-YYYY LT'),
                 mo_ta: value.mo_ta,
-                staff: value.nhan_vien,
-                don_gia: `${value.don_gia}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'
+                staff: value.nhan_vien.ho_ten,
+                sdt: value.nhan_vien.account.sdt,
+                email: value.nhan_vien.email,
+                bo_phan: value.nhan_vien.bo_phan.ten_bo_phan,
+                don_gia: `${value.don_gia}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ',
+                status: value.status,
+                idHD: value.so_hoa_don,
+                nameBank: value.tai_khoan.ngan_hang,
+                nameCreditCard: value.tai_khoan.chu_tai_khoan,
+                numberCreditCard: value.tai_khoan.so_tai_khoan
             })
         }) : []
         setDataTask(dataTask);
@@ -178,14 +212,53 @@ function MatterDetail() {
         setDataFee(dataFee);
     }, [state.tasks, state.steps, state.fees])
 
+    const columnsTask = [
+        {
+            title: 'Tên công việc',
+            dataIndex: 'ten_cong_viec',
+        },
+        {
+            title: 'Phân công cho',
+            dataIndex: 'nguoi_phu_trach',
+        },
+        {
+            title: 'Ngày giao',
+            dataIndex: 'ngay_giao',
+        },
+        {
+            title: 'Hạn chót',
+            dataIndex: 'han_chot_cong_viec',
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            render: (status) => (
+                <Tag
+                    color={status === 0 ? 'volcano' : status === 1 ? 'success' : 'warning'}
+                >
+                    {statusTask[status]}
+                </Tag>
+            ),
+        },
+        {
+            title: '',
+            dataIndex: '',
+            width: 130,
+            render: (_, record) => (
+                <Link to={`/${url[token.account.quyen]}/task/${record._id}`}>
+                Xem chi tiết
+                </Link>
+            )
+        },
+    ];
     return (
         <>
             {state.matter._id ?
                 <Card
                     title={
-                        state.matter.status === 0 ? <Badge status="processing" text="Đang thực hiện" />
-                                : state.matter.status === 1 ? <Badge status="success" text="Hoàn thành" />
-                                    : <Badge status="warning" text="Tạm ngưng" />
+                        state.matter.status == 0 ? <Badge status="processing" text="Đang thực hiện" />
+                            : state.matter.status == 1 ? <Badge status="success" text="Hoàn thành" />
+                                : <Badge status="warning" text="Tạm ngưng" />
                     }
                     extra={
                         <Space split={<Divider type="vertical" />}>
@@ -322,13 +395,12 @@ function MatterDetail() {
                         }
                     ]} />
                     {
-                        state.matter.status !== 1 ?  
-                        <Link to={`/${url[token.account.quyen]}/matter/edit/${id}`}>
-                        <Button type="primary" className="btn-primary">Chỉnh sửa</Button>
-                        </Link>
-                        : <></>
+                        state.matter.status != 1 ?
+                            <Link to={`/${url[token.account.quyen]}/matter/edit/${id}`}>
+                                <Button type="primary" className="btn-primary">Chỉnh sửa</Button>
+                            </Link>
+                            : <></>
                     }
-                   
                 </Card>
                 : null
             }

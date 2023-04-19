@@ -1,35 +1,39 @@
 import { Button, Form, Modal, Popconfirm, Select, Table, DatePicker, Space, Divider, Input, Tag } from "antd";
-import { useLayoutEffect, useState } from "react";
+import { DeleteOutlined, FormOutlined } from '@ant-design/icons';
+import { useState } from "react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import Title from "antd/es/typography/Title";
-import { actions, useStore } from "~/store";
+import { useStore, useToken } from "~/store";
 import { taskService, userService } from "~/services";
 import { useEffect } from "react";
 import moment from "moment";
+import { Link } from "react-router-dom";
 
 dayjs.extend(customParseFormat);
 const dateFormat = 'DD-MM-YYYY hh:mm A';
-const statusText = ['Đã giao', 'Đã duyệt']
-
+const statusText = ['Đã giao', 'Đã hoàn thành', 'Tạm ngưng']
+const url = ['', 'admin', 'staff'];
 function FormAddTask() {
 
     const [state, dispatch] = useStore()
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false);
     const [dataSource, setDataSource] = useState([]);
+    const [edit, setEdit] = useState();
     const [staff, setStaff] = useState([]);
     const [task, setTask] = useState([]);
-    const [edit, setEdit] = useState()
+    const {token} = useToken()
     let data = []
+
     useEffect(() => {
         const getTask = async () => {
             setTask((await taskService.findByMatter({ id: state.matter._id })).data)
         }
-        getTask();
         const getStaff = async () => {
             setStaff((await userService.getByMatter(state.matter.truy_cap.nhan_vien)).data)
         }
+        getTask();
         getStaff();
     }, [edit])
     useEffect(() => {
@@ -46,46 +50,45 @@ function FormAddTask() {
                 }
             })
         }
-        setDataSource(data)
+        setDataSource(data);
     }, [task])
+
     const arrStaff = staff.map((value) => {
         return ({
             value: value._id,
             label: value.ho_ten
         })
     })
-    const handleEdit = async (value, id, key) => {
+    const handleDelete = async (key) => {
+        (await taskService.delete(key));
+        const newData = dataSource.filter((item) => item._id !== key);
+        setDataSource(newData);
+    };
+    const handleEdit = async (id, data, key) => {
         try {
-            let result = (await taskService.update(id, value)).data
+            let result = (await taskService.update(id, data)).data;
             const index = dataSource.findIndex((item) => key === item.key);
-            const item = dataSource[index];
             dataSource.splice(index, 1, {
                 ...result,
                 key: key,
                 ngay_giao: moment(result.ngay_giao).format('DD-MM-YYYY LTS'),
                 nguoi_phu_trach: result.nguoi_phu_trach.ho_ten,
                 han_chot_cong_viec: moment(result.han_chot_cong_viec).format('DD-MM-YYYY LTS')
-
             });
             setDataSource([...dataSource]);
-            setEdit(null)
-            form.resetFields()
-            setOpen(false)
-        } catch (err) {
+            setEdit(null);
+            setOpen(false);
+        }
+        catch (err) {
             console.log(err);
         }
     }
-    const handleDelete = (key) => {
-        const newData = dataSource.filter((item) => item._id !== key);
-        setDataSource(newData);
-    };
     const handleAdd = async (values) => {
-        setOpen(false);
         try {
             let result = (await taskService.create(values)).data;
-            const taskNew = (await taskService.getById(result.insertedId)).data
-            setTask([...task, taskNew])
-            form.resetFields() 
+            const taskNew = (await taskService.getById(result.insertedId)).data;
+            setTask([...task, taskNew]);
+            setOpen(false);
         }
         catch (err) {
             console.log(err);
@@ -101,8 +104,7 @@ function FormAddTask() {
             status: 0
         }
         form.resetFields();
-        edit ? handleEdit(newVal, edit._id, edit.key) :
-            handleAdd(newVal)
+        edit ? handleEdit(edit._id, newVal, edit.key) : handleAdd(newVal)
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -129,7 +131,7 @@ function FormAddTask() {
             dataIndex: 'status',
             render: (status) => (
                 <Tag
-                    color={status === 0 ? 'volcano' : 'success'}
+                    color={status === 0 ? 'volcano' : status===1 ? 'success' : 'warning'}
                 >
                     {statusText[status]}
                 </Tag>
@@ -137,25 +139,27 @@ function FormAddTask() {
         },
         {
             title: 'Thao tác',
-
             dataIndex: 'operation',
             render: (_, record) => (
                 <Space split={<Divider type="vertical" />}>
                     <Button onClick={() => {
-                        setEdit({
-                            ...task[record.key],
-                            key: record.key
-                        }
-                        );
-                        console.log(edit);
+                        setEdit({...task[record.key], key: record.key})
                         setOpen(true)
-                    }
-
-                    }>Edit</Button>
+                    }}><FormOutlined /></Button>
                     <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
-                        <Button>Delete</Button>
+                        <Button><DeleteOutlined /></Button>
                     </Popconfirm>
                 </Space>)
+        },
+        {
+            title: '',
+            dataIndex: '',
+            width: 130,
+            render: (_, record) => (
+                <Link to={`/${url[token.account.quyen]}/task/${record._id}`}>
+                Xem chi tiết
+                </Link>
+            )
         },
     ];
 
@@ -198,21 +202,24 @@ function FormAddTask() {
                     onFinish={onSubmit}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
-                    fields={edit ? [
-                        {
-                            name: ['nguoi_phu_trach'],
-                            value: edit.nguoi_phu_trach._id,
-                            label: edit.nguoi_phu_trach.ho_ten
-                        },
-                        {
-                            name: ['ten_cong_viec'],
-                            value: edit.ten_cong_viec
-                        },
-                        {
-                            name: ['han_chot_cong_viec'],
-                            value: dayjs(edit.han_chot_cong_viec)
-                        }
-                    ] : null}
+                    fields={
+                        edit ? [
+                            {
+                                name: ["ten_cong_viec"],
+                                value: edit.ten_cong_viec,
+                            },
+                            {
+                                name: ["nguoi_phu_trach"],
+                                value: edit.nguoi_phu_trach._id,
+                                label: edit.nguoi_phu_trach.ho_ten,
+                            },
+                            {
+                                name: ["han_chot_cong_viec"],
+                                value: dayjs(edit.han_chot_cong_viec),
+
+                            }
+                        ] : null
+                    }
                 >
                     <Form.Item
                         label="Phân công cho"
@@ -224,7 +231,7 @@ function FormAddTask() {
                             },
                         ]}
                     >
-                        <Select options={arrStaff} />
+                        <Select options={arrStaff}  />
                     </Form.Item>
                     <Form.Item
                         label="Tên công việc"
@@ -242,7 +249,7 @@ function FormAddTask() {
                         label="Hạn chót"
                         name="han_chot_cong_viec"
                     >
-                        <DatePicker showTime />
+                        <DatePicker showTime format={dateFormat} />
                     </Form.Item>
                     <Form.Item
                         wrapperCol={{

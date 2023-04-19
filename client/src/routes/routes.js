@@ -11,31 +11,34 @@ import MatterAdd from "~/pages/managers/matters/MatterAdd"
 import StaffManager from "~/pages/managers/users/StaffManager"
 import StaffEdit from "~/pages/managers/users/StaffCrud/StaffEdit"
 import StaffAdd from "~/pages/managers/users/StaffCrud/StaffAdd"
-import QuotesManager from "~/pages/managers/quotes/QuoteManager"
+import QuotesManager from "~/pages/managers/quotes/QuotesManager"
 import QuotesAdd from "~/pages/managers/quotes/QuotesAdd"
 import HomePage from "~/pages/User/HomePage"
-import LayoutUser from "~/layouts/UserLayout"
-import LoginPage from "~/pages/Auth/Login"
-import CalendarManager from "~/pages/managers/calendars/CalendarManager"
+import UserLayout from "~/layouts/UserLayout/UserLayout"
 import QuoteDetail from "~/pages/managers/quotes/QuoteDetail"
 import QuoteEdit from "~/pages/managers/quotes/QuoteEdit"
+import CalendarManager from "~/pages/managers/calendars/CalendarManager"
 import MatterList from "~/pages/managers/matters/MatterList"
-import MatterEdit from "~/pages/managers/matters/MatterEdit"
 import MatterDetail from "~/pages/managers/matters/MatterDetail"
+import MatterEdit from "~/pages/managers/matters/MatterEdit"
+import LoginPage from "~/pages/auth/LoginPage"
+import FeeManager from "~/pages/managers/fees/FeeManager"
 import TaskManager from "~/pages/managers/tasks/TaskManager"
 import TaskList from "~/pages/managers/tasks/TaskList"
-import FeeManager from "~/pages/managers/fees/FeeManager"
 import FeeList from "~/pages/managers/fees/FeeList"
-import QuotesList from "~/pages/managers/quotes/QuotesList"
+import FeeDetail from "~/pages/managers/fees/FeeDetail"
+import TaskDetail from "~/pages/managers/tasks/TaskDetail"
+import MatterManager from "~/pages/managers/matters/MatterManager"
+import TaskAdd from "~/pages/managers/tasks/TaskAdd"
 
 const publicRoutes = [
-    {path: config.routes.user.home, component: HomePage,  layout: LayoutUser},
-    {path: config.routes.login, component: LoginPage,  layout: LayoutUser},
+    { path: config.routes.login, component: LoginPage, layout: UserLayout },
+    { path: config.routes.user.home, component: HomePage, layout: UserLayout },
 ]
 
 const privateRoutes = [
     // Dashboard
-    { path: config.routes.admin.dashboard, component: Dashboard, layout: Layout },
+    { path: config.routes.admin.dashboard, component: MatterManager, layout: LayoutAdmin },
     // Customer
     { path: config.routes.admin.customerManager, component: CustomerManager, layout: LayoutAdmin },
     { path: config.routes.admin.customerDetail, component: CustomerDetail, layout: LayoutAdmin },
@@ -48,13 +51,16 @@ const privateRoutes = [
     { path: config.routes.admin.staffAdd, component: StaffAdd, layout: LayoutAdmin },
     // Matter
     { path: config.routes.admin.matterManager, component: Matter, layout: LayoutAdmin },
-    { path: config.routes.admin.matetrAdd, component: MatterAdd, layout: LayoutAdmin },
-    { path: config.routes.admin.matetrList, component: MatterList, layout: LayoutAdmin },
-    { path: config.routes.admin.matetrEdit, component: MatterEdit, layout: LayoutAdmin },
+    { path: config.routes.admin.matterAdd, component: MatterAdd, layout: LayoutAdmin },
+    { path: config.routes.admin.matterList, component: MatterList, layout: LayoutAdmin },
     { path: config.routes.admin.matterDetail, component: MatterDetail, layout: LayoutAdmin },
+    { path: config.routes.admin.matterEdit, component: MatterEdit, layout: LayoutAdmin },
+     // Task
+     { path: config.routes.admin.taskList, component: TaskList, layout: LayoutAdmin },
+     { path: config.routes.admin.taskDetail, component: TaskDetail, layout: LayoutAdmin },
+     { path: config.routes.admin.taskAdd, component: TaskAdd, layout: LayoutAdmin },
     //Quotes
     { path: config.routes.admin.quotesManager, component: QuotesManager, layout: LayoutAdmin },
-    { path: config.routes.admin.quoteList, component: QuotesList, layout: LayoutAdmin },
     { path: config.routes.admin.quotesAdd, component: QuotesAdd, layout: LayoutAdmin },
     { path: config.routes.admin.quoteDetail, component: QuoteDetail, layout: LayoutAdmin },
     { path: config.routes.admin.quoteEdit, component: QuoteEdit, layout: LayoutAdmin },
@@ -62,23 +68,31 @@ const privateRoutes = [
     { path: config.routes.admin.calendarManager, component: CalendarManager, layout: LayoutAdmin },
     //Fee
     { path: config.routes.admin.feeManager, component: FeeManager, layout: LayoutAdmin },
-
+    { path: config.routes.admin.feeList, component: FeeList, layout: LayoutAdmin },
+    { path: config.routes.admin.feeDetail, component: FeeDetail, layout: LayoutAdmin },
 ]
 const staffRouter = [
-    {path: config.routes.staff.matetrList, component: MatterList, layout: LayoutAdmin},
-    {path: config.routes.staff.matterManager, component: Matter, layout: LayoutAdmin},
-    {path: config.routes.staff.matterDetail, component: MatterDetail, layout: LayoutAdmin},
-    {path: config.routes.staff.matetrEdit, component: MatterEdit, layout: LayoutAdmin},
+    // Matter
+    { path: config.routes.staff.matterList, component: MatterList, layout: LayoutAdmin },
+    { path: config.routes.staff.matterManager, component: Matter, layout: LayoutAdmin },
+    { path: config.routes.staff.matterDetail, component: MatterDetail, layout: LayoutAdmin },
+    { path: config.routes.staff.matterEdit, component: MatterEdit, layout: LayoutAdmin },
+    // Task
+    { path: config.routes.staff.taskList, component: TaskList, layout: LayoutAdmin },
+    // Calendar
     { path: config.routes.staff.calendarManager, component: CalendarManager, layout: LayoutAdmin },
 
 ]
 const TuVanVienRouter = [
-    {path: config.routes.tvv.taskManager, component: TaskManager, layout: LayoutAdmin},
-    {path: config.routes.tvv.taskList, component: TaskList, layout: LayoutAdmin},
+    { path: config.routes.tvv.taskManager, component: TaskManager, layout: LayoutAdmin },
+    { path: config.routes.tvv.taskList, component: TaskList, layout: LayoutAdmin },
     { path: config.routes.tvv.quotesManager, component: QuotesManager, layout: LayoutAdmin },
 ]
 const KeToanRouter = [
-    {path: config.routes.keToan.feeManager, component: FeeManager, layout: LayoutAdmin},
-    {path: config.routes.keToan.feeList, component: FeeList, layout: LayoutAdmin},
+    { path: config.routes.keToan.feeManager, component: FeeManager, layout: LayoutAdmin },
+    { path: config.routes.keToan.feeList, component: FeeList, layout: LayoutAdmin },
+    { path: config.routes.keToan.feeDetail, component: FeeDetail, layout: LayoutAdmin },
+
 ]
+
 export { privateRoutes, publicRoutes, staffRouter, TuVanVienRouter, KeToanRouter }

@@ -1,31 +1,27 @@
-import { Button, Form, Modal, Popconfirm, Select, Table, 
-    Space, Divider, InputNumber, Input, Row, Col, Upload, Tag } from "antd";
+import { Button, Form, Modal, Popconfirm, Select, Table, Divider, InputNumber, Input, Row, Col, Tag, Descriptions } from "antd";
 import { useEffect, useState } from "react";
-import {
-    PlusOutlined
-} from '@ant-design/icons';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import Title from "antd/es/typography/Title";
-import moment from "moment";
 import { useStore, useToken } from "~/store";
 import axios from "axios";
 import { Option } from "antd/es/mentions";
 import { feeService } from "~/services";
-import UploadImg from "../UploadImg";
-import AvatarChanger from "../UploadImg";
-
+import { DeleteOutlined } from '@ant-design/icons';
+import moment from "moment";
 dayjs.extend(customParseFormat);
-const statusText = ['Đã trình', 'Đã duyệt', 'Đã kết toán']
-function FormAddFee({ props }) {
+const statusText = ['Đã trình', 'Đã duyệt', 'Đã kết toán', 'Đã huỷ'];
 
+function FormAddFee() {
     const [form] = Form.useForm();
-    const { token } = useToken()
+    const { token } = useToken();
     const [state, dispatch] = useStore();
     const [dataSource, setDataSource] = useState([]);
-    const [fee, setFee] = useState([])
+    const [fee, setFee] = useState([]);
     const [bank, setBank] = useState([]);
     const [open, setOpen] = useState(false);
+    let data = [];
+
     useEffect(() => {
         axios('https://api.vietqr.io/v2/banks')
             .then(rs => {
@@ -39,27 +35,32 @@ function FormAddFee({ props }) {
         }
         getChiPhiPhatSinh()
     }, [])
-
     useEffect(() => {
-        fee.map((value, index) => {
-            setDataSource([
-                ...dataSource,
-                {
+        if (fee.length > 0) {
+            data = fee.map((value, index) => {
+                return {
                     key: index,
                     _id: value._id,
-                    ngay_lap: value.ngay_lap,
+                    ngay_lap: moment(value.ngay_lap).format('DD-MM-YYYY LTS'),
                     mo_ta: value.mo_ta,
+                    idHD: value.so_hoa_don,
                     staff: value.nhan_vien.ho_ten,
                     status: value.status,
-                    don_gia: `${value.don_gia}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'
+                    don_gia: `${value.don_gia}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ',
+                    nameBank: value.tai_khoan.ngan_hang,
+                    nameCreditCard: value.tai_khoan.chu_tai_khoan,
+                    numberCreditCard: value.tai_khoan.so_tai_khoan
                 }
-            ])
-        })
-
+            })
+        }
+        setDataSource(data);
     }, [fee])
+
     const handleDelete = async (value) => {
         try {
-            let rs = (await feeService.delete(value)).data
+            (await feeService.delete(value));
+            const newData = dataSource.filter((item) => item._id !== value);
+            setDataSource(newData);
         } catch (err) {
             console.log(err);
         }
@@ -67,6 +68,9 @@ function FormAddFee({ props }) {
     const handleAdd = async (values) => {
         try {
             let result = (await feeService.create(values)).data;
+            const feeNew = (await feeService.getById(result.insertedId)).data;
+            setFee([...fee, feeNew]);
+            setOpen(false);
         }
         catch (err) {
             console.log(err);
@@ -74,7 +78,7 @@ function FormAddFee({ props }) {
     }
     const onFinish = (values) => {
         const newVal = {
-            ngay_lap: moment(new Date()).format('DD-MM-YYYY LTS'),
+            ngay_lap: new Date(),
             mo_ta: values.mo_ta,
             don_gia: values.don_gia,
             so_hoa_don: values.idHD,
@@ -87,10 +91,8 @@ function FormAddFee({ props }) {
                 so_tai_khoan: values.numberCreditCard
             }
         }
-        console.log(values);
         form.resetFields();
-        handleAdd(newVal)
-        // edit ? handleUpdate(newVal, edit.key) : 
+        handleAdd(newVal);
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -104,24 +106,24 @@ function FormAddFee({ props }) {
         {
             title: 'Mô tả',
             dataIndex: 'mo_ta',
-            width: 200
+            width: 400
         },
         {
             title: 'Nhân viên',
             dataIndex: 'staff',
-            width: 200
+            width: 300
         },
         {
             title: 'Tổng',
             dataIndex: 'don_gia',
-            width: 150
+            width: 200
         },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
             render: (status) => (
                 <Tag
-                    color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : 'success'}
+                    color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : status === 2 ? 'success' : 'error'}
                 >
                     {statusText[status]}
                 </Tag>
@@ -130,14 +132,55 @@ function FormAddFee({ props }) {
         {
             title: 'Thao tác',
             dataIndex: 'operation',
+            width: 100,
             render: (_, record) => (
-                <Space split={<Divider type="vertical" />}>
-                    <Popconfirm title="Sure to delete?">
-                        <Button onClick={() => handleDelete(record._id)}>Delete</Button>
+                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
+                        <Button><DeleteOutlined /></Button>
                     </Popconfirm>
-                </Space>)
+            )
+        },
+        {
+            title: '',
+            dataIndex: '',
+            width: 130,
+            render: (_, record) => (
+                <p 
+                onClick={() => detail(record)}
+                style={{
+                    color: "#1677ff",
+                    cursor: 'pointer'
+                }}
+                >
+                    Xem chi tiết</p>
+            )
         },
     ];
+    const detail = (data) => Modal.info({
+        title: 'Chi tiết hoá đơn',
+        content: (
+            <>
+                <Descriptions
+                    column={{
+                        lg: 4,
+                        md: 4,
+                        sm: 2,
+                    }}
+                    title={detail.loai_lich}
+                >
+                    <Descriptions.Item span={4} label="Mô tả">{data.mo_ta}</Descriptions.Item>
+                    <Descriptions.Item span={4} label="Đơn giá">{data.don_gia}</Descriptions.Item>
+                    <Descriptions.Item span={4} label="Mã số hoá đơn">{data.idHD}</Descriptions.Item>
+                    <Descriptions.Item span={4} label="Ngày lập hoá đơn">{data.ngay_lap}</Descriptions.Item>
+                    <Descriptions.Item span={4} label="Trạng thái">{statusText[data.status]}</Descriptions.Item>
+                    <Descriptions.Item span={4} label="Ngân hàng">{data.nameBank}</Descriptions.Item>
+                    <Descriptions.Item span={4} label="Tên tài khoản">{data.nameCreditCard}</Descriptions.Item>
+                    <Descriptions.Item span={4} label="Số tài khoản">{data.numberCreditCard}</Descriptions.Item>
+                </Descriptions>
+                <Divider />
+            </>
+        ),
+        onOk() { },
+    })
 
     return (
         <>
@@ -170,10 +213,11 @@ function FormAddFee({ props }) {
                         maxWidth: 1000,
                     }}
                     form={form}
-                    // onFinish={onFinish}
+                    onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
-                    fields={[
+                    fields={
+                        state.matter._id ? [
                         {
                             name: ['matter'],
                             value: state.matter.ten_vu_viec
@@ -186,8 +230,7 @@ function FormAddFee({ props }) {
                             name: ['customer'],
                             value: state.matter.khach_hang.ho_ten
                         }
-                    ]
-                    }
+                    ] : null}
                 >
                     <Row>
                         <Col span={24} pull={4}>
@@ -253,7 +296,6 @@ function FormAddFee({ props }) {
                     </Row>
                     <Divider />
                     <Row>
-
                         <Col span={10} push={2}>
                             <Form.Item>
                                 <Title level={5}>Tài khoản bồi hoàn</Title>
@@ -295,14 +337,6 @@ function FormAddFee({ props }) {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={10} push={4}>
-                            <Form.Item>
-                                <Title level={5}>Hình ảnh hóa đơn (nếu có)</Title>
-                            </Form.Item>
-                            <Form.Item>
-                             <AvatarChanger/>
-                            </Form.Item>
-                        </Col>
                     </Row>
                     <Divider />
                     <Form.Item
@@ -311,9 +345,9 @@ function FormAddFee({ props }) {
                             span: 6,
                         }}
                     >
-                        {/* <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit">
                             Tạo mới
-                        </Button> */}
+                        </Button>
                     </Form.Item>
                 </Form>
             </Modal>

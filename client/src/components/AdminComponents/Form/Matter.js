@@ -8,7 +8,6 @@ import { matterService, serviceService, timePayService, typePayService, typeServ
 import { useNavigate } from "react-router-dom";
 import { useStore, useToken } from "~/store";
 import FormAddFile from "./FormAddFile";
-import ErrorResult from "~/pages/Result/Error";
 
 const formItemLayout = {
     labelCol: {
@@ -34,8 +33,8 @@ const label = [
 ]
 
 function FormMatter({ props }) {
+
     const matter = { ...props }
-    const { token } = useToken();
     const [state, dispatch] = useStore();
     const arrCustomer = [];
     const arrStaff = [];
@@ -51,6 +50,7 @@ function FormMatter({ props }) {
     const [type, setType] = useState(
         matter._id ? matter.linh_vuc._id : null
     );
+    const {token} = useToken();
     let navigate = useNavigate();
 
     useEffect(() => {
@@ -172,12 +172,11 @@ function FormMatter({ props }) {
                 nhan_vien: values.staffAccess
             },
             status: 0,
+            tai_lieu: matter._id ? state.files : null,
             cong_viec: matter._id ? state.tasks : null,
             phi_co_dinh: matter._id ? state.steps : null,
             chi_phi_phat_sinh: matter._id ? state.fees : null
         }
-
-        console.log(newData);
         matter._id ? handleUpdate(newData) :
             handleAdd(newData)
     }
@@ -234,15 +233,17 @@ function FormMatter({ props }) {
                         value: arrCustomerAccess
                     },
                 ] : null}
-
             >
-                <Form.Item style={{float: 'right'}}>
-                    <Button type="primary" className="btn btn-dark-blue" htmlType="submit">Lưu thông tin</Button>
-                </Form.Item>
-                <Divider />
+                  <Form.Item
+                        wrapperCol={{
+                            offset: 20,
+                        }}
+                    >
+                        <Button type="primary" htmlType="submit" className="btn-primary">Lưu thông tin</Button>
+                    </Form.Item>
                 <Row>
+                  
                     <Col span={12} pull={2}>
-
                         <Form.Item
                             label="Tên vụ việc"
                             name="ten_vu_viec"
@@ -293,9 +294,9 @@ function FormMatter({ props }) {
                             name="khach_hang"
                         >
                             <Select
+                                disabled={token.account.quyen != 1}
                                 showSearch
                                 allowClear
-                                disabled={token.account.quyen != 1}
                                 style={{
                                     width: '100%',
                                 }}
@@ -305,18 +306,18 @@ function FormMatter({ props }) {
                         <Form.Item
                             label="Luật sư phụ trách"
                             name="luat_su"
-
                         >
                             <Select
+                                disabled={token.account.quyen != 1}
                                 showSearch
                                 allowClear
-                                disabled={token.account.quyen != 1}
                                 style={{
                                     width: '100%',
                                 }}
                                 options={arrStaff}
                             />
                         </Form.Item>
+
                     </Col>
                 </Row>
                 <Divider />
@@ -431,7 +432,6 @@ function FormMatter({ props }) {
                     }
                 ]} />
             </Form>
-           
         </>
     );
 }
