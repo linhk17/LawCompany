@@ -11,17 +11,17 @@ import MatterAdd from "~/pages/managers/matters/MatterAdd"
 import StaffManager from "~/pages/managers/users/StaffManager"
 import StaffEdit from "~/pages/managers/users/StaffCrud/StaffEdit"
 import StaffAdd from "~/pages/managers/users/StaffCrud/StaffAdd"
-import QuotesManager from "~/pages/managers/quotes/QuotesManager"
+import QuotesManager from "~/pages/managers/quotes/QuoteManager"
 import QuotesAdd from "~/pages/managers/quotes/QuotesAdd"
 import HomePage from "~/pages/User/HomePage"
-import UserLayout from "~/layouts/UserLayout/UserLayout"
+import UserLayout from "~/layouts/UserLayout"
 import QuoteDetail from "~/pages/managers/quotes/QuoteDetail"
 import QuoteEdit from "~/pages/managers/quotes/QuoteEdit"
 import CalendarManager from "~/pages/managers/calendars/CalendarManager"
 import MatterList from "~/pages/managers/matters/MatterList"
 import MatterDetail from "~/pages/managers/matters/MatterDetail"
 import MatterEdit from "~/pages/managers/matters/MatterEdit"
-import LoginPage from "~/pages/auth/LoginPage"
+import LoginPage from "~/pages/Auth/Login"
 import FeeManager from "~/pages/managers/fees/FeeManager"
 import TaskManager from "~/pages/managers/tasks/TaskManager"
 import TaskList from "~/pages/managers/tasks/TaskList"
@@ -29,7 +29,7 @@ import FeeList from "~/pages/managers/fees/FeeList"
 import FeeDetail from "~/pages/managers/fees/FeeDetail"
 import TaskDetail from "~/pages/managers/tasks/TaskDetail"
 import MatterManager from "~/pages/managers/matters/MatterManager"
-import TaskAdd from "~/pages/managers/tasks/TaskAdd"
+import QuoteList from "~/pages/managers/quotes/QuotesList"
 
 const publicRoutes = [
     { path: config.routes.login, component: LoginPage, layout: UserLayout },
@@ -38,7 +38,7 @@ const publicRoutes = [
 
 const privateRoutes = [
     // Dashboard
-    { path: config.routes.admin.dashboard, component: MatterManager, layout: LayoutAdmin },
+    { path: config.routes.admin.dashboard, component: Dashboard, layout: Layout },
     // Customer
     { path: config.routes.admin.customerManager, component: CustomerManager, layout: LayoutAdmin },
     { path: config.routes.admin.customerDetail, component: CustomerDetail, layout: LayoutAdmin },
@@ -57,10 +57,11 @@ const privateRoutes = [
     { path: config.routes.admin.matterEdit, component: MatterEdit, layout: LayoutAdmin },
      // Task
      { path: config.routes.admin.taskList, component: TaskList, layout: LayoutAdmin },
+     { path: config.routes.admin.taskManager, component: TaskManager, layout: LayoutAdmin },
      { path: config.routes.admin.taskDetail, component: TaskDetail, layout: LayoutAdmin },
-     { path: config.routes.admin.taskAdd, component: TaskAdd, layout: LayoutAdmin },
     //Quotes
     { path: config.routes.admin.quotesManager, component: QuotesManager, layout: LayoutAdmin },
+    { path: config.routes.admin.quoteList, component: QuoteList, layout: LayoutAdmin },
     { path: config.routes.admin.quotesAdd, component: QuotesAdd, layout: LayoutAdmin },
     { path: config.routes.admin.quoteDetail, component: QuoteDetail, layout: LayoutAdmin },
     { path: config.routes.admin.quoteEdit, component: QuoteEdit, layout: LayoutAdmin },
@@ -73,8 +74,8 @@ const privateRoutes = [
 ]
 const staffRouter = [
     // Matter
-    { path: config.routes.staff.matterList, component: MatterList, layout: LayoutAdmin },
     { path: config.routes.staff.matterManager, component: Matter, layout: LayoutAdmin },
+    { path: config.routes.staff.matterList, component: MatterList, layout: LayoutAdmin },
     { path: config.routes.staff.matterDetail, component: MatterDetail, layout: LayoutAdmin },
     { path: config.routes.staff.matterEdit, component: MatterEdit, layout: LayoutAdmin },
     // Task

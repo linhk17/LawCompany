@@ -5,6 +5,7 @@ import { quoteService } from "~/services";
 import { Button, Card, Col, Descriptions, Divider, Row, Space, Typography } from "antd";
 import { TitleCardModal } from "~/components";
 import ModalCalendar from "./ModalCalendar";
+import { useToken } from "~/store";
 
 const { Text } = Typography;
 
@@ -19,12 +20,15 @@ const item = [
         title: 'Đã tạo lịch hẹn'
     },
 ]
+const url = ['', 'admin', 'tu-van-vien']
 
 function QuoteDetail() {
     let { id } = useParams();
     const [quote, setQuote] = useState({
         khach_hang: {},
     });
+    const {token} = useToken()
+
     useEffect(() => {
         const getQuote = async () => {
             setQuote((await quoteService.getById(id)).data)
@@ -52,7 +56,7 @@ function QuoteDetail() {
                     />}>
                 <Space size={10}>
                     {quote.status < 2 ?
-                        <Link to={`/admin/quotes/edit/${id}`}>
+                        <Link to={`/${url[token.account.quyen]}/quotes/edit/${id}`}>
                             <Button type="primary" className="btn-primary">
                                 {quote.status === 0 ? 'TẠO BÁO GIÁ' : 'CHỈNH SỬA'}
                             </Button>
@@ -87,8 +91,8 @@ function QuoteDetail() {
                                 sm: 2,
                             }}>
                             <Descriptions.Item span={2} label="Họ tên">{quote.status > 0 ? quote.nguoi_lap_phieu.ho_ten : null}</Descriptions.Item>
-                            <Descriptions.Item span={2} label="Chức vụ">{quote.status > 0 ? quote.nguoi_lap_phieu.chuc_vu : null}</Descriptions.Item>
-                            <Descriptions.Item span={2} label="Số điện thoại">{quote.status > 0 ? quote.nguoi_lap_phieu.sdt : null}</Descriptions.Item>
+                            <Descriptions.Item span={2} label="Chức vụ">{quote.status > 0 ? quote.nguoi_lap_phieu.chuc_vu.ten_chuc_vu : null}</Descriptions.Item>
+                            <Descriptions.Item span={2} label="Số điện thoại">{quote.status > 0 ? quote.nguoi_lap_phieu.account.sdt : null}</Descriptions.Item>
                             <Descriptions.Item span={2} label="Email">{quote.status > 0 ? quote.nguoi_lap_phieu.email : null}</Descriptions.Item>
                         </Descriptions>
                     </Col>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { FormQuotes, TitleCardModal } from "~/components";
 import { quoteService } from "~/services";
+import { useToken } from "~/store";
 const item = [
     {
         title: 'Yêu cầu báo giá'
@@ -15,6 +16,7 @@ const item = [
         title: 'Đã tạo lịch hẹn'
     },
 ]
+
 function QuoteEdit() {
     let { id } = useParams();
     const [quote, setQuote] = useState();
@@ -24,7 +26,6 @@ function QuoteEdit() {
         }
         getQuote();
     }, [id])
-    console.log(quote);
     return (
         <>
             <Card

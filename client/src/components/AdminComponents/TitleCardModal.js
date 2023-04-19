@@ -1,7 +1,6 @@
 import { Col, Row, Steps } from "antd";
 import Title from "antd/es/typography/Title";
 function TitleCardModal(props) {
-    // console.log({...props});
     return (
         <>
             <Row style={{padding: 20}}>

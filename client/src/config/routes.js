@@ -24,15 +24,16 @@ const routes = {
         matterDetail: '/matter/:id',
         matterEdit: '/matter/edit/:id',
         // Task
+        taskManager: '/task',
         taskList: '/tasks/:id',
         taskDetail: '/task/:id',
         taskAdd: '/task/add',
 
         // Quotes
         quotesManager: '/quote',
-        quotesAdd: '/quotes/add',
-        quoteDetail: '/quotes/:id',
-        quoteDetail: '/quotes/:id',
+        quoteList: '/quotes/:id',
+        quotesAdd: '/quote/add',
+        quoteDetail: '/quote/:id',
         quoteEdit: '/quotes/edit/:id',
 
         //Calendar

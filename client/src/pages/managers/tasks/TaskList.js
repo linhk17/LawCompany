@@ -19,7 +19,7 @@ function TaskList() {
         const getTask = async () => {
             const result = token.account.quyen === 1 ?
                 ((await taskService.get()).data)
-                : ((await taskService.finByStaff({ id: token._id })).data)
+                : ((await taskService.getByStaff({ id: token._id })).data)
             const arr = id === 'all' ? result : result.filter(item => item.status == id)
             setTask(arr)
         };

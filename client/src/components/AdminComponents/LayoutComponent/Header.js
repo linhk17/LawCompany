@@ -18,13 +18,13 @@ function HeaderAdmin() {
   const [current, setCurrent] = useState('mail');
   const { token } = useToken();
   let url = 'admin'
-  if(token.chuc_vu.id == 'LS02')
+  if(token.chuc_vu._id == 'LS02')
     url = 'staff'
-  else if(token.chuc_vu.id == 'TVV02')
+  else if(token.chuc_vu._id == 'TVV02')
     url = 'tu-van-vien'
-  else if(token.chuc_vu.id == 'KT02')
+  else if(token.chuc_vu._id == 'KT02')
     url = 'ke-toan'
-  const items = [
+  const itemsAdmin = [
     {
       icon:  <Link to={`/${url}`}>
       <FontAwesomeIcon icon={faHouse} />
@@ -32,16 +32,10 @@ function HeaderAdmin() {
       key: 'dashboard',
     },
     {
-      label: <Link to={`/${url}/matters/all`}>
+      label: <Link to={`/${url}/matter`}>
         Vụ việc
       </Link>,
       key: 'customer-service',
-    },
-    {
-      label: <Link to={`/${url}/tasks/all`}>
-        Công việc
-      </Link>,
-      key: 'task',
     },
     {
       label: <Link to={`/${url}/calendar`}>
@@ -74,13 +68,73 @@ function HeaderAdmin() {
       key: 'fee',
     },
   ];
+  const itemsLaw = [
+    {
+      icon:  <Link to={`/${url}`}>
+      <FontAwesomeIcon icon={faHouse} />
+    </Link>,
+      key: 'dashboard',
+    },
+    {
+      label: <Link to={`/${url}/matters/all`}>
+        Quản lý vụ việc
+      </Link>,
+      key: 'customer-service',
+    },
+    {
+      label: <Link to={`/${url}/calendar`}>
+        Quản lý lịch hẹn
+      </Link>,
+      key: 'calendar',
+    }
+  ];
+  const itemsTuVanVien = [
+    {
+      icon:  <Link to={`/${url}`}>
+      <FontAwesomeIcon icon={faHouse} />
+    </Link>,
+      key: 'dashboard',
+    },
+    {
+      label: <Link to={`/${url}/calendar`}>
+        Lịch hẹn
+      </Link>,
+      key: 'calendar',
+    },
+    {
+      label: <Link to={`/${url}/quote`}>
+        Báo giá
+      </Link>,
+      key: 'quote',
+    },
+  ];
+  const itemsKeToan = [
+    {
+      icon:  <Link to={`/${url}`}>
+      <FontAwesomeIcon icon={faHouse} />
+    </Link>,
+      key: 'dashboard',
+    },
+    {
+      label: <Link to={`/${url}/calendar`}>
+        Lịch hẹn
+      </Link>,
+      key: 'calendar',
+    },
+    {
+      label: <Link to={`/${url}/fee`}>
+       Kế toán
+      </Link>,
+      key: 'fee',
+    },
+  ];
   const onClick = (e) => {
     setCurrent(e.key);
   };
   const items1 = [
     {
       label: token.email,
-      icon: <MailOutlined />,
+      icon: <MailOutlined/>,
     },
     {
       label: token.chuc_vu.ten_chuc_vu,
@@ -117,16 +171,25 @@ function HeaderAdmin() {
         }
       ]
     },
-
-
   ];
   return (
     <>
       <Row className="header-admin">
-        <Col md={{ span: 16, push: 1}}>
-          <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={items} />
+        <Col md={
+          token.account.quyen == 1 ? {span: 12}
+          :  {span: 8}
+        }>
+          <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={
+            token.account.quyen == 1 ? itemsAdmin 
+            : token.chuc_vu._id == 'LS02' ? itemsLaw
+            : token.chuc_vu._id == 'TVV02' ? itemsTuVanVien
+            : itemsKeToan
+          } />
         </Col>
-        <Col md={{ span: 8 }}>
+        <Col md={
+          token.account.quyen == 1 ? {span: 12}
+          :  {span: 14}
+        }>
           <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={items1} />
         </Col>
       </Row>
