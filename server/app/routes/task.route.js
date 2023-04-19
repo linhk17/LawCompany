@@ -11,11 +11,19 @@ router.route("/:id")
     .get(task.findById)
     .put(task.update)
     .delete(task.delete);
-    
+
 router.route("/findByStaff")
     .post(task.findByStaff)
 
 router.route("/findByMatter")
     .post(task.findByMatter)
 
+router.route("/findByStatus")
+    .post(task.findByStatus);
+    
+router.route("/findByDate")
+    .post(task.findByDate);
+
+router.route("/setStatusPause")
+    .patch(task.setStatusPause);
 module.exports = router;

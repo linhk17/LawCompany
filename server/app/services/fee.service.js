@@ -44,7 +44,10 @@ class Fee {
         });
         return result.toArray();
     }
-
+    async findByStatus(statusP) {
+        const result = await this.Fee.find({ status: Number(statusP) });
+        return result.toArray();
+    }
     async create(payload){
         const fee = this.extractConactData(payload);
         const newVal = {

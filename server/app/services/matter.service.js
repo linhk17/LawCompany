@@ -8,6 +8,7 @@ class Matter {
         this.User = client.db().collection("user");
         this.TypePay = client.db().collection("typePay");
         this.TimePay = client.db().collection("timePay");
+        this.Task = client.db().collection("task")
     }
 
     // define csdl

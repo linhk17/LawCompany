@@ -18,7 +18,7 @@ exports.findAll = async (req, res, next) => {
 exports.findByStatus = async (req, res, next) => {
     try{
         const matter = new Matter(MongoDB.client);
-        const document = await matter.findByStatus(req.body);
+        const document = await matter.findByStatus(req.params.id);
         return res.send(document);
     }
     catch(error){

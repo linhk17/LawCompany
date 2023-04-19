@@ -29,6 +29,10 @@ class ChucVu {
         const result = await this.ChucVu.findOne({ _id: id });
         return result;
     }
+    async findByBoPhan(payload){
+        const result = await this.ChucVu.find({ 'bo_phan.id': payload.bo_phan });
+        return result.toArray();
+    }
 
     async create(payload){
         const chucVu = this.extractConactData(payload);

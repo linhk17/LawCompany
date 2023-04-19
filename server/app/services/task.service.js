@@ -34,6 +34,10 @@ class Task {
         });
         return result.toArray();
     }
+    async findByStatus(statusP) {
+        const result = await this.Task.find({ status: Number(statusP) });
+        return result.toArray();
+    }
     async findById(id){
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null
@@ -48,6 +52,22 @@ class Task {
         console.log(result);
         return result.toArray();
     }
+    async setStatusPause(payload) {
+        const rs = await this.Task.updateMany(
+            {status: 0, vu_viec: payload.matter},
+            {$set: {status: 2}}
+        )
+        return rs;
+    }
+
+    async findByDate() {
+        const date = new Date('2023-04-17T14:52:23.800Z')
+        const result = await this.Task.find({
+            han_chot_cong_viec: '2023-04-17T14:52:23.800Z'
+        });
+        return result.toArray();
+    }
+
     async create(payload){
         const task = this.extractConactData(payload);
         const newVal = {

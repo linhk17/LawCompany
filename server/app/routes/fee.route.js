@@ -13,5 +13,6 @@ router.route("/:id")
     .delete(fee.delete);
 router.route("/findByMatter")
     .post(fee.findByMatter)
-
+router.route("/findByStatus")
+    .post(fee.findByStatus);
 module.exports = router;
