@@ -11,6 +11,7 @@ class Task {
         const task = {
             ten_cong_viec: payload.ten_cong_viec,
             han_chot_cong_viec: payload.han_chot_cong_viec,
+            nguoi_giao: payload.nguoi_giao,
             status: payload.status,
             vu_viec: payload.vu_viec,
             ngay_giao: payload.ngay_giao,

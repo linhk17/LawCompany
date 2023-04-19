@@ -4,6 +4,7 @@ class QuoteForm {
     constructor(client){
         this.QuoteForm = client.db().collection("quoteForm");
         this.TypeService = client.db().collection("typeService");
+        this.Service = client.db().collection("service");
     }
 
     // define csdl
@@ -44,12 +45,15 @@ class QuoteForm {
     }
 
     async create(payload){
-        const quoteForm = this.extractConactData(payload);
-        const newVal = {
-            ...quoteForm,
-            linh_vuc: await this.TypeService.findOne({ _id: payload.linh_vuc })
+        const linh_vuc = await this.TypeService.findOne({ _id: payload.linh_vuc });
+        const dich_vu = await this.Service.findOne({ _id: new ObjectId(payload.dich_vu) });
+        const quote = {
+            ...payload,
+            linh_vuc: linh_vuc,
+            dich_vu: dich_vu,
         }
-        const result = await this.QuoteForm.insertOne(newVal);
+        const quoteForm = this.extractConactData(quote);
+        const result = await this.QuoteForm.insertOne(quoteForm);
         return result;
     }
 
@@ -57,7 +61,14 @@ class QuoteForm {
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null
         };
-        const quoteForm = this.extractConactData(payload);
+        const linh_vuc = await this.TypeService.findOne({ _id: payload.linh_vuc });
+        const dich_vu = await this.Service.findOne({ _id: new ObjectId(payload.dich_vu) });
+        const quote = {
+            ...payload,
+            linh_vuc: linh_vuc,
+            dich_vu: dich_vu,
+        }
+        const quoteForm = this.extractConactData(quote);
         const result = await this.QuoteForm.findOneAndUpdate(
             id,
             { $set: quoteForm },
