@@ -1,5 +1,5 @@
 const { ObjectId } = require("mongodb");
-
+const nodeMailer = require('nodemailer');
 class QuoteForm {
     constructor(client){
         this.QuoteForm = client.db().collection("quoteForm");
@@ -43,7 +43,33 @@ class QuoteForm {
         const result = await this.QuoteForm.findOne(id);
         return result;
     }
+    async sendMail(payload){
 
+        const adminEmail = 'coopmart.service69@gmail.com';
+        const adminPassword = 'zkxomevbzvqlmkdy';
+        const mailHost = 'smtp.gmail.com';
+        const mailPort = 587;
+        const subject = 'Thông tin báo giá'
+        const html = `<p>${payload.dich_vu.ten_dv}</p>`
+
+        const transporter = nodeMailer.createTransport({
+          host: mailHost,
+          port: mailPort,
+          secure: false, 
+          auth: {
+            user: adminEmail,
+            pass: adminPassword
+          }
+        })
+
+        const options = {
+          from: adminEmail,
+          to: payload.khach_hang.email,
+          subject: subject,
+          html: html
+        }
+        return transporter.sendMail(options);
+    }
     async create(payload){
         const linh_vuc = await this.TypeService.findOne({ _id: payload.linh_vuc });
         const dich_vu = await this.Service.findOne({ _id: new ObjectId(payload.dich_vu) });

@@ -39,7 +39,6 @@ class User {
     async findAll(){
         const result = await this.User.find();
         // const arr = result.toArray()
-        console.log(result);
         return result.toArray();
     }
 

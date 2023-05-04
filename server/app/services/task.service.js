@@ -31,7 +31,7 @@ class Task {
 
     async findByStaff(payload){
         const result = await this.Task.find({
-            "nguoi_phu_trach._id":  new ObjectId(payload.id) 
+            "nguoi_phu_trach._id":  payload.id
         });
         return result.toArray();
     }
@@ -50,7 +50,6 @@ class Task {
         const result = await this.Task.find({
             vu_viec :  payload.id
         });
-        console.log(result);
         return result.toArray();
     }
     async setStatusPause(payload) {

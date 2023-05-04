@@ -15,7 +15,36 @@ exports.findAll = async (req, res, next) => {
         );
     }
 }
-
+exports.findByMatter = async (req, res, next) => {
+    try {
+        const bill = new Bill(MongoDB.client);
+        const documents = await bill.findByMatter(req.body);
+        return res.send(documents);
+    }
+    catch (error) {
+        return next(
+            new ApiError(500, "An error occured while find fee by id")
+        );
+    }
+};
+exports.getByMonthAndType = async (req, res, next) => {
+    try {
+        let total = 0;
+        const bill = new Bill(MongoDB.client);
+        const documents = await bill.getByMonthAndType(req.body);
+        const arr = documents.map((item) => {return item.tong_gia_tri})
+        arr.length > 0 ?
+        total = arr.reduce((tong, currentValue) => {
+            return tong + currentValue
+        }) : total = 0
+        return res.send(String(total));
+    }
+    catch (error) {
+        return next(
+            new ApiError(500, "An error occured while find fee by id")
+        );
+    }
+};
 exports.findById = async (req, res, next) => {
     try{
         const bill = new Bill(MongoDB.client);

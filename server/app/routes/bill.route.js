@@ -12,4 +12,9 @@ router.route("/:id")
     .put(bill.update)
     .delete(bill.delete);
 
+router.route("/findByMatter")
+    .post(bill.findByMatter)
+
+router.route("/getByMonthAndType")
+    .post(bill.getByMonthAndType);
 module.exports = router;

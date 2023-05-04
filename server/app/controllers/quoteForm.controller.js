@@ -67,3 +67,15 @@ exports.delete = async (req, res, next) => {
         );
     }
 }
+exports.sendMail = async (req, res, next) => {
+    try{
+        const quoteForm = new QuoteForm(MongoDB.client);
+        const document = await quoteForm.sendMail(req.body);
+        return res.send(document);
+    }
+    catch(error){
+        return next(
+            new ApiError(500, "An error occured while send mail quoteForm")
+        );
+    }
+}

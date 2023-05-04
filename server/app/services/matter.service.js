@@ -8,7 +8,8 @@ class Matter {
         this.User = client.db().collection("user");
         this.TypePay = client.db().collection("typePay");
         this.TimePay = client.db().collection("timePay");
-        this.Task = client.db().collection("task")
+        this.Task = client.db().collection("task");
+        this.Bill = client.db().collection("bill");
     }
 
     // define csdl
@@ -29,7 +30,10 @@ class Matter {
             phi_co_dinh: payload.phi_co_dinh,
             chi_phi_phat_sinh: payload.chi_phi_phat_sinh,
             lien_he: payload.lien_he,
-            status: payload.status
+            status: payload.status,
+            tong_tien: payload.tong_tien,
+            status_tt: payload.status_tt,
+            ngay_lap: payload.ngay_lap
         };
 
         Object.keys(matter).forEach(
@@ -58,8 +62,8 @@ class Matter {
     }
 
     // lay vu viec theo id truy cap
-    async findByIdAccess(payload){
-        const result = await this.Matter.find({ 'truy_cap.nhan_vien': payload.id})
+    async findByIdAccess(payload) {
+        const result = await this.Matter.find({ 'truy_cap.nhan_vien': payload.id })
         return result.toArray();
     }
 
@@ -72,12 +76,14 @@ class Matter {
         const dieu_khoan_thanh_toan = await this.TimePay.findOne({ _id: new ObjectId(payload.dieu_khoan_thanh_toan) });
         const vu_viec = {
             ...payload,
+            ngay_lap: new Date(payload.ngay_lap),
             linh_vuc: linh_vuc,
             dich_vu: dich_vu,
             luat_su: luat_su,
             khach_hang: khach_hang,
             phuong_thuc_tinh_phi: phuong_thuc_tinh_phi,
-            dieu_khoan_thanh_toan: dieu_khoan_thanh_toan
+            dieu_khoan_thanh_toan: dieu_khoan_thanh_toan,
+            status_tt: 0
         }
 
         const matter = this.extractConactData(vu_viec);
@@ -112,19 +118,39 @@ class Matter {
         );
         return result.value;
     }
-    async setStatus(id, payload){
+    async setStatus_TT(id, payload) {
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null
         };
         const matter = this.extractConactData(payload);
         const rs = await this.Matter.findOneAndUpdate(
             id,
-            {$set: matter},
+            { $set: matter },
             { returnDocument: "after" }
         );
-        return rs.value;
-
+        return rs.value
     }
+
+    async setStatus(id, payload) {
+        const id_string = id;
+        id = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null
+        };
+        const matter = this.extractConactData(payload);
+        const rs = await this.Matter.findOneAndUpdate(
+            id,
+            { $set: matter },
+            { returnDocument: "after" }
+        );
+        if(payload.status == 2){
+            const result = await this.Task.updateMany(
+                {status: 0, vu_viec: id_string},
+                {$set: {status: 2}}
+            )
+        }
+        return rs.value;
+    }
+
     async delete(id) {
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null

@@ -1,7 +1,7 @@
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
 const Fee = require("../services/fee.service")
-
+const cloudinary = require('../config/cloundinary')
 exports.findAll = async (req, res, next) => {
     let documents = [];
     try{
@@ -30,7 +30,6 @@ exports.findById = async (req, res, next) => {
 };
 exports.findByMatter = async (req, res, next) => {
     try{
-        console.log(req.body);
         const fee = new Fee(MongoDB.client);
         const documents = await fee.findByMatter(req.body);
         console.log(documents);
@@ -55,9 +54,17 @@ exports.findByStatus = async (req, res, next) => {
     }
 }
 exports.create = async (req, res, next) => {
+    let document = {}
     try{
         const fee = new Fee(MongoDB.client);
-        const document = await fee.create(req.body);
+        cloudinary.uploader.upload(req.body.hinh_anh, {
+            folder: "Fee"
+        }).then((result) => {
+            document = fee.create({
+            ...req.body,
+            hinh_anh: result.secure_url
+        });
+        })
         return res.send(document);
     }
     catch(error){
