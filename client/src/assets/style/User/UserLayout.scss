@@ -112,13 +112,13 @@
 }
 
 .ant-notification-notice {
-    height: 80vh;
+    height: 90vh;
     padding: 10px;
     .ant-notification-notice-message{
         padding: 10px 10px 0px 10px;
     }
     .ant-notification-notice-description {
-        height: 50vh;
+        height: 60vh;
         overflow-y: scroll;
         scroll-snap-type: y mandatory;
         .ant-card{

@@ -159,6 +159,10 @@ console.log(quote);
                             name: ['email'],
                             value: quote.khach_hang.email
                         },   
+                        {
+                            name: ['price'],
+                            value: donGia
+                        },
                     ] :
                     quote && quote.status > 0 ? [
                         {

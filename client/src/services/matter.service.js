@@ -17,10 +17,13 @@ class MatterService {
         return (await API.post('matter', data));
     }
     async update(id, data){
-        return (await API.put(`matter/${id}`, data));
+        return (await API.patch(`matter/${id}`, data));
     }
     async setStatus(id, data){
         return (await API.patch(`matter/setStatus/${id}`, data));
+    }
+    async setStatus_TT(id, data){
+        return (await API.patch(`matter/setStatus-tt/${id}`, data));
     }
     async delete(id){
         return (await API.delete(`matter/${id}`));

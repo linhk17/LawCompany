@@ -30,6 +30,9 @@ import FeeDetail from "~/pages/managers/fees/FeeDetail"
 import TaskDetail from "~/pages/managers/tasks/TaskDetail"
 import MatterManager from "~/pages/managers/matters/MatterManager"
 import QuoteList from "~/pages/managers/quotes/QuotesList"
+import BillList from "~/pages/managers/bills/BillList"
+import BillDetail from "~/pages/managers/bills/BillDetail"
+import BillCreate from "~/pages/managers/bills/BillCreate"
 
 const publicRoutes = [
     { path: config.routes.login, component: LoginPage, layout: UserLayout },
@@ -93,6 +96,11 @@ const KeToanRouter = [
     { path: config.routes.keToan.feeManager, component: FeeManager, layout: LayoutAdmin },
     { path: config.routes.keToan.feeList, component: FeeList, layout: LayoutAdmin },
     { path: config.routes.keToan.feeDetail, component: FeeDetail, layout: LayoutAdmin },
+    { path: config.routes.keToan.billTypeList, component: BillList, layout: LayoutAdmin },
+    { path: config.routes.keToan.billDetail, component: BillDetail, layout: LayoutAdmin },
+    { path: config.routes.keToan.billAdd, component: BillCreate, layout: LayoutAdmin },
+    { path: config.routes.keToan.matterList, component: MatterList, layout: LayoutAdmin },
+    { path: config.routes.keToan.matterDetail, component: MatterDetail, layout: LayoutAdmin },
 
 ]
 

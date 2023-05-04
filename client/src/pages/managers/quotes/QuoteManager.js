@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { quoteService } from "~/services";
 import { Filter } from "~/components";
 import { Link } from "react-router-dom";
+import { ChiLine } from "../Chart/ChiLine";
 const styleCol = {
     textAlign: 'center'
 }
@@ -62,11 +63,12 @@ function QuoteManager() {
                     </Row>
                     <Divider />
                 </Col>
-                {/* <Col md={{ span: 12, push: 2 }} xs={{ span: 24 }}>
-                    <DoughnutChart title="Lĩnh vực được quan tâm" data={[10, 15, 18, 30, 32]} />
+                <Col md={{ span: 12, push: 2 }} xs={{ span: 24 }}>
+                    {/* <DoughnutChart title="Lĩnh vực được quan tâm" data={[10, 15, 18, 30, 32]} /> */}
+                    <ChiLine/>
                     <Divider />
-                    <DoughnutChart title="Lĩnh vực được quan tâm" data={[10, 15, 18, 30, 32]} />
-                </Col> */}
+                    {/* <DoughnutChart title="Lĩnh vực được quan tâm" data={[10, 15, 18, 30, 32]} /> */}
+                </Col>
             </Row>
         </>
     );

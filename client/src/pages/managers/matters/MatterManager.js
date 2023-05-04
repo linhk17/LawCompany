@@ -55,7 +55,7 @@ function MatterManager() {
         }
         getMatters();
     }, [])
-
+console.log(state.matters);
     const handleTotalMatter = (value) => {
         const arr = state.matters.filter(vl => vl.status === value)
         return arr.length
@@ -70,7 +70,7 @@ function MatterManager() {
         <>
             <Space wrap direction="horizontal">
                 { token.account.quyen === 1 ?
-                    <Link to="matter/add">
+                    <Link to="add">
                         <Button className="btn-cyan" icon={<ReconciliationFilled />} block>Vụ việc mới</Button>
                     </Link>
                     : null

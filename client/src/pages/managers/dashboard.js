@@ -44,6 +44,12 @@ const data = [
         title: "Lịch hẹn",
         color: `var(--cyan)`,
         link: "calendar"
+    },
+    {
+        icon: faUser,
+        title: "Chi phí",
+        color: `var(--magenta)`,
+        link: "fee"
     }
     
 ];

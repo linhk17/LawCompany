@@ -13,4 +13,5 @@ export { default as stepService } from './step.service';
 export { default as periodService } from './period.service';
 export { default as feeService } from './fee.service';
 export { default as taskService } from './task.service';
+export { default as billService } from './bill.service';
 

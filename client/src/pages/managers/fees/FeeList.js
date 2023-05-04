@@ -1,16 +1,16 @@
-import { Tag } from "antd";
+import { Table, Tag } from "antd";
 import moment from "moment";
 import { useEffect } from "react";
 import { useState } from "react";
-import { TableComponent } from "~/components";
+import { useNavigate, useParams } from "react-router-dom";
 import { feeService } from "~/services";
 import { useToken } from "~/store";
-const statusText = ['Đang chờ xử lý', 'Đã duyệt', 'Đã kết toán', 'Đã từ chối']
+const statusText = ['Đã trình', 'Đã duyệt', 'Đã từ chối']
 const columns = [
     {
         title: 'STT',
-        dataIndex: 'index',
-        key: 'index',
+        dataIndex: 'key',
+        key: 'key',
         width: 60
     },
     {
@@ -42,7 +42,7 @@ const columns = [
         },
         render: (status) => (
             <Tag
-                color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : status === 2 ? 'success' : 'error'}
+                color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : 'error'}
             >
                 {statusText[status]}
             </Tag>
@@ -50,26 +50,30 @@ const columns = [
     }
 
 ]
+const url = ['', 'admin', 'ke-toan']
+
 function FeeList() {
 
+    let { id } = useParams();
     const { token } = useToken();
     const [fee, setFees] = useState([]);
-
+    let navigate = useNavigate()
+    
     useEffect(() => {
         const getFees = async () => {
-            token.account.quyen === 1 || token.bo_phan.id === 'KT'
-                ? setFees((await feeService.get()).data)
-                : setFees((await feeService.findByIdAccess({ id: token._id })).data)
+            const result = (await feeService.get()).data;
+            const arr = id === 'all' ? result : result.filter(item => item.status == id)
+            setFees(arr);
         }
         getFees()
-    }, [])
+    }, [id])
 
     const data = fee.length > 0 ? fee.map((value, index) => {
         return {
             _id: value._id,
-            index: index + 1,
+            key: index + 1,
             mo_ta: value.mo_ta,
-            don_gia: value.don_gia,
+            don_gia: `${value.don_gia}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ',
             ngay_lap: moment(value.ngay_lap).format('DD-MM-YYYY LT'),
             staff: value.nhan_vien.ho_ten,
             status: value.status
@@ -78,7 +82,14 @@ function FeeList() {
 
     return (
         <>
-            <TableComponent columns={columns} data={data} />
+            <Table columns={columns} dataSource={data}
+                onRow={(record, rowIndex) => {
+                    return {
+                        onClick: (event) => {
+                            navigate(`/${url[token.account.quyen]}/fee/${record._id}`)
+                        }, // click row
+                    }
+                }} />
         </>
     );
 }

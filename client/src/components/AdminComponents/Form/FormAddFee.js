@@ -9,6 +9,7 @@ import { Option } from "antd/es/mentions";
 import { feeService } from "~/services";
 import { DeleteOutlined } from '@ant-design/icons';
 import moment from "moment";
+import {UploadImg, fileSelected} from "../UploadImg";
 dayjs.extend(customParseFormat);
 const statusText = ['Đã trình', 'Đã duyệt', 'Đã kết toán', 'Đã huỷ'];
 
@@ -68,6 +69,7 @@ function FormAddFee() {
     const handleAdd = async (values) => {
         try {
             let result = (await feeService.create(values)).data;
+            console.log(result);
             const feeNew = (await feeService.getById(result.insertedId)).data;
             setFee([...fee, feeNew]);
             setOpen(false);
@@ -89,9 +91,10 @@ function FormAddFee() {
                 ngan_hang: values.nameBank,
                 chu_tai_khoan: values.nameCreditCard,
                 so_tai_khoan: values.numberCreditCard
-            }
+            },
+            hinh_anh: fileSelected
         }
-        form.resetFields();
+        // form.resetFields();
         handleAdd(newVal);
     };
     const onFinishFailed = (errorInfo) => {
@@ -336,6 +339,12 @@ function FormAddFee() {
                                     }}
                                 />
                             </Form.Item>
+                        </Col>
+                        <Col span={10} push={4}>
+                        <Form.Item>
+                                <Title level={5}>Hình ảnh minh chứng</Title>
+                            </Form.Item>
+                            <UploadImg/>
                         </Col>
                     </Row>
                     <Divider />

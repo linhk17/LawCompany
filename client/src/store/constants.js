@@ -12,5 +12,7 @@ export const SET_USER = 'set_user'
 export const SET_STEP = 'set_step'
 export const SET_STEPS = 'set_steps'
 export const SET_FEES = 'set_fees'
+export const SET_BILLS = 'set_bills'
+export const SET_BILL = 'set_bill'
 
 

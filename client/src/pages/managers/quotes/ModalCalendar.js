@@ -84,6 +84,8 @@ function ModalCalendar(props) {
         try {
             const result = await timeAppointmentService.create(data);
             await quoteService.update(quote._id, {
+                linh_vuc: quote.linh_vuc._id,
+                dich_vu: quote.dich_vu._id,
                 status: 2
             })
             navigate(`/admin/calendar`);

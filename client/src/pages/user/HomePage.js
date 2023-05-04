@@ -16,6 +16,8 @@ import { quoteService, typeServiceService } from "~/services";
 import Meta from "antd/es/card/Meta";
 import { useEffect } from "react";
 import { useState } from "react";
+import axios from "axios";
+import { Option } from "antd/es/mentions";
 const { Text } = Typography;
 
 function HomePage() {
@@ -23,21 +25,32 @@ function HomePage() {
     const [api, contextHolder] = notification.useNotification();
     const [messageApi, contextHolderMess] = message.useMessage();
     const [type, setType] = useState([]);
-    
-    
+    const [provinces, setProvinces] = useState();
+    const [districts, setDistricts] = useState([]);
+    const [selectProvince, setSelectProvince] = useState({
+        code: 1
+    })
     useEffect(() => {
         const getTypes = async () => {
             setType((await typeServiceService.get()).data)
-        } 
+        }
         getTypes()
     }, [])
-    const arrTypeService =  type.map((value) => {
+    useEffect(() => {
+        axios('https://provinces.open-api.vn/api/')
+            .then(rs => {
+                setProvinces(rs.data);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }, [])
+    const arrTypeService = type.map((value) => {
         return ({
             value: value._id,
             label: value.ten_linh_vuc
         })
     })
-
     const onFinish = async (values) => {
         const data = {
             khach_hang: {
@@ -55,14 +68,14 @@ function HomePage() {
             messageApi.open({
                 type: 'success',
                 content: "Gửi yêu cầu báo giá thành công",
-              })
+            })
 
         }
         catch (error) {
             messageApi.open({
                 type: 'error',
                 content: 'Gửi yêu cầu thất bại',
-              });
+            });
             console.log(error);
         }
         form.resetFields();
@@ -70,6 +83,9 @@ function HomePage() {
     const openNotification = (placement) => {
         api.open({
             duration: false,
+            style: {
+                width: 500
+            },
             message: <Space size={20}>
                 <Avatar size='large' src={avatar.tuvan} />
                 <Space direction="vertical" size={1}> <Title level={5}>LawKim kính chào Quý khách </Title>
@@ -102,31 +118,66 @@ function HomePage() {
                     >
                         <Input />
                     </Form.Item>
-
+                    <Row>
+                        <Col span={12}>
+                            <Form.Item
+                                label="Email"
+                                name="email"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your email!',
+                                    },
+                                ]}
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+                        <Col span={11} push={1}>
+                            <Form.Item
+                                label="Số điện thoại"
+                                name="sdt"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your number phone!',
+                                    },
+                                ]}
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+                    </Row>
                     <Form.Item
-                        label="Số điện thoại"
-                        name="sdt"
-                        rules={[
+                        label="Tỉnh/Thành phố"
+                        name="province">
+                        <Select onChange={(value) => {}}>
                             {
-                                required: true,
-                                message: 'Please input your number phone!',
-                            },
-                        ]}
-                    >
-                        <Input />
+                                provinces.map((value) => {
+                                    return <Option value={JSON.stringify(value)}>
+                                        {value.name}
+                                    </Option>
+                                })
+                            }
+                        </Select>
                     </Form.Item>
-                    <Form.Item
-                        label="Email"
-                        name="email"
-                        rules={[
+                    {
+                        console.log(districts)
+                    }
+                    {/* <Form.Item
+                        label="Quận/Huyện"
+                        name="ward">
+                        <Select>
                             {
-                                required: true,
-                                message: 'Please input your email!',
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
+                                districts.length > 0 ?
+                                districts.map((value) => {
+                                    return <Option value={JSON.stringify(value)}>
+                                        {value.name}
+                                    </Option>
+                                }) : null
+                            }
+                        </Select>
+                    </Form.Item> */}
 
                     <Form.Item
                         label="Lĩnh vực"
@@ -134,7 +185,6 @@ function HomePage() {
                     >
                         <Select options={arrTypeService} />
                     </Form.Item>
-
                     <Form.Item
                         label="Vấn đề của bạn"
                         name="description"

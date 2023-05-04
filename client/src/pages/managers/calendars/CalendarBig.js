@@ -2,15 +2,16 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { timeAppointmentService, userService } from '~/services';
+import { quoteService, timeAppointmentService, userService } from '~/services';
 import { Col, Descriptions, Divider, Modal, Row, Tabs } from 'antd';
 import { Link } from 'react-router-dom';
 import { useToken } from '~/store';
 const localizer = momentLocalizer(moment)
-
+const url = ['', 'admin', 'tu-van-']
 function CalendarBig({ dateSelect, onReceive, select }) {
     const [events, setEvents] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [quote, setQuote] = useState();
     const {token} = useToken()
     const [event, setEvent] = useState({
         thoi_gian: {},
@@ -33,8 +34,13 @@ function CalendarBig({ dateSelect, onReceive, select }) {
         const getStaff = async () => {
             setStaff((await userService.getById(event.nhan_vien)).data)
         }
+        const getQuote = async() => {
+            setQuote((await quoteService.getById(event.phieu_bao_gia)).data)
+        }
+        getQuote()
         getStaff()
     }, [event])
+    console.log(quote);
     const arrEvent = events.map((value) => {
         return ({
             id: value._id,
@@ -125,12 +131,28 @@ function CalendarBig({ dateSelect, onReceive, select }) {
                         }}>
                         <Descriptions.Item span={2} label="Mô tả">{event.mo_ta}</Descriptions.Item>
                         <Descriptions.Item span={2} label="Ghi chú">{event.ghi_chu}</Descriptions.Item>
-                        <Descriptions.Item span={2}>
-                            <Link to={`/admin/quotes/${event.phieu_bao_gia}`}>
-                                Xem chi tiết vấn đề
-                            </Link>
-                        </Descriptions.Item>
+                     
                     </Descriptions>
+                    <Divider/>
+                    {event.phieu_bao_gia && quote ? 
+                      <Tabs type='card'
+                      items={[
+                        {
+                            key: 0,
+                            label: "Vấn đề cụ thể",
+                            children:  <Descriptions
+                            column={{
+                                lg: 4,
+                                md: 4,
+                                sm: 2,
+                            }}>
+                            <Descriptions.Item span={2} label="Lĩnh vực">{quote.linh_vuc.ten_linh_vuc}</Descriptions.Item>
+                            <Descriptions.Item span={2} label="Dịch vụ">{quote.dich_vu.ten_dv}</Descriptions.Item>
+                            <Descriptions.Item span={2} label="Vấn đề giải quyết">{quote.van_de}</Descriptions.Item>
+                            <Descriptions.Item span={2} label="Giá dự kiến">{quote.tong_gia_du_kien}</Descriptions.Item>
+                            </Descriptions>
+                        }
+                      ]}/> : <></>}  
                 </Modal> : null}
 
         </>

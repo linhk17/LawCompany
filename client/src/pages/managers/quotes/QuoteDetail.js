@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { quoteService } from "~/services";
-import { Button, Card, Col, Descriptions, Divider, Row, Space, Typography } from "antd";
+import { Button, Card, Col, Descriptions, Divider, Popconfirm, Row, Space, Typography, message } from "antd";
 import { TitleCardModal } from "~/components";
 import ModalCalendar from "./ModalCalendar";
 import { useToken } from "~/store";
@@ -28,7 +28,20 @@ function QuoteDetail() {
         khach_hang: {},
     });
     const {token} = useToken()
-
+    const [openSendMail, setOpenSendMail] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
+    const success = () => {
+        messageApi.open({
+          type: 'success',
+          content: 'Cập nhật thành công',
+        });
+      };
+      const error = () => {
+        messageApi.open({
+          type: 'error',
+          content: 'Có lỗi khi xử lý',
+        });
+      };
     useEffect(() => {
         const getQuote = async () => {
             setQuote((await quoteService.getById(id)).data)
@@ -36,17 +49,27 @@ function QuoteDetail() {
         getQuote();
     }, [id])
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const showPopconfirmSendMail = () => {
+        setOpenSendMail(true);
+    };
+    const handleOk = async () => {
+        try{
+            await quoteService.sendMail({ ...quote })
+            success()
+            setOpenSendMail(false);
+        }catch(err){
+            error()
+        }
+    };
     const showModal = () => {
         setIsModalOpen(true)
     }
-    const handleOk = () => {
-        setIsModalOpen(false);
-    };
     const handleCancel = () => {
         setIsModalOpen(false);
     };
     return (
         <>
+        {contextHolder}
             <Card style={{ paddingLeft: 20 }}
                 title={
                     <TitleCardModal
@@ -67,6 +90,15 @@ function QuoteDetail() {
                             TẠO LỊCH HẸN
                         </Button>
                         : null}
+                        <Popconfirm
+                        title="Xác nhận"
+                        description="Bạn có muốn gửi báo giá này bằng email không?"
+                        open={openSendMail}
+                        onConfirm={handleOk}
+                        onCancel={handleCancel}
+                    >
+                        <Button type="primary" onClick={showPopconfirmSendMail} className="btn-primary">GỬI EMAIL</Button>
+                    </Popconfirm>
                 </Space>
                 <Divider />
                 <Row>

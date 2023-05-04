@@ -137,7 +137,7 @@ function FormMatter({ props }) {
     const handleAdd = async (data) => {
         try {
             let result = (await matterService.create(data)).data;
-            navigate(`/admin/matter`);
+            navigate(`/admin/matter/${result.insertedId}`);
         }
         catch (error) {
             console.log(error);
@@ -162,7 +162,6 @@ function FormMatter({ props }) {
         }
     }
     const onFinish = (values) => {
-
         const newData = {
             ...values,
             chiet_khau_hoa_hong: values.chiet_khau_hoa_hong
@@ -175,7 +174,8 @@ function FormMatter({ props }) {
             tai_lieu: matter._id ? state.files : null,
             cong_viec: matter._id ? state.tasks : null,
             phi_co_dinh: matter._id ? state.steps : null,
-            chi_phi_phat_sinh: matter._id ? state.fees : null
+            chi_phi_phat_sinh: matter._id ? state.fees : null,
+            ngay_lap: new Date()
         }
         matter._id ? handleUpdate(newData) :
             handleAdd(newData)
@@ -348,6 +348,19 @@ function FormMatter({ props }) {
                                         formatter={(value) => `${value}%`}
                                         parser={(value) => value.replace('%', '')}
                                     />
+                                </Form.Item>
+                                <Form.Item
+                                    name='tong_tien'
+                                    label="Tổng tiền">
+                                    <InputNumber
+                                    style={{
+                                        width: 250
+                                    }}
+                                    min={1}
+                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+                                    addonAfter="đ"
+                                />
                                 </Form.Item>
                             </Col>
                             <Col md={{ span: 12 }}>

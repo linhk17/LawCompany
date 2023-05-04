@@ -41,8 +41,8 @@ const routes = {
 
         //Fee
         feeManager: '/fee',
-        feeList: '/fees',
-        feeDetail: '/fees/:id'
+        feeList: '/fees/:id',
+        feeDetail: '/fee/:id'
     },
     staff: {
         // Matter
@@ -65,8 +65,15 @@ const routes = {
     },
     keToan: {
         feeManager: '/',
-        feeList: '/fees',
-        feeDetail: '/fees/:id'
+        feeList: '/fees/:id',
+        feeDetail: '/fee/:id',
+
+        billTypeList: '/bills/type-bill/:id',
+        billDetail: '/bill/:id',
+        billAdd: '/bill/add/:id',
+        
+        matterList: '/matters/:id',
+        matterDetail: '/matter/:id'
     }
 }
 export default routes;
