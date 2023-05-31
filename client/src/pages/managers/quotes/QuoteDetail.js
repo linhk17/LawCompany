@@ -14,6 +14,9 @@ const item = [
         title: 'Yêu cầu báo giá'
     },
     {
+        title: 'Đã tạo báo giá'
+    },
+    {
         title: 'Đã gửi báo giá'
     },
     {
@@ -23,25 +26,14 @@ const item = [
 const url = ['', 'admin', 'tu-van-vien']
 
 function QuoteDetail() {
+    const [messageApi, contextHolderMess] = message.useMessage();
+
     let { id } = useParams();
     const [quote, setQuote] = useState({
         khach_hang: {},
     });
-    const {token} = useToken()
-    const [openSendMail, setOpenSendMail] = useState(false);
-    const [messageApi, contextHolder] = message.useMessage();
-    const success = () => {
-        messageApi.open({
-          type: 'success',
-          content: 'Cập nhật thành công',
-        });
-      };
-      const error = () => {
-        messageApi.open({
-          type: 'error',
-          content: 'Có lỗi khi xử lý',
-        });
-      };
+    const { token } = useToken()
+
     useEffect(() => {
         const getQuote = async () => {
             setQuote((await quoteService.getById(id)).data)
@@ -49,27 +41,39 @@ function QuoteDetail() {
         getQuote();
     }, [id])
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true)
+    }
+    const handleCancelModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const [openSendMail, setOpenSendMail] = useState(false);
     const showPopconfirmSendMail = () => {
         setOpenSendMail(true);
     };
     const handleOk = async () => {
         try{
-            await quoteService.sendMail({ ...quote })
-            success()
-            setOpenSendMail(false);
-        }catch(err){
-            error()
+          await quoteService.sendMail({ ...quote })
+          messageApi.open({
+              type: 'success',
+              content: "Gửi email thành công",
+            })
+            setOpenSendMail(false);  
+        } catch(err) {
+            messageApi.open({
+                type: 'error',
+                content: 'Gửi email thất bại',
+            });
         }
+        
     };
-    const showModal = () => {
-        setIsModalOpen(true)
-    }
     const handleCancel = () => {
-        setIsModalOpen(false);
+        setOpenSendMail(false);
     };
     return (
         <>
-        {contextHolder}
+        {contextHolderMess}
             <Card style={{ paddingLeft: 20 }}
                 title={
                     <TitleCardModal
@@ -78,19 +82,20 @@ function QuoteDetail() {
                         current={quote ? quote.status : 0}
                     />}>
                 <Space size={10}>
-                    {quote.status < 2 ?
-                        <Link to={`/${url[token.account.quyen]}/quotes/edit/${id}`}>
+                    {quote.status < 3 && token.chuc_vu._id != 'LS02' ?
+                        <Link to={`/${url[token.account.quyen]}/quote/edit/${id}`}>
                             <Button type="primary" className="btn-primary">
                                 {quote.status === 0 ? 'TẠO BÁO GIÁ' : 'CHỈNH SỬA'}
                             </Button>
                         </Link>
                         : null}
-                    {quote.status === 1 ?
+                    {quote.status > 0 && token.chuc_vu._id != 'LS02' ?
                         <Button type="primary" className="btn-primary" onClick={showModal}>
                             TẠO LỊCH HẸN
                         </Button>
                         : null}
-                        <Popconfirm
+                        {
+                           token.chuc_vu._id != 'LS02'? <Popconfirm
                         title="Xác nhận"
                         description="Bạn có muốn gửi báo giá này bằng email không?"
                         open={openSendMail}
@@ -98,7 +103,10 @@ function QuoteDetail() {
                         onCancel={handleCancel}
                     >
                         <Button type="primary" onClick={showPopconfirmSendMail} className="btn-primary">GỬI EMAIL</Button>
-                    </Popconfirm>
+                    </Popconfirm> : <></>
+                        }
+                   
+                    
                 </Space>
                 <Divider />
                 <Row>
@@ -140,7 +148,7 @@ function QuoteDetail() {
                     <Descriptions.Item span={2} label="Điều khoản thanh toán">{quote.status > 0 ? quote.dieu_khoan_thanh_toan : null}</Descriptions.Item>
                     <Descriptions.Item span={2} label="Dịch vụ">{quote.status > 0 ? quote.dich_vu.ten_dv : null}</Descriptions.Item>
                     <Descriptions.Item span={2} label="Ghi chú">{quote.status > 0 ? quote.ghi_chu : null}</Descriptions.Item>
-                    <Descriptions.Item span={2} label="Tổng giá">{quote.status > 0 ? quote.tong_gia_du_kien : null}</Descriptions.Item>
+                    <Descriptions.Item span={2} label="Tổng giá">{quote.status > 0 ? `${quote.tong_gia_du_kien}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ' : null}</Descriptions.Item>
                 </Descriptions>
                 <Divider />
                 <Text code italic>
@@ -148,7 +156,7 @@ function QuoteDetail() {
                     Để có giá thành chính xác nhất, hãy trao đổi trực tiếp cụ thể vấn đề của bạn.
                 </Text>
             </Card>
-                <ModalCalendar quote={quote} open={isModalOpen} onCancel={handleCancel}/> 
+            <ModalCalendar quote={quote} open={isModalOpen} onCancel={handleCancelModal} />
 
         </>
     );

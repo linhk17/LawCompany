@@ -1,4 +1,4 @@
-import { Button, Form, Modal, Popconfirm, Select, Table, Divider, InputNumber, Input, Row, Col, Tag, Descriptions } from "antd";
+import { Button, Form, Modal, Popconfirm, Select, Table, Divider, InputNumber, Input, Row, Col, Tag, Descriptions, Image } from "antd";
 import { useEffect, useState } from "react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
@@ -8,8 +8,8 @@ import axios from "axios";
 import { Option } from "antd/es/mentions";
 import { feeService } from "~/services";
 import { DeleteOutlined } from '@ant-design/icons';
+import { UploadImg, fileSelected } from "../UploadImg";
 import moment from "moment";
-import {UploadImg, fileSelected} from "../UploadImg";
 dayjs.extend(customParseFormat);
 const statusText = ['Đã trình', 'Đã duyệt', 'Đã kết toán', 'Đã huỷ'];
 
@@ -50,7 +50,8 @@ function FormAddFee() {
                     don_gia: `${value.don_gia}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ',
                     nameBank: value.tai_khoan.ngan_hang,
                     nameCreditCard: value.tai_khoan.chu_tai_khoan,
-                    numberCreditCard: value.tai_khoan.so_tai_khoan
+                    numberCreditCard: value.tai_khoan.so_tai_khoan,
+                    hinh_anh: value.hinh_anh
                 }
             })
         }
@@ -60,8 +61,8 @@ function FormAddFee() {
     const handleDelete = async (value) => {
         try {
             (await feeService.delete(value));
-            const newData = dataSource.filter((item) => item._id !== value);
-            setDataSource(newData);
+            const newData = fee.filter((item) => item._id !== value);
+            setFee(newData);
         } catch (err) {
             console.log(err);
         }
@@ -69,10 +70,10 @@ function FormAddFee() {
     const handleAdd = async (values) => {
         try {
             let result = (await feeService.create(values)).data;
-            console.log(result);
             const feeNew = (await feeService.getById(result.insertedId)).data;
             setFee([...fee, feeNew]);
             setOpen(false);
+
         }
         catch (err) {
             console.log(err);
@@ -93,8 +94,9 @@ function FormAddFee() {
                 so_tai_khoan: values.numberCreditCard
             },
             hinh_anh: fileSelected
+
         }
-        // form.resetFields();
+        form.resetFields();
         handleAdd(newVal);
     };
     const onFinishFailed = (errorInfo) => {
@@ -137,9 +139,9 @@ function FormAddFee() {
             dataIndex: 'operation',
             width: 100,
             render: (_, record) => (
-                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
-                        <Button><DeleteOutlined /></Button>
-                    </Popconfirm>
+                <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
+                    <Button><DeleteOutlined /></Button>
+                </Popconfirm>
             )
         },
         {
@@ -147,12 +149,12 @@ function FormAddFee() {
             dataIndex: '',
             width: 130,
             render: (_, record) => (
-                <p 
-                onClick={() => detail(record)}
-                style={{
-                    color: "#1677ff",
-                    cursor: 'pointer'
-                }}
+                <p
+                    onClick={() => detail(record)}
+                    style={{
+                        color: "#1677ff",
+                        cursor: 'pointer'
+                    }}
                 >
                     Xem chi tiết</p>
             )
@@ -180,6 +182,7 @@ function FormAddFee() {
                     <Descriptions.Item span={4} label="Số tài khoản">{data.numberCreditCard}</Descriptions.Item>
                 </Descriptions>
                 <Divider />
+                <Image width={100} src={data.hinh_anh} />
             </>
         ),
         onOk() { },
@@ -187,17 +190,12 @@ function FormAddFee() {
 
     return (
         <>
-            <Button type="primary" onClick={() => { setOpen(true) }}
+            <Button className="btn-cyan" onClick={() => { setOpen(true) }}
             >
                 Thêm mới
             </Button>
             <Modal
-                title={
-                    <>
-                        <Title level={4}>Thêm công việc</Title>
-                        <Divider />
-                    </>
-                }
+                title="Thêm chi phí"
                 centered
                 open={open}
                 footer={null}
@@ -221,25 +219,31 @@ function FormAddFee() {
                     autoComplete="off"
                     fields={
                         state.matter._id ? [
-                        {
-                            name: ['matter'],
-                            value: state.matter.ten_vu_viec
-                        },
-                        {
-                            name: ['staff'],
-                            value: state.matter.luat_su.ho_ten
-                        },
-                        {
-                            name: ['customer'],
-                            value: state.matter.khach_hang.ho_ten
-                        }
-                    ] : null}
+                            {
+                                name: ['matter'],
+                                value: state.matter.ten_vu_viec
+                            },
+                            {
+                                name: ['staff'],
+                                value: state.matter.luat_su.ho_ten
+                            },
+                            {
+                                name: ['customer'],
+                                value: state.matter.khach_hang.ho_ten
+                            }
+                        ] : null}
                 >
                     <Row>
                         <Col span={24} pull={4}>
                             <Form.Item
                                 label="Mô tả"
                                 name="mo_ta"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập mô tả',
+                                    },
+                                ]}
                             >
                                 <Input placeholder="VD: Ăn trưa với khách hàng A" />
                             </Form.Item>
@@ -250,12 +254,18 @@ function FormAddFee() {
                             <Form.Item
                                 label="Tổng tiền"
                                 name="don_gia"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập số tiền',
+                                    },
+                                ]}
                             >
                                 <InputNumber
                                     style={{
                                         width: 250
                                     }}
-                                    min={1}
+                                    min={0}
                                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                     parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
                                     addonAfter="đ"
@@ -306,6 +316,12 @@ function FormAddFee() {
                             <Form.Item
                                 label="Ngân hàng"
                                 name="nameBank"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng chọn ngân hàng',
+                                    },
+                                ]}
                             >
                                 <Select>
                                     {bank.map((value, index) => {
@@ -322,6 +338,12 @@ function FormAddFee() {
                             <Form.Item
                                 label="Tên tài khoản"
                                 name="nameCreditCard"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập tên tài khoản',
+                                    },
+                                ]}
                             >
                                 <Input
                                     style={{
@@ -332,6 +354,12 @@ function FormAddFee() {
                             <Form.Item
                                 label="Số tài khoản"
                                 name="numberCreditCard"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập số tài khoản',
+                                    },
+                                ]}
                             >
                                 <Input
                                     style={{
@@ -341,10 +369,19 @@ function FormAddFee() {
                             </Form.Item>
                         </Col>
                         <Col span={10} push={4}>
-                        <Form.Item>
+                            <Form.Item>
                                 <Title level={5}>Hình ảnh minh chứng</Title>
                             </Form.Item>
-                            <UploadImg/>
+                            <Form.Item
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn lĩnh vực',
+                                },
+                            ]}>
+
+                            <UploadImg />
+                            </Form.Item>
                         </Col>
                     </Row>
                     <Divider />
@@ -354,8 +391,8 @@ function FormAddFee() {
                             span: 6,
                         }}
                     >
-                        <Button type="primary" htmlType="submit">
-                            Tạo mới
+                        <Button className="btn-cyan" htmlType="submit">
+                            Thêm mới
                         </Button>
                     </Form.Item>
                 </Form>

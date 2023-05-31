@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { billService, matterService } from "~/services";
 import { useToken } from "~/store";
+const url = ['', 'admin', 'ke-toan']
 
 function BillCreate() {
     const [form] = Form.useForm();
@@ -31,7 +32,7 @@ function BillCreate() {
     }, [])
     const handleAdd = async (value) => {
         const result = (await billService.create(value)).data
-        navigate(`/ke-toan/bill/${result.insertedId}`)
+        navigate(`/${url[token.account.quyen]}/bill/${result.insertedId}`)
     }
     const onFinish = (values) => {
         const newVal = {
@@ -39,15 +40,15 @@ function BillCreate() {
             vu_viec: matter._id,
             loai_hoa_don: 'KH',
             ngay_lap: new Date(),
-            tai_khoan_boi_hoan: {
-                ngan_hang: values.name_bank_bh,
-                chu_tai_khoan: values.name_card_bh,
-                so_tai_khoan: values.number_bh
+            tai_khoan_khach: {
+                ngan_hang: values.name_bank_khach,
+                chu_tai_khoan: values.name_card_khach,
+                so_tai_khoan: values.number_khach
             },
-            tai_khoan_ket_toan: {
-                ngan_hang: values.name_bank_kt,
-                chu_tai_khoan: values.name_card_kt,
-                so_tai_khoan: values.number_kt
+            tai_khoan_cong_ty: {
+                ngan_hang: values.name_bank_cty,
+                chu_tai_khoan: values.name_card_cty,
+                so_tai_khoan: values.number_cty
             },
             tong_gia_tri: values.total
         }
@@ -103,11 +104,11 @@ function BillCreate() {
                     <Row>
                         <Col span={10} push={2}>
                             <Form.Item>
-                                <Title level={5}>Tài khoản kết toán</Title>
+                                <Title level={5}>Tài khoản công ty</Title>
                             </Form.Item>
                             <Form.Item
                                 label="Ngân hàng"
-                                name="name_bank_kt"
+                                name="name_bank_cty"
                             >
                                 <Select>
                                     {bank.map((value, index) => {
@@ -123,7 +124,7 @@ function BillCreate() {
                             </Form.Item>
                             <Form.Item
                                 label="Tên tài khoản"
-                                name="name_card_kt"
+                                name="name_card_cty"
                             >
                                 <Input
                                     style={{
@@ -133,7 +134,7 @@ function BillCreate() {
                             </Form.Item>
                             <Form.Item
                                 label="Số tài khoản"
-                                name="number_kt"
+                                name="number_cty"
                             >
                                 <Input
                                     style={{
@@ -157,11 +158,11 @@ function BillCreate() {
                         </Col>
                         <Col span={10} push={2}>
                             <Form.Item>
-                                <Title level={5}>Tài khoản bút toán</Title>
+                                <Title level={5}>Tài khoản khách hàng</Title>
                             </Form.Item>
                             <Form.Item
                                 label="Ngân hàng"
-                                name="name_bank_bh"
+                                name="name_bank_khach"
                             >
                                 <Select>
                                     {bank.map((value, index) => {
@@ -177,7 +178,7 @@ function BillCreate() {
                             </Form.Item>
                             <Form.Item
                                 label="Tên tài khoản"
-                                name="name_card_bh"
+                                name="name_card_khach"
                             >
                                 <Input
                                     style={{
@@ -187,7 +188,7 @@ function BillCreate() {
                             </Form.Item>
                             <Form.Item
                                 label="Số tài khoản"
-                                name="number_bh"
+                                name="number_khach"
                             >
                                 <Input
                                     style={{

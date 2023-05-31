@@ -7,7 +7,7 @@ import "~/assets/style/Admin/HeaderBottom.scss"
 import { useToken } from '~/store';
 import { Link } from 'react-router-dom';
 function HeaderBottom() {
-    const {token} = useToken();
+    const { token } = useToken();
     const data = [
         {
             label: <Link to='/staff/'>Vụ việc</Link>,
@@ -27,41 +27,10 @@ function HeaderBottom() {
     ];
     return (
         <>
-
-            {/* <Breadcrumb
-                items={[
-                    {
-                        title: 'Home',
-                    },
-                    {
-                        title: <a href="/">Application List</a>,
-                    },
-                    {
-                        title: 'An Application',
-                    },
-                ]}
-            /> */}
             <section className='header-bottom'>
                 <Row>
                     <Col md={{ span: 13 }}>
                         <Segmented options={data} />
-                    </Col>
-                    <Col md={{push: 6}}>
-                        {/* <Segmented
-                            options={[
-                                {
-                                    label: 'Danh sách',
-                                    value: 'List',
-                                    icon: <BarsOutlined />,
-                                },
-                                {
-                                    label: 'Kanban',
-                                    value: 'Kanban',
-                                    icon: <AppstoreOutlined />,
-                                },
-                            ]}
-                        /> */}
-                     
                     </Col>
                 </Row>
 

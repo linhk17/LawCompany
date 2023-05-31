@@ -4,10 +4,10 @@ function TitleCardModal(props) {
     return (
         <>
             <Row style={{padding: 20}}>
-                <Col span={10}>
+                <Col span={8}>
                     <Title level={3}>{props.title}</Title>
                 </Col>
-                <Col span={10} push={4}>
+                <Col span={14} push={2}>
                     <Steps
                     size="small"
                     current={props.current}

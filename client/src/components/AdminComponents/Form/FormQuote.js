@@ -56,7 +56,7 @@ function FormQuotes({ quote }) {
         getTypeServices()
     }, [dispatch]);
     useEffect(() => {
-        const getService = async() => {
+        const getService = async () => {
             const dv = (await serviceService.getById(service)).data
             setServiceSelected(dv)
             setDonGia(dv.don_gia_dv)
@@ -77,7 +77,9 @@ function FormQuotes({ quote }) {
         return (
             arrTimePay.push({
                 value: value.ten,
-                label: value.ten
+                label: value.ten == 0 ? "Thanh toán ngay"
+                        : value.ten == -1 ? "Thanh toán ngay khi hoàn thành"
+                        : value.ten + " ngày"
             })
         )
     })
@@ -96,9 +98,9 @@ function FormQuotes({ quote }) {
     }
     const arrServices = state.services.map((value) => {
         return ({
-                value: value._id,
-                label: value.ten_dv
-            })
+            value: value._id,
+            label: value.ten_dv
+        })
     })
     const handleAdd = async (data) => {
         try {
@@ -111,7 +113,6 @@ function FormQuotes({ quote }) {
         }
     }
     const handleEdit = async (data) => {
-        console.log(data);
         try {
             await quoteService.update(quote._id, data);
             setisSubmit(1);
@@ -139,107 +140,106 @@ function FormQuotes({ quote }) {
         }
         quote ? handleEdit(data) : handleAdd(data)
     }
-console.log(quote);
+
     return (
         <>
             <Form
                 {...formItemLayout}
                 fields={
                     quote && quote.status == 0 ?
-                    [
-                        {
-                            name: ['ho_ten'],
-                            value: quote.khach_hang.ho_ten
-                        },
-                        {
-                            name: ['sdt'],
-                            value: quote.khach_hang.sdt
-                        },
-                        {
-                            name: ['email'],
-                            value: quote.khach_hang.email
-                        },   
-                        {
-                            name: ['price'],
-                            value: donGia
-                        },
-                    ] :
-                    quote && quote.status > 0 ? [
-                        {
-                            name: ['ho_ten'],
-                            value: quote.khach_hang.ho_ten
-                        },
-                        {
-                            name: ['sdt'],
-                            value: quote.khach_hang.sdt
-                        },
-                        {
-                            name: ['email'],
-                            value: quote.khach_hang.email
-                        },
-                        {
-                            name: ['price'],
-                            value: donGia ? donGia : quote.tong_gia_du_kien,
-                        },
-                        {
-                            name: ['typeService'],
-                            label: typeServiceSelected ? typeServiceSelected.ten_linh_vuc 
-                            : quote.linh_vuc.ten_linh_vuc,
-                            value: typeServiceSelected ? typeServiceSelected._id : quote.linh_vuc._id,
-                        },
-                        {
-                            name: ['service'],
-                            value: serviceSelected ? serviceSelected._id : quote.dich_vu._id,
-                            label: serviceSelected ? serviceSelected.ten_dv : quote.dich_vu.ten_dv,
-                        },
-                        {
-                            name: ['payTime'],
-                            value: quote.dieu_khoan_thanh_toan,
-                        }
-                    ] :
-                     [
-                        {
-                            name: ['price'],
-                            value: donGia
-                        }
-                    ]}
+                        [
+                            {
+                                name: ['ho_ten'],
+                                value: quote.khach_hang.ho_ten
+                            },
+                            {
+                                name: ['sdt'],
+                                value: quote.khach_hang.sdt
+                            },
+                            {
+                                name: ['email'],
+                                value: quote.khach_hang.email
+                            },
+                            {
+                                name: ['price'],
+                                value: donGia ? donGia : quote.tong_gia_du_kien,
+                            },
+                        ] :
+                        quote && quote.status > 0 ? [
+                            {
+                                name: ['ho_ten'],
+                                value: quote.khach_hang.ho_ten
+                            },
+                            {
+                                name: ['sdt'],
+                                value: quote.khach_hang.sdt
+                            },
+                            {
+                                name: ['email'],
+                                value: quote.khach_hang.email
+                            },
+                            {
+                                name: ['price'],
+                                value: donGia ? donGia : quote.tong_gia_du_kien,
+                            },
+                            {
+                                name: ['typeService'],
+                                label: typeServiceSelected ? typeServiceSelected.ten_linh_vuc
+                                    : quote.linh_vuc.ten_linh_vuc,
+                                value: typeServiceSelected ? typeServiceSelected._id : quote.linh_vuc._id,
+                            },
+                            {
+                                name: ['service'],
+                                value: serviceSelected ? serviceSelected._id : quote.dich_vu._id,
+                                label: serviceSelected ? serviceSelected.ten_dv : quote.dich_vu.ten_dv,
+                            },
+                            {
+                                name: ['payTime'],
+                                value: quote.dieu_khoan_thanh_toan,
+                            }
+                        ] :
+                            [
+                                {
+                                    name: ['price'],
+                                    value: donGia
+                                }
+                            ]}
 
                 form={form}
                 onFinish={onFinish}
             >
                 <Space>
-                    <Button type="primary" htmlType="submit" className="btn-primary">GỬI EMAIL</Button>
                     <Button type="primary" htmlType="submit" className="btn-primary">LƯU</Button>
                 </Space>
                 <Divider />
                 <Row>
-                        <Col md={{ span: 14 }} >
-                            <Title level={5} style={{ marginLeft: 50, marginTop: -3, marginBottom: 20 }}>KHÁCH HÀNG</Title>
-                            <Form.Item
-                                label="Họ tên"
-                                name="ho_ten"
-                                labelCol={{
-                                    md: {span: 5}
-                                }}>
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                label="Email"
-                                name="email"
-                                labelCol={{
-                                    md: {span: 5}
-                                }}>
-                                <Input type="email"/>
-                            </Form.Item>
-                            <Form.Item
-                                label="Số điện thoại"
-                                name="sdt"
-                                labelCol={{
-                                    md: {span: 5}
-                                }}>
-                                <Input />
-                            </Form.Item>
-                        </Col>
+                    <Col md={{ span: 14 }} >
+                        <Title level={5} style={{ marginLeft: 50, marginTop: -3, marginBottom: 20 }}>KHÁCH HÀNG</Title>
+                        <Form.Item
+                            label="Họ tên"
+                            name="ho_ten"
+                            labelCol={{
+                                md: { span: 5 }
+                            }}>
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            label="Email"
+                            name="email"
+                            labelCol={{
+                                md: { span: 5 }
+                            }}>
+                            <Input type="email" />
+                        </Form.Item>
+                        <Form.Item
+                            label="Số điện thoại"
+                            name="sdt"
+                            labelCol={{
+                                md: { span: 5 }
+                            }}>
+                            <Input />
+                        </Form.Item>
+                    </Col>
                     <Col md={{ span: 10 }}>
                         <Descriptions title="NHÂN VIÊN"
                             column={{
@@ -279,7 +279,7 @@ console.log(quote);
                         <Form.Item
                             label="Dịch vụ"
                             name="service">
-                              <Select
+                            <Select
                                 showSearch
                                 allowClear
                                 style={{

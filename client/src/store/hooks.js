@@ -5,7 +5,6 @@ export const useStore = () => {
     const [state, dispatch] = useContext(Context)
     return [state, dispatch]
 }
-
 export function useToken() {
     const getToken = () => {
       const tokenString = sessionStorage.getItem('token');
@@ -18,6 +17,7 @@ export function useToken() {
     const saveToken = userToken => {
       sessionStorage.setItem('token', JSON.stringify(userToken));
       setToken(userToken.token);
+
     };
     return {
       setToken: saveToken,

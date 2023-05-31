@@ -1,15 +1,17 @@
 import { Form, Input, Modal, DatePicker, Select, Button } from "antd";
+import TextArea from "antd/es/input/TextArea";
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useState, useEffect } from "react";
 import { matterService, taskService, userService } from "~/services";
-import { actions, useStore } from "~/store";
+import { actions, useStore, useToken } from "~/store";
 
 dayjs.extend(customParseFormat);
 const dateFormat = 'DD-MM-YYYY hh:mm A';
 
 function ModalAddTask(props) {
 
+    const {token} = useToken();
     const [form] = Form.useForm();
     const [state, dispatch] = useStore();
     const [staff, setStaff] = useState([]);
@@ -47,8 +49,10 @@ function ModalAddTask(props) {
     }
     const onSubmit = (values) => {
         const newVal = {
+            ...values,
             ten_cong_viec: values.nameTask,
             nguoi_phu_trach: values.staff,
+            nguoi_phan_cong: token._id,
             vu_viec: values.matter,
             han_chot_cong_viec: values.dateEnd,
             ngay_giao: new Date(),
@@ -104,17 +108,41 @@ function ModalAddTask(props) {
                     <Input />
                 </Form.Item>
                 <Form.Item
+                        label="Yêu cầu công việc"
+                        name="yeu_cau"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập yêu cầu công việc!',
+                            },
+                        ]}
+                    >
+                        <TextArea placeholder="Giấy chứng nhận phải có chữ ký bác sĩ"/>
+                    </Form.Item>
+                    <Form.Item
+                        label="Mô tả công việc"
+                        name="mo_ta"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập mô tả công việc!',
+                            },
+                        ]}
+                    >
+                        <TextArea placeholder="Xin giấy chứng nhận thương tích tại bệnh viện Bạch Mai"/>
+                    </Form.Item>
+                <Form.Item
                     label="Hạn chót công việc"
                     name='dateEnd'>
                     <DatePicker showTime format={dateFormat} />
                 </Form.Item>
                 <Form.Item
                     wrapperCol={{
-                        offset: 20,
+                        offset: 17,
                     }}
                 >
-                    <Button type="primary" htmlType="submit">
-                        Submit
+                    <Button htmlType="submit" className="btn-cyan">
+                        Thêm mới
                     </Button>
                 </Form.Item>
             </Form>

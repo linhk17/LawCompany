@@ -1,10 +1,11 @@
-import { Col, Row, Segmented, Pagination, Tag } from "antd";
+import { Col, Row, Segmented, Pagination } from "antd";
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStore, actions } from "~/store";
 import { CardUser, Filter, TableComponent } from "~/components";
 import { userService } from '../../../services';
+
 function User({ props, columns }) {
     const [state, dispatch] = useStore();
     const data = [];
@@ -12,15 +13,15 @@ function User({ props, columns }) {
     const [maxValue, setMaxValue] = useState(8)
     const [tab, setTab] = useState("Kanban");
     const numEachPage = 8
+    let chuc_vu = null;
+    let bo_phan = null;
     useEffect(() => {
         const getUsers = async () => {
             dispatch(actions.setUsers((await userService.get()).data))
         };
         getUsers()
-    }, [dispatch]);
+    }, []);
 
-    let chuc_vu = null;
-    let bo_phan = null;
     state.users.map((value, index) => {
         if (value.account.quyen === props) {
             if (value.account.quyen !== 0) {
@@ -38,10 +39,7 @@ function User({ props, columns }) {
                     email: value.email,
                     address: value.dia_chi,
                     avatar: value.avatar,
-                    typeOfUser: <Tag color={
-                        value.loai_user === 'Doanh nghiệp' ? "volcano" : "geekblue"}>
-                        {value.loai_user === 'Doanh nghiệp' ? 'Doanh nghiệp' : "Cá nhân"}
-                    </Tag>,
+                    typeOfUser: value.loai_user,
                     websiteCompany: value.website_cong_ty,
                     role: value.account.quyen,
                     active: value.active,
@@ -60,7 +58,6 @@ function User({ props, columns }) {
 
     const seg = <Segmented
         defaultValue="Kanban"
-        style={{marginLeft: 10}}
         options={[
             {
                 label: 'Kanban',
@@ -78,7 +75,6 @@ function User({ props, columns }) {
 
     return (
         <>
-
             <Filter seg={seg} />
             <br />
             {tab === 'Kanban' ?
@@ -109,7 +105,8 @@ function User({ props, columns }) {
                         total={16}
                     />
                 </>
-                : <TableComponent data={data} columns={columns} />
+                :
+                 <TableComponent data={data} columns={columns} />
             }
         </>
     );

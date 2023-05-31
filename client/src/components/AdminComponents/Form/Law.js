@@ -1,11 +1,12 @@
-import { Avatar, Button, Col, DatePicker, Form, Input, Radio, Row, Select, Switch } from "antd";
+import { Button, Col, DatePicker, Form, Input, Row, Select, Switch, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { avatar } from "~/assets/images";
-import { boPhanService, chucVuService, userService } from '../../../services/index';
+import { boPhanService, chucVuService, typeServiceService, userService } from '../../../services/index';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { useStore } from "~/store";
+import { UploadImg, fileSelected } from "../UploadImg";
+import Title from "antd/es/typography/Title";
+import FormAddDegree from "./FormAddDegree";
 dayjs.extend(customParseFormat);
 
 const formItemLayout = {
@@ -14,7 +15,7 @@ const formItemLayout = {
             span: 24,
         },
         md: {
-            span: 8,
+            span: 9,
         },
     }
 };
@@ -25,18 +26,32 @@ function FormLaw({ props }) {
     let btn = ['Thêm mới', 'Cập nhật'];
     const user = { ...props }
     const [form] = Form.useForm();
-    const [state, dispatch] = useStore()
     const [chucVu, setChucVu] = useState([]);
     const [boPhan, setBoPhan] = useState([]);
-    const [show, setShow] = useState(false);
+    const [showBoss, setShowBoss] = useState(false);
+    const [showChuyenMon, setShowChuyenMon] = useState(false);
+    const [typeService, setTypeService] = useState([]);
+    const [arrType, setArrType]= useState([]);
+    const [arrLaws, setArrLaw] = useState([]);
     const [law, setLaw] = useState([]);
+    let arrLaw = [];
+    let arrTypeService = [];
 
     useEffect(() => {
         const getBoPhan = async () => {
             setBoPhan((await boPhanService.get()).data)
         };
+        const getTypeService = async () => {
+            setTypeService((await typeServiceService.get()).data)
+        };
+        const getLaw = async () => {
+            setLaw((await userService.get()).data)
+        }
+        getLaw();
+        getTypeService();
         getBoPhan();
     }, []);
+
     const handleSelectedBoPhan = async (e) => {
         setChucVu((await chucVuService.getByBoPhan({ bo_phan: e })).data)
     }
@@ -53,19 +68,30 @@ function FormLaw({ props }) {
         }
     });
     const handleSelectedChucVu = async (e) => {
-        let arrLaw = [];
         if (e === 'TL02') {
-            setShow(true)
-            state.users.map(item => {
-                if (item.account.quyen != 0 && item.chuc_vu.id === 'LS02') {
+            setShowBoss(true);
+            setShowChuyenMon(false);
+            law.map(item => {
+                if (item.account.quyen != 0 && item.chuc_vu._id === 'LS02') {
                     arrLaw.push({
                         label: item.ho_ten,
                         value: item._id
                     })
                 }
             })
+            setArrLaw(arrLaw);
         }
-        setLaw(arrLaw)
+        else if (e === 'LS02') {
+            setShowChuyenMon(true);
+            setShowBoss(false);
+            typeService.map((item) => {
+                arrTypeService.push({
+                    label: item.ten_linh_vuc,
+                    value: item._id
+                })
+            })
+            setArrType(arrTypeService);
+        }
     }
     const handleUpdate = async (data) => {
         try {
@@ -104,12 +130,15 @@ function FormLaw({ props }) {
             active: values.active,
             chuc_vu: values.chucVu,
             bo_phan: values.boPhan,
-            boss: values.boss
+            boss: values.boss,
+            chuyen_mon: values.type,
+            avatar: fileSelected
         }
         if (props)
             handleUpdate(data);
         else handleAdd(data);
     }
+    
     return (
         <>
             <Form
@@ -182,7 +211,9 @@ function FormLaw({ props }) {
                 onFinish={onFinish}
             >
                 <Row>
-                    <Col md={{ span: 8 }}>
+                    <Col span={16}>
+                    <Row>
+                    <Col md={{ span: 12 }}>
                         <Form.Item
                             label="Họ tên"
                             name="name"
@@ -196,7 +227,7 @@ function FormLaw({ props }) {
                             <Input />
                         </Form.Item>
                     </Col>
-                    <Col md={{ span: 8, push: 1 }}>
+                    <Col md={{ span: 12, push: 1 }}>
                         <Form.Item
                             label="Di động"
                             name="phone"
@@ -214,17 +245,9 @@ function FormLaw({ props }) {
                             <Input />
                         </Form.Item>
                     </Col>
-                    <Col md={{ span: 4, push: 3 }}>
-                        <div className="edit-img">
-                            <Avatar size={150} style={{
-                                position: 'absolute'
-                            }} src={avatar.user} />
-
-                        </div>
-                    </Col>
                 </Row>
                 <Row>
-                    <Col md={{ span: 8 }}>
+                    <Col md={{ span: 12 }}>
                         <Form.Item
                             name="dateOfBirth"
                             label="Ngày sinh"
@@ -232,7 +255,7 @@ function FormLaw({ props }) {
                             <DatePicker format={'DD-MM-YYYY'} />
                         </Form.Item>
                     </Col>
-                    <Col md={{ span: 8, push: 1 }}>
+                    <Col md={{ span: 12, push: 1 }}>
                         <Form.Item
                             label="Địa chỉ"
                             name="address"
@@ -242,7 +265,7 @@ function FormLaw({ props }) {
                     </Col>
                 </Row>
                 <Row>
-                    <Col md={{ span: 8 }}>
+                    <Col md={{ span: 12 }}>
                         <Form.Item
                             name="email"
                             label="E-mail"
@@ -260,7 +283,7 @@ function FormLaw({ props }) {
                             <Input />
                         </Form.Item>
                     </Col>
-                    <Col md={{ span: 8, push: 1 }}>
+                    <Col md={{ span: 12, push: 1 }}>
                         <Form.Item
                             label="Mật khẩu tài khoản"
                             name="password"
@@ -276,37 +299,31 @@ function FormLaw({ props }) {
                     </Col>
                 </Row>
                 <Row>
-
-                    <Col md={{ span: 8 }}>
+                    <Col md={{ span: 12 }}>
                         <Form.Item
                             name="boPhan"
                             label="Bộ phận"
                         >
                             <Select
-                                // defaultValue={selectedBoPhan ? user.bo_phan.ten_bo_phan : null}
                                 options={arrBoPhan}
                                 onChange={handleSelectedBoPhan}
                             />
                         </Form.Item>
                     </Col>
-                    <Col md={{ span: 8, push: 1 }}>
+                    <Col md={{ span: 12, push: 1 }}>
                         <Form.Item
                             label="Chức vụ"
                             name="chucVu"
                         >
                             <Select
-                                // defaultValue={selectedChucVu ? user.chuc_vu.ten_chuc_vu : null}
                                 options={arrChucVu}
                                 onChange={handleSelectedChucVu}
                             />
                         </Form.Item>
-
-
                     </Col>
                 </Row>
-
                 <Row>
-                    <Col md={{ span: 8 }}>
+                    <Col md={{ span: 12 }}>
                         <Form.Item
                             label='Hoạt động'
                             name="active"
@@ -315,20 +332,46 @@ function FormLaw({ props }) {
                         >
                             <Switch checkedChildren="Hoạt động" unCheckedChildren="Khoá" success="false" />
                         </Form.Item>
-
                     </Col>
-                    <Col md={{ span: 8, push: 1 }}>
-                        {show
+                    <Col md={{ span: 12, push: 1 }}>
+                        {showBoss
                             ? <Form.Item
                                 label="Thuộc cấp"
                                 name="boss"
                             >
                                 <Select
-                                    options={law}
+                                    options={arrLaws}
+                                />
+                            </Form.Item> : <></>}
+                        {showChuyenMon
+                            ? <Form.Item
+                                label="Chuyên môn"
+                                name="type"
+                            >
+                                <Select
+                                    mode="multiple"
+                                    options={arrType}
                                 />
                             </Form.Item> : <></>}
                     </Col>
                 </Row>
+                    </Col>
+                    <Col push={4}>
+                    <Form.Item>
+                        <Title level={5}>Hình đại diện</Title>
+                    </Form.Item>
+                    <UploadImg/>
+                    </Col>
+                </Row>
+                <Tabs
+                items={[
+                    {
+                        key: 1,
+                        label: "Chứng chỉ - Bằng cấp",
+                        children: <FormAddDegree props = {user}/>
+                    }
+                ]}
+                />
                 <Form.Item
                     wrapperCol={{
                         offset: 20,

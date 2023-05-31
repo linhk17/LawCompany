@@ -1,25 +1,25 @@
 import API from './api.service'
 
 class StepService {
-    async get() {
+    async get(){
         return (await API.get(`/step`));
     }
-    async getById(id) {
+    async getById(id){
         return (await API.get(`/step/${id}`));
     }
-    async getByIdService(id) {
+    async getByIdService(id){
         return (await API.get(`/step/findByIdService/${id}`));
     }
-    async getByIdChiPhiCoDinh(data) {
+    async getByIdChiPhiCoDinh(data){
         return (await API.post(`step/findByChiPhiCoDinh`, data));
     }
-    async create(data) {
+    async create(data){
         return (await API.post(`step`, data));
     }
-    async update(id, data) {
+    async update(id, data){
         return (await API.put(`step/${id}`, data));
     }
-    async delete(id) {
+    async delete(id){
         return (await API.delete(`step/${id}`));
     }
 }

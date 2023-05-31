@@ -27,9 +27,6 @@ function HomePage() {
     const [type, setType] = useState([]);
     const [provinces, setProvinces] = useState();
     const [districts, setDistricts] = useState([]);
-    const [selectProvince, setSelectProvince] = useState({
-        code: 1
-    })
     useEffect(() => {
         const getTypes = async () => {
             setType((await typeServiceService.get()).data)
@@ -52,6 +49,7 @@ function HomePage() {
         })
     })
     const onFinish = async (values) => {
+        console.log(values);
         const data = {
             khach_hang: {
                 ho_ten: values.fullname,
@@ -60,7 +58,8 @@ function HomePage() {
             },
             linh_vuc: values.typeService,
             van_de: values.description,
-            status: 0
+            status: 0,
+            tinh_thanh: values.province
         }
 
         try {
@@ -93,78 +92,78 @@ function HomePage() {
                         Quý Khách cần thêm thông tin xin hãy điền vào thông tin bên dưới.
                         Chúng tôi sẽ liên hệ với bạn.</Text>
                 </Space>
-
             </Space>,
-            description: <Card title="Yêu cầu báo giá">
-                <Form
-                    form={form}
-                    layout="vertical"
-                    name="basic"
-                    initialValues={{
-                        remember: true,
-                    }}
-                    autoComplete="off"
-                    onFinish={onFinish}
-                >
-                    <Form.Item
-                        label="Họ và tên"
-                        name="fullname"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your fullname!',
-                            },
-                        ]}
+            description:
+                <Card title="Yêu cầu báo giá">
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        name="basic"
+                        initialValues={{
+                            remember: true,
+                        }}
+                        autoComplete="off"
+                        onFinish={onFinish}
                     >
-                        <Input />
-                    </Form.Item>
-                    <Row>
-                        <Col span={12}>
-                            <Form.Item
-                                label="Email"
-                                name="email"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your email!',
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-                        </Col>
-                        <Col span={11} push={1}>
-                            <Form.Item
-                                label="Số điện thoại"
-                                name="sdt"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your number phone!',
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Form.Item
-                        label="Tỉnh/Thành phố"
-                        name="province">
-                        <Select onChange={(value) => {}}>
-                            {
-                                provinces.map((value) => {
-                                    return <Option value={JSON.stringify(value)}>
-                                        {value.name}
-                                    </Option>
-                                })
-                            }
-                        </Select>
-                    </Form.Item>
-                    {
-                        console.log(districts)
-                    }
-                    {/* <Form.Item
+                        <Form.Item
+                            label="Họ và tên"
+                            name="fullname"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your fullname!',
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Row>
+                            <Col span={12}>
+                                <Form.Item
+                                    label="Email"
+                                    name="email"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please input your email!',
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={11} push={1}>
+                                <Form.Item
+                                    label="Số điện thoại"
+                                    name="sdt"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please input your number phone!',
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Form.Item
+                            label="Tỉnh/Thành phố"
+                            name="province">
+                            <Select onChange={(value) => { }}>
+                                {
+                                    provinces.map((value) => {
+                                        return <Option value={value.name}>
+                                            {value.name}
+                                        </Option>
+                                    })
+                                }
+                            </Select>
+                        </Form.Item>
+                        {
+                            console.log(districts)
+                        }
+                        {/* <Form.Item
                         label="Quận/Huyện"
                         name="ward">
                         <Select>
@@ -179,36 +178,36 @@ function HomePage() {
                         </Select>
                     </Form.Item> */}
 
-                    <Form.Item
-                        label="Lĩnh vực"
-                        name="typeService"
-                    >
-                        <Select options={arrTypeService} />
-                    </Form.Item>
-                    <Form.Item
-                        label="Vấn đề của bạn"
-                        name="description"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your email!',
-                            },
-                        ]}
-                    >
-                        <TextArea />
-                    </Form.Item>
-                    <Form.Item
-                        wrapperCol={{
-                            offset: 8,
-                            span: 16,
-                        }}
-                    >
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Card>,
+                        <Form.Item
+                            label="Lĩnh vực"
+                            name="typeService"
+                        >
+                            <Select options={arrTypeService} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Vấn đề của bạn"
+                            name="description"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your email!',
+                                },
+                            ]}
+                        >
+                            <TextArea />
+                        </Form.Item>
+                        <Form.Item
+                            wrapperCol={{
+                                offset: 8,
+                                span: 16,
+                            }}
+                        >
+                            <Button type="primary" htmlType="submit">
+                                Submit
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Card>,
             placement,
 
         })

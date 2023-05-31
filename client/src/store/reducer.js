@@ -1,25 +1,24 @@
-import { SET_FEES, SET_FILES, SET_MATTER, SET_MATTERS, 
-    SET_QUOTES, SET_QUOTE_BY_ID, SET_SERVICES, 
-    SET_STEP, SET_STEPS, SET_TASKS, 
-    SET_TIME_PAY, SET_TYPE_SERVICES, SET_USER, 
-    SET_USERS, SET_BILL, SET_BILLS } from "./constants"
+import { SET_BILL, SET_BILLS, SET_CONTACTS, SET_FEES, SET_FILES, 
+    SET_MATTER, SET_MATTERS, SET_QUOTES, SET_SERVICES, SET_STEP, 
+    SET_STEPS, SET_TASKS, SET_TYPE_SERVICES, SET_USER, SET_USERS,
+SET_PERIODS } from "./constants"
 const initState = {
     users: [],
     matters: [],
+    matter: {},
     type_services: [],
     services: [],
     quotes: [],
-    matter: {},
-    quoteOne: {},
-    timePay: {},
     tasks: [],
-    files: [],
-    user: {},
     step: {},
     steps: [],
+    files: [],
     fees: [],
+    user: {},
     bills: [],
-    bill: {}
+    bill: {},
+    contacts: [],
+    periods: []
 }
 
 function reducer(state, action) {
@@ -54,30 +53,10 @@ function reducer(state, action) {
                 ...state,
                 quotes: action.payload
             }
-        case SET_QUOTE_BY_ID:
-            return {
-                ...state,
-                quoteOne: action.payload
-            }
-        case SET_TIME_PAY:
-            return {
-                ...state,
-                timePay: action.payload
-            }
         case SET_TASKS:
             return {
                 ...state,
                 tasks: action.payload
-            }
-        case SET_FILES:
-            return {
-                ...state,
-                files: action.payload
-            }
-        case SET_USER:
-            return {
-                ...state,
-                user: action.payload
             }
         case SET_STEP:
             return {
@@ -89,10 +68,20 @@ function reducer(state, action) {
                 ...state,
                 steps: action.payload
             }
+        case SET_FILES:
+            return {
+                ...state,
+                files: action.payload
+            }
         case SET_FEES:
             return {
                 ...state,
                 fees: action.payload
+            }
+        case SET_USER:
+            return {
+                ...state,
+                user: action.payload
             }
         case SET_BILLS:
             return {
@@ -104,6 +93,16 @@ function reducer(state, action) {
                 ...state,
                 bill: action.payload
             }
+        case SET_CONTACTS:
+            return {
+                ...state,
+                contacts: action.payload
+            }
+            case SET_PERIODS:
+                return {
+                    ...state,
+                    periods: action.payload
+                }
         default:
             throw new Error('Invalid action')
     }

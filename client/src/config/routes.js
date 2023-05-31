@@ -4,6 +4,7 @@ const routes = {
     user: {
         home: '/',
         service: '/service',
+        matters: '/matters/:id'
     },
     admin: {
         dashboard: '/',
@@ -18,33 +19,36 @@ const routes = {
         staffEdit: '/staff/edit/:id',
         staffAdd: '/staff/add',
         // Matter
-        matterManager: '/matter',
+        matterManager: '/matters',
         matterList: '/matters/:id',
         matterAdd: '/matter/add',
         matterDetail: '/matter/:id',
         matterEdit: '/matter/edit/:id',
         // Task
-        taskManager: '/task',
         taskList: '/tasks/:id',
         taskDetail: '/task/:id',
         taskAdd: '/task/add',
-
         // Quotes
-        quotesManager: '/quote',
+        quotesManager: '/quotes',
         quoteList: '/quotes/:id',
-        quotesAdd: '/quote/add',
+        quotesAdd: '/quotes/add',
         quoteDetail: '/quote/:id',
-        quoteEdit: '/quotes/edit/:id',
-
+        quoteEdit: '/quote/edit/:id',
         //Calendar
         calendarManager: '/calendar',
-
         //Fee
-        feeManager: '/fee',
+        feeManager: '/fees',
         feeList: '/fees/:id',
-        feeDetail: '/fee/:id'
+        feeDetail: '/fee/:id',
+        // Bill
+        billTypeList: '/bills/type-bill/:id',
+        billDetail: '/bill/:id',
+        billAdd: '/bill/add/:id',
+
+        thongKe: '/thong-ke'
     },
     staff: {
+        dashboard: '/',
         // Matter
         matterManager: '/',
         matterList: '/matters/:id',
@@ -52,28 +56,54 @@ const routes = {
         matterEdit: '/matter/edit/:id',
         // Task
         taskList: '/tasks/:id',
+        taskListGiao: '/tasks-giao/:id',
         taskDetail: '/task/:id',
         taskAdd: '/task/add',
+
+        feeList: '/fees/:id',
+        feeDetail: '/fee/:id',
         // Calendar
         calendarManager: '/calendar'
 
     },
-    tvv: {
-        taskManager: '/',
+    tl: {
+        dashboard: '/',
         taskList: '/tasks/:id',
-        quotesManager: '/quotes',
-    },
-    keToan: {
-        feeManager: '/',
+        taskDetail: '/task/:id',
+
+        matterList: '/matters/:id',
+        matterDetail: '/matter/:id',
+
         feeList: '/fees/:id',
         feeDetail: '/fee/:id',
 
+        calendarManager: '/calendar'
+
+    },
+    tvv: {
+        dashboard: '/',
+        // Quotes
+        quoteList: '/quotes/:id',
+        quotesAdd: '/quotes/add',
+        quoteDetail: '/quote/:id',
+        quoteEdit: '/quote/edit/:id',
+        //Calendar
+        calendarManager: '/calendar',
+    },
+    keToan: {
+        // Fee
+        feeManager: '/',
+        feeList: '/fees/:id',
+        feeDetail: '/fee/:id',
+        // Bill
         billTypeList: '/bills/type-bill/:id',
         billDetail: '/bill/:id',
         billAdd: '/bill/add/:id',
-        
+        // Matter
         matterList: '/matters/:id',
-        matterDetail: '/matter/:id'
+        matterDetail: '/matter/:id',
+        calendarManager: '/calendar',
+
     }
 }
 export default routes;

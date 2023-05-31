@@ -13,11 +13,14 @@ class MatterService {
     async findByIdAccess(data){
         return (await API.post(`matter/findByIdAccess`, data))
     }
+    async findByIdAccessUser(data){
+        return (await API.post(`matter/findByIdAccessUser`, data))
+    }
     async create(data){
         return (await API.post('matter', data));
     }
     async update(id, data){
-        return (await API.patch(`matter/${id}`, data));
+        return (await API.put(`matter/${id}`, data));
     }
     async setStatus(id, data){
         return (await API.patch(`matter/setStatus/${id}`, data));
@@ -25,8 +28,17 @@ class MatterService {
     async setStatus_TT(id, data){
         return (await API.patch(`matter/setStatus-tt/${id}`, data));
     }
+    async getRoseByMonth(data){
+        return (await API.post('matter/getRoseByMonth', data));
+    }
+    async thongKeKhachHangCu(data){
+        return (await API.post('matter/thongKeKhachHangCu', data));
+    }
     async delete(id){
         return (await API.delete(`matter/${id}`));
+    }
+    async findFinishedMatterByYear(data){
+        return (await API.post(`matter/findFinishedMatterByYear`, data))
     }
 }
 

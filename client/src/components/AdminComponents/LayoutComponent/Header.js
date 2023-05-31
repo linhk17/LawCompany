@@ -1,7 +1,6 @@
-import { Col, Menu, Row } from "antd";
+import { Avatar, Col, Menu, Row, Space } from "antd";
 import {
   UserOutlined,
-  BellFilled,
   SettingOutlined,
   LogoutOutlined,
   MailOutlined
@@ -10,32 +9,35 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
 import "~/assets/style/Admin/Header.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useToken } from "~/store";
+import { avatar } from "~/assets/images";
 const url = ['', 'admin', 'staff']
 
 function HeaderAdmin() {
   const [current, setCurrent] = useState('mail');
   const { token } = useToken();
   let url = 'admin'
-  if(token.chuc_vu._id == 'LS02')
+  if (token.chuc_vu._id === 'LS02')
     url = 'staff'
-  else if(token.chuc_vu._id == 'TVV02')
+  else if (token.chuc_vu._id === 'TVV02')
     url = 'tu-van-vien'
-  else if(token.chuc_vu._id == 'KT02')
+  else if (token.chuc_vu._id === 'KT02')
     url = 'ke-toan'
+  else if (token.chuc_vu._id === 'TL02')
+    url = 'tro-ly'
   const itemsAdmin = [
     {
-      icon:  <Link to={`/${url}`}>
-      <FontAwesomeIcon icon={faHouse} />
-    </Link>,
+      icon: <Link to={`/${url}`}>
+        <FontAwesomeIcon icon={faHouse} />
+      </Link>,
       key: 'dashboard',
     },
     {
-      label: <Link to={`/${url}/matter`}>
+      label: <Link to={`/${url}/matters/all`}>
         Vụ việc
       </Link>,
-      key: 'customer-service',
+      key: 'matter',
     },
     {
       label: <Link to={`/${url}/calendar`}>
@@ -44,7 +46,7 @@ function HeaderAdmin() {
       key: 'calendar',
     },
     {
-      label: <Link to={`/${url}/quote`}>
+      label: <Link to={`/${url}/quotes/all`}>
         Báo giá
       </Link>,
       key: 'quote',
@@ -62,70 +64,120 @@ function HeaderAdmin() {
       key: 'customer',
     },
     {
-      label: <Link to={`/${url}/fee`}>
-       Kế toán
+      label: <Link to={`/${url}/fees/all`}>
+        Chi phí
       </Link>,
       key: 'fee',
+    },
+    {
+      label: <Link to={`/${url}/bills/all`}>
+        Hoá đơn
+      </Link>,
+      key: 'bill',
     },
   ];
   const itemsLaw = [
     {
-      icon:  <Link to={`/${url}`}>
-      <FontAwesomeIcon icon={faHouse} />
-    </Link>,
+      icon: <Link to={`/${url}`}>
+        <FontAwesomeIcon icon={faHouse} />
+      </Link>,
       key: 'dashboard',
     },
     {
       label: <Link to={`/${url}/matters/all`}>
         Quản lý vụ việc
       </Link>,
-      key: 'customer-service',
+      key: 'matter',
     },
     {
       label: <Link to={`/${url}/calendar`}>
         Quản lý lịch hẹn
       </Link>,
       key: 'calendar',
+    },
+    {
+      label: <Link to={`/${url}/fees/all`}>
+        Quản lý chi phí
+      </Link>,
+      key: 'fee',
     }
   ];
-  const itemsTuVanVien = [
+  const itemsTroLy = [
     {
-      icon:  <Link to={`/${url}`}>
-      <FontAwesomeIcon icon={faHouse} />
-    </Link>,
+      icon: <Link to={`/${url}`}>
+        <FontAwesomeIcon icon={faHouse} />
+      </Link>,
       key: 'dashboard',
     },
     {
+      label: <Link to={`/${url}/tasks/all`}>
+        Quản lý công việc
+      </Link>,
+      key: 'task',
+    },
+    {
       label: <Link to={`/${url}/calendar`}>
-        Lịch hẹn
+        Quản lý lịch hẹn
       </Link>,
       key: 'calendar',
     },
     {
-      label: <Link to={`/${url}/quote`}>
-        Báo giá
+      label: <Link to={`/${url}/fees/all`}>
+        Quản lý chi phí
+      </Link>,
+      key: 'fee',
+    }
+  ];
+  const itemsTuVanVien = [
+    {
+      icon: <Link to={`/${url}`}>
+        <FontAwesomeIcon icon={faHouse} />
+      </Link>,
+      key: 'dashboard',
+    },
+    {
+      label: <Link to={`/${url}/calendar`}>
+        Quản lý lịch hẹn
+      </Link>,
+      key: 'calendar',
+    },
+    {
+      label: <Link to={`/${url}/quotes/all`}>
+        Quản lý báo giá
       </Link>,
       key: 'quote',
     },
   ];
   const itemsKeToan = [
     {
-      icon:  <Link to={`/${url}`}>
-      <FontAwesomeIcon icon={faHouse} />
-    </Link>,
+      icon: <Link to={`/${url}`}>
+        <FontAwesomeIcon icon={faHouse} />
+      </Link>,
       key: 'dashboard',
     },
     {
       label: <Link to={`/${url}/calendar`}>
-        Lịch hẹn
+        Quản lý lịch hẹn
       </Link>,
       key: 'calendar',
     },
     {
-      label: <Link to={`/${url}/fee`}>
-       Kế toán
+      label: <Link to={`/${url}/bills/type-bill/all`}>
+        Quản lý hoá đơn
+      </Link>,
+      key: 'bill',
+    },
+    {
+      label: <Link to={`/${url}/fees/all`}>
+        Quản lý chi phí
       </Link>,
       key: 'fee',
+    },
+    {
+      label: <Link to={`/${url}/fee`}>
+        Báo cáo thống kê
+      </Link>,
+      key: 'bc',
     },
   ];
   const onClick = (e) => {
@@ -134,16 +186,18 @@ function HeaderAdmin() {
   const items1 = [
     {
       label: token.email,
-      icon: <MailOutlined/>,
+      icon: <MailOutlined />,
     },
     {
       label: token.chuc_vu.ten_chuc_vu,
       icon: <UserOutlined />,
     },
     {
-      label: token.ho_ten,
+      label: <Space style={{marginBottom: 4}} align="center">
+        <Avatar shape="circle" src={token.avatar ? token.avatar : avatar.user} />
+        {token.ho_ten}
+      </Space>,
       key: 'user',
-
       children: [
         {
           label: 'Thiết lập tài khoản',
@@ -157,14 +211,14 @@ function HeaderAdmin() {
         },
         {
           label: <button
-          style={{
-            border: 0,
-            backgroundColor: 'transparent'
-          }}
-          onClick={() => {
-            sessionStorage.removeItem('token')
-            window.location.href = '/login'
-          }}>Đăng xuất</button>,
+            style={{
+              border: 0,
+              backgroundColor: 'transparent'
+            }}
+            onClick={() => {
+              sessionStorage.removeItem('token')
+              window.location.href = '/login'
+            }}>Đăng xuất</button>,
           key: 'logout',
 
           icon: <LogoutOutlined />
@@ -176,19 +230,20 @@ function HeaderAdmin() {
     <>
       <Row className="header-admin">
         <Col md={
-          token.account.quyen == 1 ? {span: 12}
-          :  {span: 8}
+          token.account.quyen === 1 ? { span: 0, push: 1 }
+            : { span: 12, push: 1 }
         }>
-          <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={
-            token.account.quyen == 1 ? itemsAdmin 
-            : token.chuc_vu._id == 'LS02' ? itemsLaw
-            : token.chuc_vu._id == 'TVV02' ? itemsTuVanVien
-            : itemsKeToan
-          } />
+          {/* <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={
+            token.account.quyen === 1 ? itemsAdmin
+              : token.chuc_vu._id === 'LS02' ? itemsLaw
+                : token.chuc_vu._id === 'TVV02' ? itemsTuVanVien
+                  : token.chuc_vu._id === 'TL02' ? itemsTroLy
+                    : itemsKeToan
+          } /> */}
         </Col>
         <Col md={
-          token.account.quyen == 1 ? {span: 12}
-          :  {span: 14}
+          token.account.quyen === 1 ? { span: 12, push: 12 }
+            : { span: 10, push: 2 }
         }>
           <Menu onClick={onClick} className="menu" selectedKeys={[current]} mode="horizontal" items={items1} />
         </Col>

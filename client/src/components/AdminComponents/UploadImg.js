@@ -42,6 +42,7 @@ const UploadImg = () => {
     <>
       <Upload
         listType="picture-card"
+        multiple={false}
         onPreview={handlePreview}
         onChange={handleChange}
       >

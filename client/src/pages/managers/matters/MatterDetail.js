@@ -1,16 +1,23 @@
-import { Avatar, Badge, Button, Card, Col, Descriptions, Divider, List, Modal, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
+import { Avatar, Badge, Button, Card, Col, Descriptions, Divider, Image, List, Modal, Row, Space, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { faHouse, faReceipt, faTasks } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { billService, feeService, matterService, stepService, taskService, userService } from "~/services";
+import { billService, contactService, feeService, matterService, periodService, stepService, taskService, userService } from "~/services";
 import { actions, useStore, useToken } from "~/store";
 import { avatar } from "~/assets/images";
 import moment from "moment";
 import FormAddFile from "~/components/AdminComponents/Form/FormAddFile";
+import {
+    UsbFilled,
+    EditOutlined
+} from '@ant-design/icons';
+import ListHistory from "./ListHistoryMatter";
 const url = ['', 'admin', 'staff'];
+const url2 = ['', 'admin', 'ke-toan'];
 const statusTask = ['Đã giao', 'Đã hoàn thành', 'Tạm ngưng'];
 const statusFee = ['Đã trình', 'Đã duyệt', 'Đã kết toán', 'Đã huỷ'];
+const statusText = ['Đang thực hiện','Đã trình', 'Hoàn thành'];
 
 const columnsStep = [
     {
@@ -97,23 +104,23 @@ const columnsBill = [
         width: 200
     },
     {
-        title: 'Tài khoản bút toán',
-        dataIndex: 'stk_bt',
+        title: 'Tài khoản khách',
+        dataIndex: 'stk_khach',
         width: 150
     },
     {
-        title: 'Chủ tài khoản bút toán',
-        dataIndex: 'ctk_bt',
+        title: 'Chủ tài khoản khách',
+        dataIndex: 'ctk_khach',
         width: 150
     },
     {
-        title: 'Tài khoản nhận',
-        dataIndex: 'stk_nhan',
+        title: 'Tài khoản công ty',
+        dataIndex: 'stk_cty',
         width: 150
     },
     {
-        title: 'Chủ tài khoản nhận',
-        dataIndex: 'ctk_nhan',
+        title: 'Chủ tài khoản công ty',
+        dataIndex: 'ctk_cty',
         width: 150
     },
     {
@@ -162,7 +169,9 @@ const detail = (data) => Modal.info({
                 <Descriptions.Item span={2} label="Tên tài khoản">{data.nameCreditCard}</Descriptions.Item>
                 <Descriptions.Item span={2} label="Số tài khoản">{data.numberCreditCard}</Descriptions.Item>
             </Descriptions>
-            <img src={data.hinh_anh} width="50%" height="auto" alt="ok"/>
+            <Divider />
+            <Image src={data.hinh_anh} width={150} />
+
         </>
     ),
     onOk() { },
@@ -175,7 +184,9 @@ function MatterDetail() {
     const [access, setAccess] = useState([]);
     const [dataTask, setDataTask] = useState([]);
     const [dataStep, setDataStep] = useState([]);
+    const [dataContact, setDataContact] = useState([]);
     const [dataFee, setDataFee] = useState([]);
+    const [dataPeriod, setDataPeriod] = useState([]);
     const [dataBill, setDataBill] = useState([]);
     const { token } = useToken();
 
@@ -196,21 +207,34 @@ function MatterDetail() {
             const result = (await billService.findByMatter({ id: id })).data
             dispatch(actions.setBills(result))
         }
+        const getContact = async () => {
+            const rs = (await contactService.findByMatter({ id: id })).data
+            dispatch(actions.setContacts(rs))
+        }
+        const getPeriods = async () => {
+            const rs = (await periodService.findByMatter(id)).data
+            dispatch(actions.setPeriods(rs))
+        }
+        getPeriods()
         getMatter()
         getTask()
         getFee()
         getBill()
+        getContact()
     }, [id, dispatch])
     useEffect(() => {
         const getAccess = async () => {
             const arr1 = state.matter.truy_cap.nhan_vien;
-            const arr2 = state.matter.truy_cap.khach_hang;
-            setAccess((await userService.getByMatter(arr1.concat(arr2))).data)
+            const arr2 = state.matter.truy_cap.khach_hang ? state.matter.truy_cap.khach_hang : [];
+            setAccess(
+                !state.matter.truy_cap.nhan_vien && !state.matter.truy_cap.khach_hang ? []
+                    : (await userService.getByMatter(arr1.concat(arr2))).data)
         }
         dispatch(actions.setFiles(state.matter.tai_lieu))
         dispatch(actions.setSteps(state.matter.phi_co_dinh))
         getAccess();
     }, [state.matter])
+
     useEffect(() => {
         const dataTask = state.tasks ? state.tasks.map((value) => {
             return ({
@@ -253,26 +277,50 @@ function MatterDetail() {
                 hinh_anh: value.hinh_anh
             })
         }) : []
-        const dataBill = state.bills ? state.bills.map((value, index) => {
-            return ({
-                key: index + 1,
-                _id: value._id,
-                dateCreate: moment(value.ngay_lap).format('DD-MM-YYYY LT'),
-                staff: value.nhan_vien_lap_hoa_don.ho_ten,
-                stk_bt: value.tai_khoan_boi_hoan.so_tai_khoan,
-                ctk_bt: value.tai_khoan_boi_hoan.chu_tai_khoan,
-                stk_nhan: value.tai_khoan_ket_toan.so_tai_khoan,
-                ctk_nhan: value.tai_khoan_ket_toan.chu_tai_khoan,
-                tong_tien: `${value.tong_gia_tri}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'
+        const dataBill = state.bills.length > 0 ? state.bills.map((value, index) => {
+            if (value.loai_hoa_don == 'KH')
+                return ({
+                    key: index + 1,
+                    _id: value._id,
+                    dateCreate: moment(value.ngay_lap).format('DD-MM-YYYY LT'),
+                    staff: value.nhan_vien_lap_hoa_don.ho_ten,
+                    stk_khach: value.tai_khoan_khach.so_tai_khoan,
+                    ctk_khach: value.tai_khoan_khach.chu_tai_khoan,
+                    stk_cty: value.tai_khoan_cong_ty.so_tai_khoan,
+                    ctk_cty: value.tai_khoan_cong_ty.chu_tai_khoan,
+                    tong_tien: `${value.tong_gia_tri}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'
 
-            })
+                })
         }) : []
+        const dataContacts = state.contacts.map((value, index) => {
+            return ({
+                key: index,
+                _id: value._id,
+                fullname: value.ho_ten,
+                sex: value.gioi_tinh,
+                year: moment(value.nam_sinh).format('YYYY'),
+                sdt: value.sdt,
+                address: value.dia_chi,
+                relationship: value.quan_he
+            })
+        })
+        const dataPeriod = state.periods.map((value, index) => {
+            return ({
+                key: index,
+                _id: value._id,
+                name: value.ten_qt,
+                mo_ta: value.mo_ta,
+                status: value.status,
+                vu_viec: value.vu_viec
+            })
+        })
+        setDataPeriod(dataPeriod)
+        setDataContact(dataContacts)
         setDataBill(dataBill)
         setDataTask(dataTask);
         showDataSource();
         setDataFee(dataFee);
-    }, [state.tasks, state.steps, state.fees])
-
+    }, [state.tasks, state.steps, state.fees, state.contacts, state.periods])
     const columnsTask = [
         {
             title: 'Tên công việc',
@@ -295,10 +343,11 @@ function MatterDetail() {
             dataIndex: 'status',
             render: (status) => (
                 <Tag
-                    color={status === 0 ? 'volcano' : status === 1 ? 'success' : 'warning'}
-                >
-                    {statusTask[status]}
-                </Tag>
+                color={status === 0 ? 'geekblue' : status === 1 ? 'volcano' : status === 2 ? 'success' : '#faad14'}
+            >
+                
+                { status != -1 ?  statusText[status] : "Tạm ngưng"}
+            </Tag>
             ),
         },
         {
@@ -312,23 +361,106 @@ function MatterDetail() {
             )
         },
     ];
-    const total_bill = state.bills.map((value) => {
-        return value.tong_gia_tri
+    const columnsContact = [
+        {
+            title: 'Họ tên',
+            dataIndex: 'fullname',
+            width: 300
+        },
+        {
+            title: 'Giới tính',
+            dataIndex: 'sex',
+            width: 150
+        },
+        {
+            title: 'Năm sinh',
+            dataIndex: 'year',
+            width: 200
+        },
+        {
+            title: 'Số điện thoại',
+            dataIndex: 'sdt',
+            width: 250
+        },
+        {
+            title: 'Địa chỉ',
+            dataIndex: 'address',
+            width: 300
+        },
+        {
+            title: 'Mối quan hệ',
+            dataIndex: 'relationship',
+            width: 200
+        }
+    ];
+    const columnsPeriod = [
+        {
+            title: 'Tên quy trình',
+            dataIndex: 'name',
+            width: 300
+        },
+        {
+            title: 'Mô tả',
+            dataIndex: 'mo_ta',
+            width: 200,
+            ellipsis: {
+                showTitle: false,
+            },
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            width: 200,
+            render: (status) => (
+                <Tag
+                    color={status === 0 ? 'volcano' : 'success'}
+                >
+                    {statusText[status]}
+                </Tag>
+            ),
+        },
+
+    ];
+    const total_bill = []
+    state.bills.map((value) => {
+        if (value.loai_hoa_don == 'KH')
+            total_bill.push(value.tong_gia_tri)
     })
     if (total_bill.length > 0) {
         var result = total_bill.reduce((total, currentValue) => {
-            return total + currentValue
+            if (currentValue) {
+
+                return total + currentValue
+            }
         })
     }
-
-    console.log(total_bill);
+    console.log(result);
     return (
         <>
-            <Link to={`/ke-toan/bill/add/${state.matter._id}`}>
-                <Button>Tạo hoá đơn</Button>
-            </Link>
+            {
+                token.account.quyen != 0 ?
+                    <Space direction="horizontal">
+                        {
+                            token.account.quyen == 1 || token.chuc_vu._id == 'KT02' ?
+                                <Link to={`/${url2[token.account.quyen]}/bill/add/${state.matter._id}`}>
+                                    <Button style={{ marginBottom: 20 }} className="btn-cyan" icon={<UsbFilled />} block>Hóa đơn mới</Button>
+                                </Link>
+                                : <></>
+                        }
+                        {
+                            state.matter.status !== 1 && token.chuc_vu._id != 'TL02' && token.chuc_vu._id != 'KT02' || token.account.quyen == 1 ?
+                                <Link to={`/${url[token.account.quyen]}/matter/edit/${id}`}>
+                                    <Button style={{ marginBottom: 20 }} className="btn-cyan" icon={<EditOutlined />}>Chỉnh sửa</Button>
+                                </Link>
+                                : <></>
+                        }
+                    </Space> : <></>
+            }
+
+
+
             {state.matter._id ?
-                <Badge.Ribbon
+                <><Badge.Ribbon
                     style={{
                         width: 200,
                         height: 40,
@@ -338,13 +470,19 @@ function MatterDetail() {
                         textTransform: 'uppercase',
                         color: '#000'
                     }}
-                    text="Chưa thanh toán"
-                    color="volcano"
+                    text={
+                        state.matter.status_tt == 0 ? "Chưa thanh toán" : state.matter.status_tt == 1 ? "Đang thanh toán"
+                            : "Đã thanh toán"
+                    }
+                    color={
+                        state.matter.status_tt == 0 ? "vocalno" : state.matter.status_tt == 1 ? "greekblue"
+                            : "green"
+                    }
                 >
                     <Card
                         title={
-                            state.matter.status == 0 ? <Badge status="processing" text="Đang thực hiện" />
-                                : state.matter.status == 1 ? <Badge status="success" text="Hoàn thành" />
+                            state.matter.status === 0 ? <Badge status="processing" text="Đang thực hiện" />
+                                : state.matter.status === 1 ? <Badge status="success" text="Hoàn thành" />
                                     : <Badge status="warning" text="Tạm ngưng" />
                         }
                         extra={
@@ -409,13 +547,20 @@ function MatterDetail() {
                                                     }}>
 
                                                     <Descriptions.Item span={4} label="Điều khoản thanh toán">
-                                                        {state.matter.dieu_khoan_thanh_toan.ten}
+                                                        {
+                                                            state.matter.dieu_khoan_thanh_toan.ten == 0 ? "Thanh toán ngay"
+                                                                : state.matter.dieu_khoan_thanh_toan.ten == -1 ? "Thanh toán ngay khi hoàn thành"
+                                                                    : state.matter.dieu_khoan_thanh_toan.ten + " ngày"
+                                                        }
                                                     </Descriptions.Item>
-                                                    <Descriptions.Item span={4} label="Phương thức tính phí">
+                                                    {/* <Descriptions.Item span={4} label="Phương thức tính phí">
                                                         {state.matter.phuong_thuc_tinh_phi.ten}
-                                                    </Descriptions.Item>
+                                                    </Descriptions.Item> */}
                                                     <Descriptions.Item span={4} label="Chiết khấu hoa hồng">
                                                         {state.matter.chiet_khau_hoa_hong} %
+                                                    </Descriptions.Item>
+                                                    <Descriptions.Item span={4} label="Tổng tiền">
+                                                        {`${state.matter.tong_tien}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'}
                                                     </Descriptions.Item>
                                                 </Descriptions>
                                             </Col>
@@ -452,17 +597,15 @@ function MatterDetail() {
                                     </Descriptions>
                             },
                             {
-                                key: '1',
-                                label: `Mô tả`,
-                            },
-                            {
                                 key: '2',
                                 label: `Giấy tờ`,
+                                disabled: !(token.account.quyen == 1 || state.matter.luat_su._id == token._id || token.account.quyen == 0),
                                 children: <FormAddFile props={1} />
                             },
                             {
                                 key: '3',
                                 label: `Liên hệ`,
+                                children: <Table columns={columnsContact} dataSource={dataContact} />
                             },
                             {
                                 key: '4',
@@ -471,8 +614,8 @@ function MatterDetail() {
                             },
                             {
                                 key: '5',
-                                label: `Phí cố định`,
-                                children: <Table columns={columnsStep} dataSource={dataStep} />,
+                                label: `Quy trình thực hiện`,
+                                children: <Table columns={columnsPeriod} dataSource={dataPeriod} />,
 
                             },
                             {
@@ -494,25 +637,23 @@ function MatterDetail() {
                                             </span>
                                             <span>
                                                 <b style={{ marginRight: 15 }}>Đã thanh toán :</b>
-                                                {`${result}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'}
+                                                {`${result ? result : 0}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'}
                                             </span>
                                             <span>
                                                 <b style={{ marginRight: 15 }}>Số tiền còn lại:</b>
-                                                {`${state.matter.tong_tien - result}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'}
-                                                </span>
+                                                {`${state.matter.tong_tien - (result ? result : 0)}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'}
+                                            </span>
                                         </Space>
                                     </>,
                             }
                         ]} />
-                        {
-                            state.matter.status != 1 ?
-                                <Link to={`/${url[token.account.quyen]}/matter/edit/${id}`}>
-                                    <Button type="primary" className="btn-primary">Chỉnh sửa</Button>
-                                </Link>
-                                : <></>
-                        }
+
                     </Card>
                 </Badge.Ribbon>
+
+                    <ListHistory props={state.matter.lich_su_chinh_sua} />
+                </>
+
                 : null
             }
         </>

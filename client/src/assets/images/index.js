@@ -17,6 +17,9 @@ const icon ={
     iconTranhTung: require('~/assets/images/icon/tranh_tung.png'),
     iconTuVan: require('~/assets/images/icon/tu_van.png'),
 }
+const board = {
+    contact: require('~/assets/images/board/contacts.png')
+}
 const banner = {
     bannerTop: require('~/assets/images/banner/banner-top.jpg'),
     bannerHere: require('~/assets/images/banner/banner-here.jpg'),
@@ -27,4 +30,4 @@ const imgLogo = {
 const lawers = {
     jack: require('~/assets/images/lawer/jack.png')
 }
-export { avatar, icon, banner, imgLogo, lawers };
+export { avatar, icon, banner, imgLogo, lawers, board };

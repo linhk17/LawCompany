@@ -16,15 +16,12 @@
     --grey: #595959;
     --body-background: #f0f1f3;
 }
-button{
-    border: none;
-    border-radius: 2px;
-}
-.btn{
-    border-radius: 0;
-}
 .btn-primary{
     background-color: var(--dark-blue);
+    box-shadow: rgba(255, 255, 255, 0.423) 3px 3px 2px  inset;
+    font-weight: 600;
+    width: 140px !important;
+    height: 40px;
     border-radius: 1px;
     letter-spacing: 1px;
     color: #fff;
@@ -34,6 +31,9 @@ button{
     border-radius: 1px;
 }
 .btn-cyan{
+    box-shadow: rgba(255, 255, 255, 0.423) 3px 3px 2px  inset;
+    width: 140px !important;
+    height: 40px;
     background-color: var(--cyan);
     color: #fff;
     border-radius: 3px;
@@ -43,12 +43,6 @@ button{
         color: #fff !important;
     }
 }
-.btn-dark-blue{
-    background-color: var(--dark-blue);
-    &:hover{
-       color: var(--dark-blue);
-    }
-} 
 .btn-status{
     &:hover{
         background-color: #eeeeee;

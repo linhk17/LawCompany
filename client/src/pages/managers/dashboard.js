@@ -1,94 +1,88 @@
-import { faLaptopFile, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faBusinessTime, faChartPie, faCoins, faHeadset, faLaptopFile, faPhoneVolume, faUser, faUsers, faUsersGear, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, List} from "antd";
+import { Avatar, List } from "antd";
 import { Link } from "react-router-dom";
 import "~/assets/style/Admin/Dashboard.scss"
 const data = [
     {
         icon: faUsers,
         title: "Khách hàng",
-        color: `var(--cyan)`,
+        color: `linear-gradient(to bottom, #0000cc 0%, #000066 100%)`,
         link: "customer"
     },
     {
         icon: faLaptopFile,
         title: "Vụ việc",
-        color: `var(--volcano)`,
-        link: "matter"
+        color: `linear-gradient(to top, #800000 0%, #cc0000 100%)`,
+        link: "matters"
     },
     {
-        icon: faUser,
+        icon: faCoins,
         title: "Kế toán",
-        color: `var(--green)`,
-        link: "fee"
+        color: `linear-gradient(to bottom, #339933 0%, #006600 100%)`,
+        link: "fees"
     },
     {
-        icon: faUser,
-        title: "Lịch làm việc",
-        color: `var(--gold)`
-    },
-    {
-        icon: faUser,
+        icon: faHeadset,
         title: "Báo giá",
-        color: `var(--magenta)`,
-        link: 'quote'
+        color: `linear-gradient(to bottom, #ff9900 0%, #cc6600 100%)`,
+        link: 'quotes'
     },
     {
-        icon: faUser,
+        icon: faUsersGear,
         title: "Nhân viên",
-        color: `var(--oranger)`,
+        color: `linear-gradient(to top, #990033 0%, #cc0066 100%)`,
         link: "staff"
     },
     {
-        icon: faUser,
+        icon: faBusinessTime,
         title: "Lịch hẹn",
-        color: `var(--cyan)`,
+        color: `linear-gradient(to top, #003366 0%, #006699 100%)`,
         link: "calendar"
     },
     {
         icon: faUser,
         title: "Chi phí",
-        color: `var(--magenta)`,
-        link: "fee"
+        color: `linear-gradient(to bottom, #993399 0%, #660066 100%)`,
+        link: "fees"
+    },
+    {
+        icon: faChartPie,
+        title: "Thống kê",
+        color: `linear-gradient(to bottom, #009999 0%, #006666 100%)`,
+        link: "fees"
     }
-    
+
 ];
 function Dashboard() {
     return (
         <>
-        <div className="dashboard">
-            <List
-                
-                style={{ width: '70%' }}
-                grid={{
-                    xs: 2,
-                    sm: 3,
-                    md: 4,
-                    lg: 5,
-                    xl: 5
-                }}
-                dataSource={data}
-                renderItem={(item) => (
-                    <List.Item
-                        style={{textAlign:'center'}}>
+            <div className="dashboard">
+                <List
+                    style={{ width: '70%' }}
+                    grid={{
+                        xs: 2,
+                        sm: 3,
+                        md: 3,
+                        lg: 4,
+                        xl: 4
+                    }}
+                    dataSource={data}
+                    renderItem={(item) => (
+                        <List.Item
+                            style={{ textAlign: 'center' }}>
                             <Link to={`${item.link}`}>
-                            <Avatar
-                            className="item-dashboard"
-                            shape="square"
-                            style={{
-                                backgroundColor: item.color,
-                                verticalAlign: 'middle',
-                            }}
-                            icon={<FontAwesomeIcon icon={item.icon}/>}
-                            size={100}
-                        />
-                        <h4>{item.title}</h4>
+                                <button style={{ background: item.color }} className="item-dashboard">
+                                    <FontAwesomeIcon icon={item.icon} />
+                                </button>
+                                <h4 style={{ fontSize: 22 }}>{item.title}</h4>
                             </Link>
-                    </List.Item>
-                )}
-            /> 
-        </div>
-           
+                            <br/>
+                        </List.Item>
+                    )}
+                />
+            </div>
+
         </>
     );
 }

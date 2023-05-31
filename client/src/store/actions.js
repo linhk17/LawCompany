@@ -4,17 +4,17 @@ import {
     SET_TYPE_SERVICES,
     SET_SERVICES,
     SET_QUOTES,
-    SET_QUOTE_BY_ID,
-    SET_TIME_PAY,
     SET_MATTER,
     SET_TASKS,
-    SET_FILES,
-    SET_USER,
     SET_STEP,
     SET_STEPS,
+    SET_FILES,
     SET_FEES,
+    SET_USER,
     SET_BILLS,
-    SET_BILL
+    SET_BILL,
+    SET_CONTACTS,
+    SET_PERIODS
 } from './constants'
 export const setUser = payload => (
     {
@@ -52,18 +52,6 @@ export const setQuotes = payload => (
         payload
     }
 )
-export const setQuoteById = payload => (
-    {
-        type: SET_QUOTE_BY_ID,
-        payload
-    }
-)
-export const setTimePay = payload => (
-    {
-        type: SET_TIME_PAY, 
-        payload
-    }
- )
 export const setMatter = payload => (
     {
         type: SET_MATTER,
@@ -76,12 +64,6 @@ export const setTasks = payload => (
         payload
     }
 )
-export const setFiles = payload => (
-    {
-        type: SET_FILES,
-        payload
-    }
-)
 export const setStep = payload => (
     {
         type: SET_STEP,
@@ -91,6 +73,12 @@ export const setStep = payload => (
 export const setSteps = payload => (
     {
         type: SET_STEPS,
+        payload
+    }
+)
+export const setFiles = payload => (
+    {
+        type: SET_FILES,
         payload
     }
 )
@@ -109,6 +97,18 @@ export const setBills = payload => (
 export const setBill = payload => (
     {
         type: SET_BILL,
+        payload
+    }
+)
+export const setContacts = payload => (
+    {
+        type: SET_CONTACTS,
+        payload
+    }
+)
+export const setPeriods = payload => (
+    {
+        type: SET_PERIODS,
         payload
     }
 )

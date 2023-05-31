@@ -1,18 +1,30 @@
-import { Calendar, momentLocalizer } from 'react-big-calendar'
+import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment'
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { quoteService, timeAppointmentService, userService } from '~/services';
-import { Col, Descriptions, Divider, Modal, Row, Tabs } from 'antd';
-import { Link } from 'react-router-dom';
+import { timeAppointmentService, userService } from '~/services';
+import { Button, Col, Descriptions, Divider, Modal, Popconfirm, Row, message } from 'antd';
 import { useToken } from '~/store';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCancel, faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
 const localizer = momentLocalizer(moment)
-const url = ['', 'admin', 'tu-van-']
-function CalendarBig({ dateSelect, onReceive, select }) {
-    const [events, setEvents] = useState([]);
+
+function CalendarBig({ dateSelect, onNhan, select }) {
+
+    const { token } = useToken()
+    const [events, setEvents] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [quote, setQuote] = useState();
-    const {token} = useToken()
+    const [messageApi, contextHolder] = message.useMessage();
+  let url = 'admin'
+  if (token.chuc_vu._id === 'LS02')
+    url = 'staff'
+  else if (token.chuc_vu._id === 'TVV02')
+    url = 'tu-van-vien'
+  else if (token.chuc_vu._id === 'KT02')
+    url = 'ke-toan'
+  else if (token.chuc_vu._id === 'TL02')
+    url = 'tro-ly'
     const [event, setEvent] = useState({
         thoi_gian: {},
         khach_hang: {}
@@ -23,24 +35,18 @@ function CalendarBig({ dateSelect, onReceive, select }) {
         }
     })
     useEffect(() => {
-        const getTime = async () => { 
-           select == 1 ? setEvents((await timeAppointmentService.get()).data)
-           : setEvents((await timeAppointmentService.findByStaff({id: token._id})).data)
+        const getTime = async () => {
+            select == 1 ? setEvents((await timeAppointmentService.get()).data)
+                : setEvents((await timeAppointmentService.findByStaff({ id: token._id })).data)
         }
         getTime()
-        
-    }, [onReceive, select]);
+    }, [onNhan, select]);
     useEffect(() => {
         const getStaff = async () => {
             setStaff((await userService.getById(event.nhan_vien)).data)
         }
-        const getQuote = async() => {
-            setQuote((await quoteService.getById(event.phieu_bao_gia)).data)
-        }
-        getQuote()
         getStaff()
     }, [event])
-    console.log(quote);
     const arrEvent = events.map((value) => {
         return ({
             id: value._id,
@@ -50,7 +56,23 @@ function CalendarBig({ dateSelect, onReceive, select }) {
             title: value.tieu_de
         })
     })
+    const handleDelete = async (value) => {
+        try{
+            const rs = (await timeAppointmentService.delete(value)).data
+            messageApi.open({
+                type: 'success',
+                content: 'Xoá lịch thành công!',
+            });
+            setIsModalOpen(false)
+            setEvents((await timeAppointmentService.get()).data)
+        } catch(err) {
+            messageApi.open({
+                type: 'error',
+                content: 'Xoá lịch thất bại!',
+            });
+        }
 
+    }
     const handleOk = () => {
         setIsModalOpen(false);
     };
@@ -58,12 +80,13 @@ function CalendarBig({ dateSelect, onReceive, select }) {
         setIsModalOpen(false);
     };
     const handleEvent = async (data) => {
-        console.log(data);
         setIsModalOpen(true)
         setEvent((await timeAppointmentService.getById(data.id)).data)
     }
+
     return (
         <>
+        {contextHolder}
             <Calendar
                 // defaultDate={dateSelect}
                 date={dateSelect}
@@ -78,14 +101,39 @@ function CalendarBig({ dateSelect, onReceive, select }) {
                 style={{ height: "100vh" }}
             />
             {event ?
-                <Modal bodyStyle={{paddingLeft: 40}} width={800} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                <Modal bodyStyle={{ paddingLeft: 40 }} width={800} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}
+                    footer={[
+                        event.nguoi_tao == token._id ?
+                        <Popconfirm
+                            placement="topRight"
+                            title="Xoá lịch hẹn"
+                            description="Bạn có chắc muốn xoá lịch hẹn này chứ?"
+                            okText="Xác nhận"
+                            cancelText="Hủy"
+                            onConfirm={() => handleDelete(event._id)}
+                        >
+                            <Button
+                                type='primary'
+                                danger
+                                className="btn btn-status"
+                                icon={<FontAwesomeIcon
+                                    style={{
+                                        color: '#fff',
+                                        marginRight: 10
+                                    }} icon={faCancel} />}>Xoá lịch hẹn</Button>
+                        </Popconfirm> : <></>,
+                        <Button key="back" onClick={handleCancel}>
+                            Đóng
+                        </Button>
+
+                    ]}>
                     <Descriptions
                         column={{
                             lg: 4,
                             md: 4,
                             sm: 2,
                         }}
-                        title={event.loai_lich}
+                        title="Lịch hẹn"
                     >
                         <Descriptions.Item span={4} label="Tiêu đề">{event.tieu_de}</Descriptions.Item>
                         <Descriptions.Item span={2} label="Bắt đầu">{moment(event.thoi_gian.start).format(' DD-MM-YYYY LT')}</Descriptions.Item>
@@ -108,20 +156,20 @@ function CalendarBig({ dateSelect, onReceive, select }) {
                             </Descriptions>
                         </Col>
                         <Col span={12}>
-                        <Descriptions
-                        title="Thông tin nhân viên"
-                        column={{
-                            lg: 4,
-                            md: 4,
-                            sm: 2,
-                        }}>
-                        <Descriptions.Item span={4} label="Họ tên">{staff.ho_ten}</Descriptions.Item>
-                        <Descriptions.Item span={4} label="Số điện thoại">{staff ? staff.account.sdt : null}</Descriptions.Item>
-                        <Descriptions.Item span={4} label="Email">{staff.email}</Descriptions.Item>
-                        </Descriptions>
+                            <Descriptions
+                                title="Thông tin nhân viên"
+                                column={{
+                                    lg: 4,
+                                    md: 4,
+                                    sm: 2,
+                                }}>
+                                <Descriptions.Item span={4} label="Họ tên">{staff.ho_ten}</Descriptions.Item>
+                                <Descriptions.Item span={4} label="Số điện thoại">{staff ? staff.account.sdt : null}</Descriptions.Item>
+                                <Descriptions.Item span={4} label="Email">{staff.email}</Descriptions.Item>
+                            </Descriptions>
                         </Col>
                     </Row>
-                    <Divider/>
+                    <Divider />
                     <Descriptions
                         title="Thông tin chi tiết"
                         column={{
@@ -131,28 +179,13 @@ function CalendarBig({ dateSelect, onReceive, select }) {
                         }}>
                         <Descriptions.Item span={2} label="Mô tả">{event.mo_ta}</Descriptions.Item>
                         <Descriptions.Item span={2} label="Ghi chú">{event.ghi_chu}</Descriptions.Item>
-                     
+                        <Descriptions.Item span={2}>
+                            {event.phieu_bao_gia ? <Link to={`/${url}/quote/${event.phieu_bao_gia}`}>
+                                Xem chi tiết vấn đề
+                            </Link> : <></>}
+                           
+                        </Descriptions.Item>
                     </Descriptions>
-                    <Divider/>
-                    {event.phieu_bao_gia && quote ? 
-                      <Tabs type='card'
-                      items={[
-                        {
-                            key: 0,
-                            label: "Vấn đề cụ thể",
-                            children:  <Descriptions
-                            column={{
-                                lg: 4,
-                                md: 4,
-                                sm: 2,
-                            }}>
-                            <Descriptions.Item span={2} label="Lĩnh vực">{quote.linh_vuc.ten_linh_vuc}</Descriptions.Item>
-                            <Descriptions.Item span={2} label="Dịch vụ">{quote.dich_vu.ten_dv}</Descriptions.Item>
-                            <Descriptions.Item span={2} label="Vấn đề giải quyết">{quote.van_de}</Descriptions.Item>
-                            <Descriptions.Item span={2} label="Giá dự kiến">{quote.tong_gia_du_kien}</Descriptions.Item>
-                            </Descriptions>
-                        }
-                      ]}/> : <></>}  
                 </Modal> : null}
 
         </>

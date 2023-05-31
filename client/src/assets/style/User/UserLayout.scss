@@ -41,8 +41,6 @@
 }
 
 .content {
-    padding-top: 2%;
-
     .breadcrump {
         padding: 0 0 5% 5%;
     }
@@ -57,7 +55,6 @@
         .sidebar-info {
             margin-bottom: 30px;
             width: 100%;
-            // background-image: url('../images/banner/banner-here.jpg');
             background-size: cover;
             border-radius: 10px;
 
@@ -77,7 +74,9 @@
         }
     }
 }
-
+.content{
+    padding: 10px;
+}
 .footer {
     background-color: #fff;
     padding: 5% 0;

@@ -12,7 +12,7 @@ const formItemLayout = {
             span: 24,
         },
         md: {
-            span: 8,
+            span: 10,
         },
     }
 };
@@ -61,12 +61,11 @@ function FormCustomer({ props }) {
             active: values.active,
             
         }
-       
+        console.log(data);
         if (props)
             handleUpdate(data);
         else handleAdd(data);
     }
-    console.log(typeof user.ngay_sinh);
     return (
         <>
 
@@ -245,7 +244,7 @@ function FormCustomer({ props }) {
 
                 <Row>
                     <Col md={{ span: 8 }}>
-                        {/* <Form.Item
+                        <Form.Item
                             label="Mật khẩu tài khoản"
                             name="password"
                             rules={[
@@ -256,14 +255,6 @@ function FormCustomer({ props }) {
                             ]}
                         >
                             <Input.Password />
-                        </Form.Item> */}
-                        <Form.Item
-                            label='Hoạt động'
-                            name="active"
-                            valuePropName="checked"
-                            initialValue={user.active}
-                        >
-                            <Switch checkedChildren="Hoạt động" unCheckedChildren="Khoá" success="false" />
                         </Form.Item>
                     </Col>
 
@@ -281,7 +272,7 @@ function FormCustomer({ props }) {
 
                 </Row>
                 <Row>
-                    {/* <Col md={{ span: 8 }}>
+                    <Col md={{ span: 8 }}>
                         <Form.Item
                             label='Hoạt động'
                             name="active"
@@ -290,7 +281,7 @@ function FormCustomer({ props }) {
                         >
                             <Switch checkedChildren="Hoạt động" unCheckedChildren="Khoá" success="false" />
                         </Form.Item>
-                    </Col> */}
+                    </Col>
                 </Row>
                 <Form.Item
                     wrapperCol={{

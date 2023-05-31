@@ -1,5 +1,9 @@
 .auth-page {
     margin: 5% 30%;
+    background-color: var(--grey-blue);
+    padding: 1% 0 2% 0;
+    border-radius: 5px;
+    box-shadow:  5px 10px 15px #b7b7b7;
     h1{
         font-size: 2.5rem;
         font-weight: 400;
@@ -20,6 +24,9 @@
             width: 100%;
         }
         .login-form-button{
+            border-radius: 5px;
+            box-shadow: 5px 5px 10px #939393;
+            border: none;
             padding: 2% 5%;
             font-size: 1rem ;
             letter-spacing: 0;

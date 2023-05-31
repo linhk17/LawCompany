@@ -1,13 +1,13 @@
 import { quoteService } from "~/services";
 import { useToken } from "~/store";
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Button, Card, Input, Space, Table, Tag } from "antd";
 import moment from "moment";
 import Highlighter from "react-highlight-words";
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, ReconciliationFilled } from '@ant-design/icons';
 const url = ['', 'admin', 'tu-van-vien']
-const statusText = ['Yêu cầu báo giá', 'Đã gửi báo giá', 'Đã lên lịch']
+const statusText = ['Yêu cầu báo giá', 'Đã  tạo báo giá', 'Đã gửi báo giá', 'Đã lên lịch']
 
 
 function QuoteList() {
@@ -28,6 +28,7 @@ function QuoteList() {
         };
         getQuotes()
     }, [id]);
+
     const data = quotes.map((value, index) => {
         return {
             stt: index + 1,
@@ -36,10 +37,9 @@ function QuoteList() {
             sdt: value.khach_hang.sdt,
             email: value.khach_hang.email,
             date: value.ngay_gui_phieu ?
-                moment(value.ngay_gui_phieu).format('YYYY-MM-DD LTS') :
-                moment(value.ngay_gui_phieu).format('YYYY-MM-DD LTS'),
-            status: value.status
-
+                moment(value.ngay_gui_phieu).format('DD-MM-YYYY LTS') :
+                moment(value.ngay_gui_phieu).format('DD-MM-YYYY LTS'),
+            status: `${value.status}`
         }
     })
 
@@ -62,7 +62,7 @@ function QuoteList() {
             >
                 <Input
                     ref={searchInput}
-                    placeholder={`Tìm kiếm theo số điện thoại khách hàng`}
+                    placeholder={ dataIndex == 'date' ? 'VD: 08-05-2023' : `Nhập từ khoá tìm kiếm`}
                     value={selectedKeys[0]}
                     onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
@@ -134,6 +134,7 @@ function QuoteList() {
             title: 'Khách hàng',
             dataIndex: 'customer',
             key: 'customer',
+            ...getColumnSearchProps('customer')
         },
         {
             title: 'Số điện thoại',
@@ -145,19 +146,41 @@ function QuoteList() {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
+            ...getColumnSearchProps('email')
+
         },
         {
             title: 'Thời gian lập phiếu',
             dataIndex: 'date',
             key: 'date',
+            ...getColumnSearchProps('date')
         },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
+            filters: [
+                {
+                    text: 'Yêu cầu báo giá',
+                    value: 0
+                },
+                {
+                    text: 'Đã gửi báo giá',
+                    value: 1
+                },
+                {
+                    text: 'Đã tạo báo giá',
+                    value: 2
+                },
+                {
+                    text: 'Đã tạo lịch hẹn',
+                    value: 3
+                },
+            ],
+            onFilter: (value, record) => record.status.startsWith(value),
             render: (status) => (
                 <Tag
-                    color={status === 0 ? 'volcano' : status === 1 ? 'geekblue' : 'success'}
+                    color={status == 0 ? 'volcano' : status == 1 ? 'geekblue' : status == 2 ? 'success' : "#d4b106"}
                 >
                     {statusText[status].toUpperCase()}
                 </Tag>
@@ -166,7 +189,11 @@ function QuoteList() {
     ];
     return (
         <>
-            <Table columns={columns} dataSource={data}
+                <Link to={`/${url[token.account.quyen]}/quotes/add`}>
+                    <Button className="btn-cyan" icon={<ReconciliationFilled />} block>Báo giá mới</Button>
+                </Link>
+            <Card className="card-list">
+                <Table columns={columns} dataSource={data}
                 onRow={(record, rowIndex) => {
                     return {
                         onClick: (event) => {
@@ -174,6 +201,8 @@ function QuoteList() {
                         }, // click row
                     }
                 }} />
+            </Card>
+            
         </>
     );
 }

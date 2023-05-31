@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { boPhanService, quoteService, timeAppointmentService, typeAppointmentService, userService } from "~/services";
+import { useToken } from "~/store";
 const { RangePicker } = DatePicker;
 const formItemLayout = {
     labelCol: {
@@ -23,18 +24,21 @@ const formItemLayout = {
         }
     }
 };
-
+const url = ['', 'admin', 'tu-van-vien']
 function ModalCalendar(props) {
 
     let navigate = useNavigate();
+    const { token } = useToken();
     const [form] = Form.useForm();
     const [typeAppoint, setTypeAppoint] = useState([]);
     const [boPhan, setBoPhan] = useState([]);
     const [users, setUsers] = useState([]);
+    // const [arrUser, setArrUser] = useState([]);
     const quote = { ...props.quote };
     const khach_hang = { ...props.quote.khach_hang };
     const dich_vu = { ...props.quote.dich_vu };
     const linh_vuc = { ...props.quote.linh_vuc };
+    let arrUser = []
 
     useEffect(() => {
         const getTypeAppoints = async () => {
@@ -48,21 +52,30 @@ function ModalCalendar(props) {
         }
         getBoPhan();
     }, []);
+
     const arrTypeAppoint = typeAppoint.map((value) => {
         return ({ value: value.ten, label: value.ten })
     })
     const arrBoPhan = boPhan.map((value) => {
         return ({ value: value._id, label: value.ten_bo_phan })
     })
-
-    const handleChangeBoPhan = async (value) => {
-        setUsers((await userService.getByBoPhan(value)).data)
-    }
-    const arrUser = users.map((value) => {
-        return ({ value: value._id, label: value.ho_ten })
+    users.map((value) => {
+        if (value.chuc_vu._id === 'LS02' && value.chuyen_mon.includes(linh_vuc._id))
+            arrUser.push({
+                value: value._id,
+                label: value.ho_ten
+            })
+        else if (value.bo_phan._id !== 'LS')
+            arrUser.push({
+                value: value._id,
+                label: value.ho_ten
+            })
     })
+    const handleChangeBoPhan = async (value) => {
+        setUsers((await userService.getByBoPhan(value)).data);
+    }
+    
     const onFinish = async (values) => {
-        console.log(values);
         const data = {
             tieu_de: values.tieu_de,
             bo_phan: values.bo_phan,
@@ -80,15 +93,16 @@ function ModalCalendar(props) {
                 sdt: values.sdt,
                 email: values.email
             },
+            nguoi_tao: token._id
         }
         try {
-            const result = await timeAppointmentService.create(data);
+            await timeAppointmentService.create(data);
             await quoteService.update(quote._id, {
                 linh_vuc: quote.linh_vuc._id,
                 dich_vu: quote.dich_vu._id,
-                status: 2
+                status: 3
             })
-            navigate(`/admin/calendar`);
+            navigate(`/${url[token.account.quyen]}/calendar`);
         }
         catch (error) {
             console.log(error);
@@ -97,7 +111,7 @@ function ModalCalendar(props) {
 
     return (
         <Modal
-            title="Thêm công việc"
+            title="Thêm lịch hẹn"
             width={1000}
             {...props}
             footer={null}
@@ -251,9 +265,9 @@ function ModalCalendar(props) {
                                             <Form.Item
                                                 label="Thời gian"
                                                 name='thoi_gian'>
-                                                <RangePicker 
+                                                <RangePicker
                                                     showTime={{ format: 'HH:mm' }}
-                                                    format="YYYY-MM-DD HH:mm" 
+                                                    format="YYYY-MM-DD HH:mm"
                                                 />
                                             </Form.Item>
                                             <Form.Item
@@ -304,7 +318,7 @@ function ModalCalendar(props) {
                         offset: 20,
                         span: 6
                     }}>
-                    <Button htmlType="submit">Lưu</Button>
+                    <Button htmlType="submit" type="primary">Thêm mới</Button>
                 </Form.Item>
             </Form>
         </Modal>

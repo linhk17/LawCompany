@@ -9,10 +9,11 @@ import { taskService, userService } from "~/services";
 import { useEffect } from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import TextArea from "antd/es/input/TextArea";
 
 dayjs.extend(customParseFormat);
 const dateFormat = 'DD-MM-YYYY hh:mm A';
-const statusText = ['Đã giao', 'Đã hoàn thành', 'Tạm ngưng']
+const statusText = ['Đã giao', 'Đã trình', 'Đã hoàn thành', 'Tạm ngưng']
 const url = ['', 'admin', 'staff'];
 function FormAddTask() {
 
@@ -61,8 +62,8 @@ function FormAddTask() {
     })
     const handleDelete = async (key) => {
         (await taskService.delete(key));
-        const newData = dataSource.filter((item) => item._id !== key);
-        setDataSource(newData);
+        const newData = task.filter((item) => item._id !== key);
+        setTask(newData);
     };
     const handleEdit = async (id, data, key) => {
         try {
@@ -96,12 +97,10 @@ function FormAddTask() {
     }
     const onSubmit = (values) => {
         const newVal = {
-            ten_cong_viec: values.ten_cong_viec,
-            nguoi_phu_trach: values.nguoi_phu_trach,
+            ...values,
             vu_viec: state.matter._id,
-            han_chot_cong_viec: values.han_chot_cong_viec,
             ngay_giao: new Date(),
-            nguoi_giao: token._id,
+            nguoi_phan_cong: token._id,
             status: 0
         }
         form.resetFields();
@@ -132,16 +131,18 @@ function FormAddTask() {
             dataIndex: 'status',
             render: (status) => (
                 <Tag
-                    color={status === 0 ? 'volcano' : status===1 ? 'success' : 'warning'}
-                >
-                    {statusText[status]}
-                </Tag>
+                color={status === 0 ? 'geekblue' : status === 1 ? 'volcano' : status === 2 ? 'success' : '#faad14'}
+            >
+                
+                { status != -1 ?  statusText[status] : "Tạm ngưng"}
+            </Tag>
             ),
         },
         {
             title: 'Thao tác',
             dataIndex: 'operation',
             render: (_, record) => (
+                record.status != 2 ?
                 <Space split={<Divider type="vertical" />}>
                     <Button onClick={() => {
                         setEdit({...task[record.key], key: record.key})
@@ -150,7 +151,7 @@ function FormAddTask() {
                     <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
                         <Button><DeleteOutlined /></Button>
                     </Popconfirm>
-                </Space>)
+                </Space> : <></>)
         },
         {
             title: '',
@@ -166,35 +167,31 @@ function FormAddTask() {
 
     return (
         <>
-            <Button type="primary" onClick={() => {
+            <Button className="btn-cyan" onClick={() => {
                 setOpen(true)
             }}>
                 Thêm công việc
             </Button>
             <Modal
-                title={
-                    <>
-                        <Title level={4}>Thêm công việc</Title>
-                        <Divider />
-                    </>
-                }
+                title="Thêm công việc"
                 centered
                 open={open}
                 footer={null}
-                width={1000}
+                width={700}
                 onCancel={() => {
                     form.resetFields()
                     setOpen(false)
                 }}
             >
+                <Divider/>
                 <Form
                     form={form}
                     name="basic"
                     labelCol={{
-                        span: 8,
+                        span: 6,
                     }}
                     wrapperCol={{
-                        span: 16,
+                        span: 18,
                     }}
                     style={
                         {
@@ -208,6 +205,14 @@ function FormAddTask() {
                             {
                                 name: ["ten_cong_viec"],
                                 value: edit.ten_cong_viec,
+                            },
+                            {
+                                name: ["mo_ta"],
+                                value: edit.mo_ta,
+                            },
+                            {
+                                name: ["yeu_cau"],
+                                value: edit.yeu_cau,
                             },
                             {
                                 name: ["nguoi_phu_trach"],
@@ -247,19 +252,52 @@ function FormAddTask() {
                         <Input />
                     </Form.Item>
                     <Form.Item
+                        label="Yêu cầu công việc"
+                        name="yeu_cau"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập yêu cầu công việc!',
+                            },
+                        ]}
+                    >
+                        <TextArea placeholder="Giấy chứng nhận phải có chữ ký bác sĩ"/>
+                    </Form.Item>
+                    <Form.Item
+                        label="Mô tả công việc"
+                        name="mo_ta"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập mô tả công việc!',
+                            },
+                        ]}
+                    >
+                        <TextArea placeholder="Xin giấy chứng nhận thương tích tại bệnh viện Bạch Mai"/>
+                    </Form.Item>
+                    <Form.Item
                         label="Hạn chót"
                         name="han_chot_cong_viec"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng chọn ngày hạn',
+                            },
+                        ]}
                     >
                         <DatePicker showTime format={dateFormat} />
                     </Form.Item>
                     <Form.Item
                         wrapperCol={{
-                            offset: 8,
+                            offset: 18,
                             span: 16,
                         }}
                     >
-                        <Button type="primary" htmlType="submit">
-                            Submit
+                        <Button className="btn-cyan" htmlType="submit">
+                            {
+                                edit ? "Cập nhật"
+                                : "Thêm mới"
+                            }
                         </Button>
                     </Form.Item>
                 </Form>

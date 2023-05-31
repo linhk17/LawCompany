@@ -1,6 +1,5 @@
-import { Button, Col, Form, Input, Radio, Row, Space, Tabs, Select, Divider, InputNumber } from "antd";
+import { Button, Col, Form, Input, Radio, Row, Space, Tabs, Select, Divider, InputNumber, Table } from "antd";
 import { useEffect, useState } from "react";
-import { TableAddFile } from "~/components";
 import FormAddTask from "./FormAddTask";
 import FormAddPeriod from "./FormAddPeriod";
 import FormAddFee from "./FormAddFee";
@@ -8,7 +7,8 @@ import { matterService, serviceService, timePayService, typePayService, typeServ
 import { useNavigate } from "react-router-dom";
 import { useStore, useToken } from "~/store";
 import FormAddFile from "./FormAddFile";
-
+import FormAddContact from "./FormAddContact";
+const url = ['', 'admin', 'staff']
 const formItemLayout = {
     labelCol: {
         xs: {
@@ -31,9 +31,46 @@ const label = [
     'Nội bộ được phép truy cập',
     'Khách hàng được phép truy cập'
 ]
+const columnsBill = [
 
+    {
+        title: 'Ngày lập',
+        dataIndex: 'dateCreate',
+        width: 200
+    },
+    {
+        title: 'Nhân viên',
+        dataIndex: 'staff',
+        width: 200
+    },
+    {
+        title: 'Tài khoản bút toán',
+        dataIndex: 'stk_bt',
+        width: 150
+    },
+    {
+        title: 'Chủ tài khoản bút toán',
+        dataIndex: 'ctk_bt',
+        width: 150
+    },
+    {
+        title: 'Tài khoản nhận',
+        dataIndex: 'stk_nhan',
+        width: 150
+    },
+    {
+        title: 'Chủ tài khoản nhận',
+        dataIndex: 'ctk_nhan',
+        width: 150
+    },
+    {
+        title: 'Tổng',
+        dataIndex: 'tong_tien',
+        width: 150
+    },
+];
 function FormMatter({ props }) {
-
+    console.log(props);
     const matter = { ...props }
     const [state, dispatch] = useStore();
     const arrCustomer = [];
@@ -50,7 +87,7 @@ function FormMatter({ props }) {
     const [type, setType] = useState(
         matter._id ? matter.linh_vuc._id : null
     );
-    const {token} = useToken();
+    const { token } = useToken();
     let navigate = useNavigate();
 
     useEffect(() => {
@@ -93,10 +130,12 @@ function FormMatter({ props }) {
                 label: value.ho_ten
             })
         }
-        else arrStaff.push({
-            value: value._id,
-            label: value.ho_ten
-        })
+        else if (value.chuc_vu._id === 'LS02' && value.chuyen_mon.includes(type)) {
+            arrStaff.push({
+                value: value._id,
+                label: value.ho_ten
+            })
+        }
     })
     const arrTypeService = typeServices.map((value) => {
         return ({
@@ -110,16 +149,18 @@ function FormMatter({ props }) {
             label: value.ten_dv
         })
     })
-    const arrTypePay = typePay.map((value) => {
-        return ({
-            value: value._id,
-            label: value.ten
-        })
-    })
+    // const arrTypePay = typePay.map((value) => {
+    //     return ({
+    //         value: value._id,
+    //         label: value.ten
+    //     })
+    // })
     const arrTimePay = timePay.map((value) => {
         return ({
             value: value._id,
-            label: value.ten
+            label: value.ten == 0 ? "Thanh toán ngay"
+                        : value.ten == -1 ? "Thanh toán ngay khi hoàn thành"
+                        : value.ten + " ngày"
         })
     })
     access.map((value) => {
@@ -137,24 +178,45 @@ function FormMatter({ props }) {
     const handleAdd = async (data) => {
         try {
             let result = (await matterService.create(data)).data;
-            navigate(`/admin/matter/${result.insertedId}`);
+            navigate(`/${url[token.account.quyen]}/matter/${result.insertedId}`);
         }
         catch (error) {
             console.log(error);
         }
     }
     const handleUpdate = async (data) => {
-        const newData = {
+        let newData = {}
+        token.account.quyen == 1 ?
+        newData = {
             ...data,
             truy_cap: {
                 khach_hang: data.customerAccess,
                 nhan_vien: data.staffAccess,
+            },
+            nguoi_thuc_hien: {
+                ho_ten: token.ho_ten,
+                _id: token._id,
+                chuc_vu: token.chuc_vu.ten_chuc_vu
             }
-        }
+        } 
+        : newData = {
+            ...data,
+            dieu_khoan_thanh_toan: matter.dieu_khoan_thanh_toan._id,
+            chiet_khau_hoa_hong: matter.chiet_khau_hoa_hong,
+            truy_cap: {
+                khach_hang: matter.truy_cap.khach_hang,
+                nhan_vien: matter.truy_cap.nhan_vien,
+            },
+            nguoi_thuc_hien: {
+                ho_ten: token.ho_ten,
+                _id: token._id,
+                chuc_vu: token.chuc_vu.ten_chuc_vu
+            }
+        } 
         try {
             if (window.confirm(`Bạn muốn cập nhật lại vụ việc ${matter.ten_vu_viec} ?`)) {
                 await matterService.update(matter._id, newData);
-                navigate(`/admin/matters/${matter._id}`);
+                navigate(`/${url[token.account.quyen]}/matter/${matter._id}`);
             }
         }
         catch (error) {
@@ -166,21 +228,20 @@ function FormMatter({ props }) {
             ...values,
             chiet_khau_hoa_hong: values.chiet_khau_hoa_hong
                 ? values.chiet_khau_hoa_hong : 0,
+            tong_tien: values.tong_tien ? values.tong_tien : 0,
             truy_cap: {
                 khach_hang: values.customerAccess,
                 nhan_vien: values.staffAccess
             },
             status: 0,
+            ngay_lap: new Date(),
             tai_lieu: matter._id ? state.files : null,
             cong_viec: matter._id ? state.tasks : null,
             phi_co_dinh: matter._id ? state.steps : null,
-            chi_phi_phat_sinh: matter._id ? state.fees : null,
-            ngay_lap: new Date()
+            chi_phi_phat_sinh: matter._id ? state.fees : null
         }
-        matter._id ? handleUpdate(newData) :
-            handleAdd(newData)
+        matter._id ? handleUpdate(newData) : handleAdd(newData)
     }
-
 
     return (
         <>
@@ -212,13 +273,17 @@ function FormMatter({ props }) {
                         name: ['dieu_khoan_thanh_toan'],
                         value: matter.dieu_khoan_thanh_toan._id
                     },
-                    {
-                        name: ['phuong_thuc_tinh_phi'],
-                        value: matter.phuong_thuc_tinh_phi._id
-                    },
+                    // {
+                    //     name: ['phuong_thuc_tinh_phi'],
+                    //     value: matter.phuong_thuc_tinh_phi._id
+                    // },
                     {
                         name: ['chiet_khau_hoa_hong'],
                         value: matter.chiet_khau_hoa_hong
+                    },
+                    {
+                        name: ['tong_tien'],
+                        value: matter.tong_tien
                     },
                     {
                         name: ['show'],
@@ -226,33 +291,48 @@ function FormMatter({ props }) {
                     },
                     {
                         name: ['staffAccess'],
-                        value: arrStaffAccess
+                        value: matter.truy_cap.nhan_vien
                     },
                     {
                         name: ['customerAccess'],
-                        value: arrCustomerAccess
+                        value: matter.truy_cap.khach_hang
                     },
                 ] : null}
             >
-                  <Form.Item
-                        wrapperCol={{
-                            offset: 20,
-                        }}
-                    >
-                        <Button type="primary" htmlType="submit" className="btn-primary">Lưu thông tin</Button>
-                    </Form.Item>
+                <Form.Item
+                    wrapperCol={{
+                        offset: 0,
+                    }}
+                >
+                    <Button type="primary" htmlType="submit" className="btn-primary">
+                        {
+                            props ? "Cập nhật" : "Thêm mới"
+                        }
+                    </Button>
+                </Form.Item>
                 <Row>
-                  
                     <Col span={12} pull={2}>
                         <Form.Item
                             label="Tên vụ việc"
                             name="ten_vu_viec"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập tên vụ việc',
+                                },
+                            ]}
                         >
                             <Input />
                         </Form.Item>
                         <Form.Item
                             label="Lĩnh vực"
                             name="linh_vuc"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn lĩnh vực',
+                                },
+                            ]}
                         >
                             <Select
                                 showSearch
@@ -272,6 +352,12 @@ function FormMatter({ props }) {
                         <Form.Item
                             label="Dịch vụ"
                             name="dich_vu"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn dịch vụ',
+                                },
+                            ]}
                         >
                             <Select
                                 showSearch
@@ -292,9 +378,15 @@ function FormMatter({ props }) {
                         <Form.Item
                             label="Khách hàng"
                             name="khach_hang"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn khách hàng. Nếu chưa có vui lòng thêm',
+                                },
+                            ]}
                         >
                             <Select
-                                disabled={token.account.quyen != 1}
+                                disabled={token.account.quyen !== 1}
                                 showSearch
                                 allowClear
                                 style={{
@@ -306,9 +398,15 @@ function FormMatter({ props }) {
                         <Form.Item
                             label="Luật sư phụ trách"
                             name="luat_su"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn luật sư phụ trách',
+                                },
+                            ]}
                         >
                             <Select
-                                disabled={token.account.quyen != 1}
+                                disabled={token.account.quyen !== 1}
                                 showSearch
                                 allowClear
                                 style={{
@@ -317,26 +415,26 @@ function FormMatter({ props }) {
                                 options={arrStaff}
                             />
                         </Form.Item>
-
                     </Col>
                 </Row>
                 <Divider />
-                <Tabs style={{ width: '100%' }} type="card" defaultActiveKey={token.account.quyen == 1 ? '1' : '2'} items={[
+                <Tabs style={{ width: '100%' }} type="card" defaultActiveKey={token.account.quyen === 1 ? '1' : '2'} items={[
                     {
                         key: '1',
                         label: `Thiết lập`,
-                        disabled: token.account.quyen != 1 ? true : false,
+                        disabled: token.account.quyen !== 1 ? true : false,
                         children: <Row style={{ paddingTop: 30 }}>
                             <Col md={{ span: 10 }}>
                                 <Form.Item
                                     name='dieu_khoan_thanh_toan'
-                                    label="Điều khoản thanh toán">
+                                    label="Điều khoản thanh toán"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng chọn điều khoản thanh toán',
+                                        },
+                                    ]}>
                                     <Select options={arrTimePay} />
-                                </Form.Item>
-                                <Form.Item
-                                    name='phuong_thuc_tinh_phi'
-                                    label="Phương thức tính phí">
-                                    <Select options={arrTypePay} />
                                 </Form.Item>
                                 <Form.Item
                                     name='chiet_khau_hoa_hong'
@@ -353,14 +451,14 @@ function FormMatter({ props }) {
                                     name='tong_tien'
                                     label="Tổng tiền">
                                     <InputNumber
-                                    style={{
-                                        width: 250
-                                    }}
-                                    min={1}
-                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                    parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-                                    addonAfter="đ"
-                                />
+                                        style={{
+                                            width: 250
+                                        }}
+                                        min={0}
+                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+                                        addonAfter="đ"
+                                    />
                                 </Form.Item>
                             </Col>
                             <Col md={{ span: 12 }}>
@@ -413,36 +511,63 @@ function FormMatter({ props }) {
                             </Col>
                         </Row>,
                     },
+                    props ?
                     {
                         key: '2',
                         label: `Giấy tờ`,
                         children: <FormAddFile />,
-                        disabled: matter ? false : true
-                    },
+                        disabled: !(token.account.quyen == 1 || matter.luat_su._id == token._id)
+                    } : null,
+                    props ?
                     {
                         key: '3',
                         label: `Liên hệ`,
-                        children: <TableAddFile />,
-                        disabled: matter ? false : true
-                    },
+                        children: <FormAddContact />,
+                    } : null,
+                    props ?
                     {
                         key: '4',
                         label: `Công việc`,
                         children: <FormAddTask props={matter.cong_viec} />,
                         disabled: matter ? false : true
-                    },
-                    {
+                    } : null,
+                    props ? {
                         key: '5',
-                        label: `Phí cố định`,
-                        children: <FormAddPeriod props={matter.phi_co_dinh} />,
-                        disabled: matter ? false : true
-                    },
+                        label: `Quy trình thực hiện`,
+                        children: <FormAddPeriod props={matter}/>
+                    } : null,
+                    props ?
                     {
                         key: '6',
                         label: `Chi phí`,
                         children: <FormAddFee props={matter.chi_phi_phat_sinh} />,
                         disabled: matter ? false : true
-                    }
+                    }: null,
+                    props ?
+                    {
+                        key: '7',
+                        label: `Hoá đơn khách hàng`,
+                        children:
+                            <>
+                                <Table pagination={false} columns={columnsBill} />
+                                <br />
+                                <Space direction="vertical" style={{ textAlign: 'end', float: 'right' }}>
+                                    <span>
+                                        <b style={{ marginRight: 15 }}>Tổng tiền vụ việc :</b>
+                                        {`${state.matter.tong_tien}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'}
+                                    </span>
+                                    <span>
+                                        <b style={{ marginRight: 15 }}>Đã thanh toán :</b>
+                                        {`${state.matter.tong_tien}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'}
+                                    </span>
+                                    <span>
+                                        <b style={{ marginRight: 15 }}>Số tiền còn lại:</b>
+                                        {`${state.matter.tong_tien}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ'}
+                                        </span>
+                                </Space>
+                            </>,
+                    } : null
+                  
                 ]} />
             </Form>
         </>

@@ -1,6 +1,9 @@
 import { Button, Col, Row, Space, TreeSelect } from 'antd';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  PlusOutlined
+} from '@ant-design/icons';
 const treeData = [
   {
     value: 'parent 1',
@@ -51,25 +54,10 @@ function Filter({ seg }) {
       <Row>
         <Col md={{ span: 4 }}>
           <Space>
-            <Link to={`add`}><Button type="primary" className="btn-primary">CREATE</Button></Link>
+            <Link to={`add`}><Button type="primary" className="btn-cyan"><PlusOutlined />Thêm mới</Button></Link>
           </Space>
         </Col>
-        <Col md={{ span: 8, push: 10 }}>
-
-          <TreeSelect
-            showSearch
-            dropdownStyle={{
-              maxHeight: 400,
-              overflow: 'auto',
-              minWidth: 300,
-            }}
-            placeholder="Bộ lọc"
-            dropdownMatchSelectWidth={false}
-            placement={placement}
-            allowClear
-            treeDefaultExpandAll
-            treeData={treeData}
-          />
+        <Col md={{ span: 4, push: 16 }}>
           {seg}
         </Col>
       </Row>

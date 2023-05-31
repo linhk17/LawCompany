@@ -1,11 +1,12 @@
-import { Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Select } from "antd";
+import { Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, message } from "antd";
 import { Option } from "antd/es/mentions";
 import Title from "antd/es/typography/Title";
 import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
+import { UploadImg, fileSelected } from "~/components/AdminComponents/UploadImg";
 import { feeService } from "~/services";
-import { actions, useStore, useToken } from "~/store";
+import { useStore, useToken } from "~/store";
 
 function ModalAddFee(props) {
 
@@ -13,6 +14,7 @@ function ModalAddFee(props) {
     const [state, dispatch] = useStore();
     const [form] = Form.useForm();
     const [bank, setBank] = useState([]);
+    const [messageApi, contextHolder] = message.useMessage();
 
     useEffect(() => {
         axios('https://api.vietqr.io/v2/banks')
@@ -34,10 +36,19 @@ function ModalAddFee(props) {
     const handleAdd = async (values) => {
         try {
             let result = (await feeService.create(values)).data;
-            setTimeout(()=> props.onCancel(false), 50);
+            if(result){
+                messageApi.open({
+                    type: 'success',
+                    content: 'Thêm chi phí thành công!',
+                });
+                form.resetFields()
+            }
         }
         catch (err) {
-            console.log(err);
+            messageApi.open({
+                type: 'error',
+                content: 'Vui lòng kiểm tra lại thông tin',
+            });
         }
     }
     const onSubmit = (values) => {
@@ -53,14 +64,15 @@ function ModalAddFee(props) {
                 ngan_hang: values.nameBank,
                 chu_tai_khoan: values.nameCreditCard,
                 so_tai_khoan: values.numberCreditCard
-            }
+            }, 
+            hinh_anh: fileSelected
         }
-        form.resetFields();
         handleAdd(newVal);
     }
 
     return (
         <>
+        {contextHolder}
             <Modal title="Chi phí mới" width={1000} {...props} footer={null}>
                 <Form
                     form={form}
@@ -83,6 +95,12 @@ function ModalAddFee(props) {
                             <Form.Item
                                 label="Mô tả"
                                 name="mo_ta"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập mô tả',
+                                    },
+                                ]}
                             >
                                 <Input placeholder="VD: Ăn trưa với khách hàng A" />
                             </Form.Item>
@@ -97,12 +115,18 @@ function ModalAddFee(props) {
                             <Form.Item
                                 label="Tổng tiền"
                                 name="don_gia"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập số tiền',
+                                    },
+                                ]}
                             >
                                 <InputNumber
                                     style={{
                                         width: 250
                                     }}
-                                    min={1}
+                                    min={0}
                                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                     parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
                                     addonAfter="đ"
@@ -128,6 +152,12 @@ function ModalAddFee(props) {
                             <Form.Item
                                 label="Ngân hàng"
                                 name="nameBank"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng chọn ngân hàng',
+                                    },
+                                ]}
                             >
                                 <Select>
                                     {bank.map((value, index) => {
@@ -144,6 +174,12 @@ function ModalAddFee(props) {
                             <Form.Item
                                 label="Tên tài khoản"
                                 name="nameCreditCard"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập tên tài khoản',
+                                    },
+                                ]}
                             >
                                 <Input
                                     style={{
@@ -154,6 +190,12 @@ function ModalAddFee(props) {
                             <Form.Item
                                 label="Số tài khoản"
                                 name="numberCreditCard"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập số tài khoản',
+                                    },
+                                ]}
                             >
                                 <Input
                                     style={{
@@ -162,6 +204,12 @@ function ModalAddFee(props) {
                                 />
                             </Form.Item>
                         </Col>
+                        <Col span={10} push={4}>
+                            <Form.Item>
+                                <Title level={5}>Hình ảnh</Title>
+                            </Form.Item>
+                            <UploadImg/>
+                        </Col>
                     </Row>
                     <Form.Item
                         wrapperCol={{
@@ -169,8 +217,8 @@ function ModalAddFee(props) {
                             span: 6,
                         }}
                     >
-                        <Button type="primary" htmlType="submit">
-                            Tạo mới
+                        <Button htmlType="submit" className="btn-cyan">
+                            Thêm mới
                         </Button>
                     </Form.Item>
                 </Form>

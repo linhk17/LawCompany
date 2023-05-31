@@ -3,10 +3,14 @@
     top: 0;
     z-index: 1;
     width: 100%;
-    background-color: var(--dark-blue);
+    font-weight: 600;
+    // background: linear-gradient(to bottom, #993300 0%, #663300 100%);
+    background: linear-gradient(to top, #003366 0%, #006699 100%);
     .menu {
+        text-align: left;
         background-color: transparent;
         color: #fff;
+        font-size: 1rem !important;
     }
     
     .ant-menu-submenu-title, .ant-menu-title-content {

@@ -1,42 +1,35 @@
 import { Menu, Checkbox, Form, Input, Space } from "antd";
-import { Link, useNavigate } from "react-router-dom";
-import "~/assets/style/AuthPage.scss"
-import { useState } from "react";
-import { useToken } from "~/store";
-import { userService } from "~/services";
+import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
+import { userService } from "~/services";
+import '~/assets/style/AuthPage.scss'
+import { useToken } from "~/store";
+
 function LoginPage() {
-    const navigate = useNavigate();
-    const [status, setStatus] = useState("");
-    const { setToken } = useToken();
+    const {setToken} = useToken()
     const onFinish = async (values) => {
         try {
             const token = (await userService.login(values)).data
             setToken(token)
-            console.log(token.token.chuc_vu.id);
             if (token.token.account.quyen === 1)
                 window.location.href = '/admin'
             else if (token.token.account.quyen === 0)
                 window.location.href = '/'
             else if (token.token.account.quyen === 2) {
-                if (token.token.chuc_vu._id == 'LS02')
+                if (token.token.chuc_vu._id === 'LS02')
                     window.location.href = '/staff'
-                else if (token.token.chuc_vu._id == 'TVV02')
+                else if (token.token.chuc_vu._id === 'TVV02')
                     window.location.href = '/tu-van-vien'
+                else if (token.token.chuc_vu._id === 'TL02')
+                    window.location.href = '/tro-ly'
                 else
                     window.location.href = '/ke-toan'
             }
-
         }
         catch (error) {
             console.log(error);
         }
     }
-
-    const onFinishFailed = (errorInfo) => {
-        setStatus("error");
-        console.log(status);
-    };
 
     return (
         <>
@@ -52,7 +45,7 @@ function LoginPage() {
                             <Link to="/login">Đăng nhập</Link>
                         </Menu.Item>
                         <Menu.Item key="2">
-                            <Link to="/register">Đăng ký</Link>
+                            <Link to="/login">Đăng ký</Link>
                         </Menu.Item>
                     </Menu>
                 </div>
@@ -73,12 +66,11 @@ function LoginPage() {
                             remember: true,
                         }}
                         onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
                         autoComplete="off"
                     >
                         <Form.Item
                             className="login-form-item"
-                            label="Username"
+                            label="Số điện thoại"
                             name="sdt"
                             rules={[
                                 {
@@ -87,7 +79,9 @@ function LoginPage() {
                                 },
                             ]}
                         >
-                            <Input />
+                            <Input style={{
+                                border: '1px solid var(--dark-blue)'
+                            }} />
                         </Form.Item>
                         <Form.Item
                             className="login-form-item"
@@ -101,6 +95,9 @@ function LoginPage() {
                             ]}
                         >
                             <Input.Password
+                                style={{
+                                    border: '1px solid var(--dark-blue)'
+                                }}
                                 type="password"
                             />
                         </Form.Item>
@@ -127,7 +124,7 @@ function LoginPage() {
                                 span: 16,
                             }}
                         >
-                            <button type="submit" className="login-form-button">
+                            <button type="primary" htmltype="submit" className="login-form-button">
                                 Đăng nhập
                             </button>
                         </Form.Item>
