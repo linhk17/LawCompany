@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const axios = require("axios")
 const app = express();
 
 app.use(cors());
@@ -27,10 +26,11 @@ const feeRoute = require("./app/routes/fee.route");
 const periodRoute = require("./app/routes/period.route");
 const billRoute = require("./app/routes/bill.route");
 const thanhToanRoute = require("./app/routes/thanhToan.route");
+const typePayRoute = require("./app/routes/typePay.route");
 const timePayRoute = require("./app/routes/timePay.route");
 const timeAppointmentRoute = require("./app/routes/timeAppointment.route");
 const typeAppointmentRoute = require("./app/routes/typeAppointment.route");
-const typePayRoute = require("./app/routes/typePay.route");
+const contactRoute = require("./app/routes/contact.route");
 
 // use Route
 app.use("/api/type-service", typeServiceRoute);
@@ -56,11 +56,13 @@ app.use("/api/type-pay", typePayRoute);
 app.use("/api/time-pay", timePayRoute);
 app.use("/api/time-appointment", timeAppointmentRoute);
 app.use("/api/type-appointment", typeAppointmentRoute);
+app.use("/api/contact", contactRoute);
 
 // handle 404 response
 app.use((req, res, next) => {
     return next(new ApiError(404, "Resource not found"));
 });
+
 // define error 
 app.use((err, req, res, next) => {
     return res.status(err.statusCode || 500).json({

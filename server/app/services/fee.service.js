@@ -38,16 +38,27 @@ class Fee {
         const result = await this.Fee.findOne(id);
         return result;
     }
+    
+    async findByStaff(id){
+        const result = await this.Fee.find({
+            "nhan_vien._id" : new ObjectId(id)
+        });
+        return result.toArray();
+    }
+    
     async findByMatter(payload){
         const result = await this.Fee.find({
             vu_viec : {$eq : payload.id}
         });
         return result.toArray();
     }
+
+    // lay chi phi phat sinh theo trang thai
     async findByStatus(statusP) {
         const result = await this.Fee.find({ status: Number(statusP) });
         return result.toArray();
     }
+
     async create(payload){
         const fee = this.extractConactData(payload);
         const newVal = {

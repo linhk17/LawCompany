@@ -12,18 +12,25 @@ router.route("/:id")
     .put(task.update)
     .delete(task.delete);
 
-router.route("/findByStaff")
-    .post(task.findByStaff)
-
 router.route("/findByMatter")
     .post(task.findByMatter)
 
+router.route("/findByStaff")
+    .post(task.findByStaff)
+
 router.route("/findByStatus")
     .post(task.findByStatus);
-    
+
+router.route("/findByStaffPhanCong")
+    .post(task.findByStaffPhanCong);
+
 router.route("/findByDate")
     .post(task.findByDate);
 
+    router.route("/findByStaffAndPhanCong")
+    .post(task.findByStaffAndPhanCong);
+
 router.route("/setStatusPause")
     .patch(task.setStatusPause);
+
 module.exports = router;

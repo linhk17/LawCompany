@@ -15,6 +15,7 @@ router.route("/:id")
 router.route("/findByMatter")
     .post(bill.findByMatter)
 
-router.route("/getByMonthAndType")
-    .post(bill.getByMonthAndType);
+router.route("/findByMonth")
+    .post(bill.getByMonthAndType)
+
 module.exports = router;

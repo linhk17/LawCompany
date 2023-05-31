@@ -14,4 +14,5 @@ router.route("/:id")
 
 router.route("/findByBoPhan")
     .post(chucVu.findByBoPhan);
+
 module.exports = router;

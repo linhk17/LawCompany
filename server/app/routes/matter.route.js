@@ -9,19 +9,38 @@ router.route("/")
 
 router.route("/:id")
     .get(matter.findById)
-    .patch(matter.update)
+    .put(matter.update)
     .delete(matter.delete);
+
+router.route("/findByStatus/:id")
+    .get(matter.findByStatus);
 
 router.route("/setStatus/:id")
     .patch(matter.setStatus);
 
 router.route("/setStatus-tt/:id")
-    .patch(matter.setStatus_TT);
-    
-router.route("/findByStatus/:id")
-    .get(matter.findByStatus);
-    
+    .patch(matter.setStatusTT);
 
 router.route("/findByIdAccess")
     .post(matter.findByIdAccess);
+    
+router.route("/findByIdAccessUser")
+.post(matter.findByIdAccessUser);
+
+router.route("/getRoseByMonth")
+    .post(matter.getRoseByMonth)
+
+router.route("/reminder")
+    .post(matter.reminder)
+
+router.route("/findFinishedMatterByYear")
+    .post(matter.findFinishedByIdAndYear);
+    
+router.route("/thongKeKhachHangCu")
+    .post(matter.thongKeKhachHangCu);
+
+
+router.route("/update-progress/:id")
+    .patch(matter.updateProgress);
+
 module.exports = router;

@@ -18,8 +18,9 @@ class Bill {
             tong_gia_tri: payload.tong_gia_tri,
             status: payload.status,
             ghi_chu: payload.ghi_chu,
-            tai_khoan_ket_toan: payload.tai_khoan_ket_toan,
-            tai_khoan_boi_hoan: payload.tai_khoan_boi_hoan,
+            tai_khoan_cong_ty: payload.tai_khoan_cong_ty,
+            tai_khoan_khach: payload.tai_khoan_khach,
+            khach_hang: payload.khach_hang
         };
 
         // remove undefined fields
@@ -33,12 +34,15 @@ class Bill {
         const result = await this.Bill.find();
         return result.toArray();
     }
+
+    // tim bill theo vu viec
     async findByMatter(payload) {
         const result = await this.Bill.find({
             vu_viec: { $eq: payload.id }
         });
         return result.toArray();
     }
+
     async findById(id) {
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null
@@ -46,18 +50,7 @@ class Bill {
         const result = await this.Bill.findOne(id);
         return result;
     }
-    async getByMonthAndType(payload) {
-        const result = await this.Bill.find({
-            loai_hoa_don: payload.loai_hoa_don,
-            "$expr": {
-                "$and": [
-                    { "$eq": [{ "$month": "$ngay_lap" }, payload.month] },
-                    { "$eq": [{ "$year": "$ngay_lap" }, payload.year] }
-                ]
-            }
-        })
-        return result.toArray()
-    }
+
     async create(payload) {
         const bill = this.extractConactData(payload);
         const newVal = {
@@ -69,6 +62,7 @@ class Bill {
         this.updateToTalMatter(payload.vu_viec)
         return result;
     }
+
     async updateToTalMatter(payload) {
         let total = 0;
         const id = {
@@ -76,7 +70,6 @@ class Bill {
         };
         const result = this.Bill.find({ vu_viec: payload })
         const matter = await this.Matter.findOne({ _id: new ObjectId(payload)})
-       console.log(matter);
         result.forEach((value) => {
             total = total + value.tong_gia_tri
         }).then(() => {
@@ -93,7 +86,20 @@ class Bill {
             );
         })
     }
-
+    
+    // tim cac bill theo loai hoa don va theo nam
+    async getByMonthAndType(payload, i) {
+        const rs = await this.Bill.find({
+            loai_hoa_don: payload.loai_hoa_don,
+            "$expr": {
+                "$and": [
+                    { "$eq": [{ "$month": "$ngay_lap" }, i] },
+                    { "$eq": [{ "$year": "$ngay_lap" }, payload.year] }
+                ]
+            }
+        })
+        return rs.toArray()
+    }
 
     async update(id, payload) {
         id = {

@@ -33,7 +33,9 @@ class Matter {
             status: payload.status,
             tong_tien: payload.tong_tien,
             status_tt: payload.status_tt,
-            ngay_lap: payload.ngay_lap
+            ngay_lap: payload.ngay_lap,
+            cap_nhat_lan_cuoi: payload.cap_nhat_lan_cuoi, 
+            lich_su_chinh_sua: payload.lich_su_chinh_sua
         };
 
         Object.keys(matter).forEach(
@@ -60,30 +62,107 @@ class Matter {
         const result = await this.Matter.find({ status: Number(statusP) });
         return result.toArray();
     }
+    async reminder() {
+        const rs = await this.Matter.find({
+            status_tt: { $ne: 2 }
+        })
+        return rs.toArray()
+    }
+
+    //thong ke hoa hong vu viec
+    async getRoseByMonth(payload, i) {
+        if (payload.quyen == 1) {
+            const rs = await this.Matter.find({
+                status: 1,
+                "$expr": {
+                    "$and": [
+                        { "$eq": [{ "$month": "$cap_nhat_lan_cuoi" }, i] },
+                        { "$eq": [{ "$year": "$cap_nhat_lan_cuoi" }, payload.year] }
+                    ]
+                }
+            })
+            return rs.toArray()
+        }
+        else {
+            const rs = await this.Matter.find({
+                "luat_su._id": new ObjectId(payload._id),
+                status: 1,
+                "$expr": {
+                    "$and": [
+                        { "$eq": [{ "$month": "$cap_nhat_lan_cuoi" }, i] },
+                        { "$eq": [{ "$year": "$cap_nhat_lan_cuoi" }, payload.year] }
+                    ]
+                }
+            })
+            return rs.toArray()
+        }
+    }
 
     // lay vu viec theo id truy cap
     async findByIdAccess(payload) {
         const result = await this.Matter.find({ 'truy_cap.nhan_vien': payload.id })
         return result.toArray();
     }
-
+    async findByIdAccessUser(payload) {
+        const result = await this.Matter.find({ 'truy_cap.khach_hang': payload.id })
+        return result.toArray();
+    }
+    // tim cac vu viec da hoan thanh theo id luat su va theo nam
+    async findFinishedByIdAndYear(payload, i) {
+        if (payload.quyen === 1) {
+            const rs = await this.Matter.find({
+                status: 1,
+                "$expr": {
+                    "$and": [
+                        { "$eq": [{ "$month": "$cap_nhat_lan_cuoi" }, i] },
+                        { "$eq": [{ "$year": "$cap_nhat_lan_cuoi" }, payload.year] }
+                    ]
+                }
+            })
+            return rs.toArray()
+        }
+        else {
+            const rs = await this.Matter.find({
+                status: 1,
+                "luat_su._id": new ObjectId(payload._id),
+                "$expr": {
+                    "$and": [
+                        { "$eq": [{ "$month": "$cap_nhat_lan_cuoi" }, i] },
+                        { "$eq": [{ "$year": "$cap_nhat_lan_cuoi" }, payload.year] }
+                    ]
+                }
+            })
+            return rs.toArray()
+        }
+    }
+    async updateProgress (id, payload) {
+        id = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null
+        };
+        const result = await this.Matter.findOneAndUpdate(
+            id,
+            { $set: {quy_trinh: payload} },
+            { returnDocument: "after" }
+        );
+        return result.value;
+    }
     async create(payload) {
         const linh_vuc = await this.TypeService.findOne({ _id: payload.linh_vuc });
         const dich_vu = await this.Service.findOne({ _id: new ObjectId(payload.dich_vu) });
         const luat_su = await this.User.findOne({ _id: new ObjectId(payload.luat_su) });
         const khach_hang = await this.User.findOne({ _id: new ObjectId(payload.khach_hang) });
-        const phuong_thuc_tinh_phi = await this.TypePay.findOne({ _id: new ObjectId(payload.phuong_thuc_tinh_phi) });
         const dieu_khoan_thanh_toan = await this.TimePay.findOne({ _id: new ObjectId(payload.dieu_khoan_thanh_toan) });
         const vu_viec = {
             ...payload,
-            ngay_lap: new Date(payload.ngay_lap),
             linh_vuc: linh_vuc,
             dich_vu: dich_vu,
             luat_su: luat_su,
             khach_hang: khach_hang,
-            phuong_thuc_tinh_phi: phuong_thuc_tinh_phi,
             dieu_khoan_thanh_toan: dieu_khoan_thanh_toan,
-            status_tt: 0
+            ngay_lap: new Date(),
+            status_tt: 0,
+            lich_su_chinh_sua: []
+            
         }
 
         const matter = this.extractConactData(vu_viec);
@@ -99,16 +178,23 @@ class Matter {
         const dich_vu = await this.Service.findOne({ _id: new ObjectId(payload.dich_vu) });
         const luat_su = await this.User.findOne({ _id: new ObjectId(payload.luat_su) });
         const khach_hang = await this.User.findOne({ _id: new ObjectId(payload.khach_hang) });
-        const phuong_thuc_tinh_phi = await this.TypePay.findOne({ _id: new ObjectId(payload.phuong_thuc_tinh_phi) });
         const dieu_khoan_thanh_toan = await this.TimePay.findOne({ _id: new ObjectId(payload.dieu_khoan_thanh_toan) });
+        const matter_history = await this.Matter.findOne(id)
         const vu_viec = {
             ...payload,
+            ngay_lap: new Date(),
             linh_vuc: linh_vuc,
             dich_vu: dich_vu,
             luat_su: luat_su,
             khach_hang: khach_hang,
-            phuong_thuc_tinh_phi: phuong_thuc_tinh_phi,
             dieu_khoan_thanh_toan: dieu_khoan_thanh_toan,
+            lich_su_chinh_sua: [
+                ...matter_history.lich_su_chinh_sua,
+                {
+                    thoi_gian: new Date(),
+                    nguoi_thuc_hien: payload.nguoi_thuc_hien
+                }
+            ]
         }
         const matter = this.extractConactData(vu_viec);
         const result = await this.Matter.findOneAndUpdate(
@@ -118,6 +204,35 @@ class Matter {
         );
         return result.value;
     }
+    async thongKeKhachHangCu (payload) {
+        const rs = await this.Matter.aggregate([
+            {
+                $match: {"$expr": {"$eq": [{ "$year": "$ngay_lap" }, payload] }}
+            },
+            {
+                $group: {
+                    _id: "$khach_hang._id",
+                    count: { $count: {} }
+                }
+            }
+        ])
+        return rs.toArray()
+    }
+    async thongKeKhachHangCuTruoc (payload) {
+        const rs = await this.Matter.aggregate([
+            {
+                $match: {"$expr": {"$lt": [{ "$year": "$ngay_lap" }, payload] }}
+            },
+            {
+                $group: {
+                    _id: "$khach_hang._id",
+                    count: { $count: {} }
+                }
+            }
+        ])
+        return rs.toArray()
+    }
+    // set status thanh toan
     async setStatus_TT(id, payload) {
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null
@@ -131,6 +246,7 @@ class Matter {
         return rs.value
     }
 
+    // set status cac task cua vu viec
     async setStatus(id, payload) {
         const id_string = id;
         id = {
@@ -142,11 +258,24 @@ class Matter {
             { $set: matter },
             { returnDocument: "after" }
         );
-        if(payload.status == 2){
+        if (payload.status == 2) {
             const result = await this.Task.updateMany(
-                {status: 0, vu_viec: id_string},
-                {$set: {status: 2}}
+                { status: 0, vu_viec: id_string },
+                { $set: { status: -1 } }
             )
+        }
+        else if (payload.status == 0) {
+            const result = await this.Task.updateMany(
+                { status: -1, vu_viec: id_string },
+                { $set: { status: 0 } }
+            )
+        }
+        else if (payload.status == 1) {
+            const update = await this.Matter.findOneAndUpdate(
+                id,
+                { $set: { cap_nhat_lan_cuoi: new Date() } },
+                { returnDocument: "after" }
+            );
         }
         return rs.value;
     }

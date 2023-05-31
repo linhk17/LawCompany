@@ -11,8 +11,14 @@ router.route("/:id")
     .get(fee.findById)
     .patch(fee.update)
     .delete(fee.delete);
+
 router.route("/findByMatter")
     .post(fee.findByMatter)
+
+router.route("/findByStaff/:id")
+    .get(fee.findByStaff)
+
 router.route("/findByStatus")
     .post(fee.findByStatus);
+
 module.exports = router;

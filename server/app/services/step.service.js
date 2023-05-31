@@ -40,6 +40,7 @@ class Step {
         const result = await this.Step.find({ _id: { $in: arrNew } })
         return result.toArray();
     }
+    
     async findById(id){
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null

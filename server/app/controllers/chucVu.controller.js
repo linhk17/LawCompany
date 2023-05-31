@@ -28,6 +28,7 @@ exports.findById = async (req, res, next) => {
         );
     }
 };
+
 exports.findByBoPhan = async (req, res, next) => {
     try{
         const chucVu = new ChucVu(MongoDB.client);

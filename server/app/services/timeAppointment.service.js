@@ -1,11 +1,9 @@
 const { ObjectId } = require("mongodb");
-const ApiError = require("../api-error");
 
 class TimeAppointment {
     constructor(client){
         this.TimeAppointment = client.db().collection("timeAppointment");
     }
-
     // define csdl
     extractConactData(payload){
         const timeAppointment = {
@@ -17,6 +15,7 @@ class TimeAppointment {
             phieu_bao_gia: payload.phieu_bao_gia,
             khach_hang: payload.khach_hang,
             nhan_vien: payload.nhan_vien,
+            nguoi_tao: payload.nguoi_tao
         };
 
         // remove undefined fields
@@ -30,6 +29,12 @@ class TimeAppointment {
         const result = await this.TimeAppointment.find();
         return result.toArray();
     }
+    async findByStaff(payload){
+        const result = await this.TimeAppointment.find({
+            nhan_vien: payload.id
+        });
+        return result.toArray();
+    }
 
     async findById(id){
         id = {
@@ -38,34 +43,32 @@ class TimeAppointment {
         const result = await this.TimeAppointment.findOne(id);
         return result;
     }
-    async findByStaff(payload){
-        const result = await this.TimeAppointment.find({
-            nhan_vien: payload.id
-        });
-        return result.toArray();
-    }
-
     async create(payload){
         const timeAppointment = this.extractConactData(payload);
         const isExist = await this.TimeAppointment.find({
             nhan_vien: timeAppointment.nhan_vien,
             "thoi_gian.start": { 
-                $gte: timeAppointment.thoi_gian.start,
-                $lte: timeAppointment.thoi_gian.end
+                $gte: new Date(timeAppointment.thoi_gian.start) ,
+                $lte: new Date(timeAppointment.thoi_gian.end)
             },
             "thoi_gian.end": { 
-                $gte: timeAppointment.thoi_gian.start,
-                $lte: timeAppointment.thoi_gian.end
+                $gte: new Date(timeAppointment.thoi_gian.start),
+                $lte: new Date(timeAppointment.thoi_gian.end)
             }
         }).toArray()
-        console.log(isExist);
+        console.log(new Date(timeAppointment.thoi_gian.start));
+        const newVal = {
+            ...timeAppointment,
+            thoi_gian:{
+                start: new Date(timeAppointment.thoi_gian.start),
+                end: new Date(timeAppointment.thoi_gian.end), 
+            }
+        }
         if(isExist.length == 0){
-            const result = await this.TimeAppointment.insertOne(timeAppointment);
+            const result = await this.TimeAppointment.insertOne({...newVal});
             return result;
         }
-        return next(
-            new ApiError(500, "An error occured while create document")
-        )
+        return Error;
     }
 
     async update(id, payload){

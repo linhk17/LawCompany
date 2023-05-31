@@ -1,21 +1,24 @@
 const { ObjectId } = require("mongodb");
 
 class Task {
-    constructor(client){
+    constructor(client) {
         this.Task = client.db().collection("task");
         this.User = client.db().collection("user");
     }
 
     // define csdl
-    extractConactData(payload){
+    extractConactData(payload) {
         const task = {
             ten_cong_viec: payload.ten_cong_viec,
-            han_chot_cong_viec: payload.han_chot_cong_viec,
-            nguoi_giao: payload.nguoi_giao,
-            status: payload.status,
-            vu_viec: payload.vu_viec,
-            ngay_giao: payload.ngay_giao,
             nguoi_phu_trach: payload.nguoi_phu_trach,
+            nguoi_phan_cong: payload.nguoi_phan_cong,
+            vu_viec: payload.vu_viec,
+            han_chot_cong_viec: payload.han_chot_cong_viec,
+            ngay_giao: payload.ngay_giao,
+            status: payload.status,
+            tai_lieu: payload.tai_lieu,
+            yeu_cau: payload.yeu_cau,
+            mo_ta: payload.mo_ta
         };
 
         Object.keys(task).forEach(
@@ -24,34 +27,28 @@ class Task {
         return task;
     }
 
-    async findAll(){
+    async findAll() {
         const result = await this.Task.find();
         return result.toArray();
     }
 
-    async findByStaff(payload){
-        const result = await this.Task.find({
-            "nguoi_phu_trach._id":  payload.id
-        });
-        return result.toArray();
-    }
-    async findByStatus(statusP) {
-        const result = await this.Task.find({ status: Number(statusP) });
-        return result.toArray();
-    }
-    async findById(id){
+    async findById(id) {
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null
         };
         const result = await this.Task.findOne(id);
         return result;
     }
-    async findByMatter(payload){
+
+    // lay cong viec theo vu viec
+    async findByMatter(payload) {
         const result = await this.Task.find({
-            vu_viec :  payload.id
+            vu_viec: payload.id
         });
         return result.toArray();
     }
+
+    // update trang thai tam ngung theo vu viec
     async setStatusPause(payload) {
         const rs = await this.Task.updateMany(
             {status: 0, vu_viec: payload.matter},
@@ -67,25 +64,62 @@ class Task {
         });
         return result.toArray();
     }
+    
+    // lay cong viec theo nvien phu trach
+    async findByStaff(payload) {
+        const result = await this.Task.find({
+            "nguoi_phu_trach._id": new ObjectId(payload.id)   
+            
+        });
+        return result.toArray();
+    }
+    async findByStaffAndPhanCong(payload) {
+        const result = await this.Task.find({
+            $or: [
+                {
+                 "nguoi_phu_trach._id": new ObjectId(payload.id)   
+                },
+                {
+                    nguoi_phan_cong: payload.id
+                }
+            ]
+            
+        });
+        return result.toArray();
+    }
 
-    async create(payload){
+    // lay cong viec theo nvien phan cong
+    async findByStaffPhanCong(payload) {
+        const result = await this.Task.find({
+            nguoi_phan_cong: payload.id
+        });
+        return result.toArray();
+    }
+
+    // lay cong viec theo trang thai
+    async findByStatus(statusP) {
+        const result = await this.Task.find({ status: Number(statusP) });
+        return result.toArray();
+    }
+
+    async create(payload) {
         const task = this.extractConactData(payload);
         const newVal = {
             ...task,
-            nguoi_phu_trach: await this.User.findOne({_id: new ObjectId(task.nguoi_phu_trach)})
+            nguoi_phu_trach: await this.User.findOne({ _id: new ObjectId(payload.nguoi_phu_trach) })
         }
         const result = await this.Task.insertOne(newVal);
         return result;
     }
 
-    async update(id, payload){
+    async update(id, payload) {
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null
         };
         const task = this.extractConactData(payload);
         const newVal = {
             ...task,
-            nguoi_phu_trach: await this.User.findOne({_id: new ObjectId(task.nguoi_phu_trach)})
+            nguoi_phu_trach: await this.User.findOne({ _id: new ObjectId(payload.nguoi_phu_trach) })
         }
         const result = await this.Task.findOneAndUpdate(
             id,
@@ -95,7 +129,7 @@ class Task {
         return result.value;
     }
 
-    async delete(id){
+    async delete(id) {
         id = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null
         };
